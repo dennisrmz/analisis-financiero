@@ -5,8 +5,9 @@ const pool = require('../database');
 
 //--------------------------------------ELI---------------------------------
 //mostrar transacciones
-router.get('/transaccion', (req, res) => {
-        res.render('contabilidad_general/listar_transacciones');
+router.get('/transaccion', async (req, res) => {
+        const transaccion = await pool.query('SELECT * FROM transaccion');
+        res.render('contabilidad_general/listar_transacciones', {transaccion});
 });
 //agregar transacciones
 router.get('/transaccion/agregar_transaccion', (req, res) => {
@@ -35,8 +36,9 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
         });
 });
 //listar catalogo
-router.get('/catalogo', (req, res) => {
-        res.render('contabilidad_general/listar_catalogo');
+router.get('/catalogo', async (req, res) => {
+        const cuenta = await pool.query('SELECT * FROM cuenta');
+        res.render('contabilidad_general/listar_catalogo', {cuenta});
 });
 //agregar cuenta a catalogo
 router.get('/catalogo/agregar_cuenta', (req, res) => {

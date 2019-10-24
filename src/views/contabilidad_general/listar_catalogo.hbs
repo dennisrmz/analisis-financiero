@@ -35,20 +35,26 @@
                                                                 <th>Operaciones</th>
                                                         </tr>
                                                 </thead>
+                                                {{#each cuenta}}
                                                 <tbody>
-                                                        <tr id="id_cuenta">
-                                                                <td class="text-center">id_cuenta</td>
-                                                                <td>id_rubro</td>
-                                                                <td>codigo_cuenta</td>
-                                                                <td>nombre_cuenta</td>
-                                                                <td>ACREEDORA/DEUDORA</td>
+                                                        <tr id="ID_CUENTA">
+                                                                <td class="text-center">{{ ID_CUENTA }}</td>
+                                                                <td>{{ ID_RUBRO }}</td>
+                                                                <td>{{ CODIGO_CUENTA }}</td>
+                                                                <td>{{NOMBRE_CUENTA}}</td>
+                                                                <td>{{ID_NATURALEZA_CUENTA}}</td>
                                                                 <td class="text">
                                                                         <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
-                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="/contabilidad_general/catalogo/agregar_cuenta/{{ID_CUENTA}}" onclick="" style="color:gray !important"></a>
                                                                         <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important"></a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
+                                                {{else}}
+                                                <div class="card card-body text-center">
+                                                        <p>¡Opps! Parece que no tienes ninguna cuenta registrada.</p>
+                                                </div>
+                                                {{/each}}
                                         </table>
                                 </div>
                         </div>

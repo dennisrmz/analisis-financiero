@@ -1,7 +1,6 @@
 CREATE DATABASE analisisfinanciero;
 
 use analisisfinanciero;
--- min 40:00
 
 drop table if exists CUENTA;
 
