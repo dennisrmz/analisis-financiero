@@ -1,0 +1,30 @@
+<div class="container-fluid">
+        <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">Periodo Contable</li>
+                <li class="breadcrumb-item active">Iniciar periodo contable</li>
+                </ol>
+        <div class="row">
+                <div class="col-md-4 mx-auto">
+                        <div class="card">
+                                <div class="card-header">
+                                         <i class="fas fa-clock"></i>
+                                        Periodo contable
+                                </div>
+                                <div class="card-body">
+                                        <form action="/contabilidad_general/agregar_transaccion" method="POST">
+                                                <div class="form-group">
+                                                        <a>Fecha inicio:</a>
+                                                        <input name="fecha" class="form-control" data-date-format="dd/mm/yyyy" id="datepicker">
+                                                        {{> fecha }}
+                                                </div>
+                                                <div class="form-group">
+                                                        <button style="width: 58%" class="btn btn-primary">Iniciar periodo contable</button>
+                                                        <button style="width: 40%" class="btn btn-secondary">Cancelar</button>
+                                                </div>
+                                        </form>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

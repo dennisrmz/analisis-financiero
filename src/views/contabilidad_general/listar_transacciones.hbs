@@ -1,0 +1,54 @@
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">Contabilidad General</li>
+                <li class="breadcrumb-item active">Transacciones</li>
+                </ol>
+                <!-- DataTables -->
+                <div class="alert bold alert-info">
+                        <i class="fas fw fa-plus-circle"></i>
+                        <a href="">
+                        <strong>¡Click Aquí para agregar una nueva transaccion!</strong>
+                        </a>
+                </div>
+                <div class="card mb-3">
+                        <div class="card-header">
+                                <i class="fas fa-table"></i>
+                                Transacciones
+                        </div>
+                        <div class="card-body">
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                        <tr>
+                                                                <th>id transaccion</th>
+                                                                <th>Fecha</th>
+                                                                <th>Hora</th>
+                                                                <th>Tipo</th>
+                                                                <th>Monto</th>
+                                                                <th>Ajuste</th>
+                                                                <th>Operaciones</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <tr id="id_cuenta">
+                                                                <td class="text-center">id transaccion</td>
+                                                                <td>Fecha</td>
+                                                                <td>Hora</td>
+                                                                <td>Tipo</td>
+                                                                <td>Monto</td>
+                                                                <td>Si/No</td>
+                                                                <td class="text">
+                                                                        <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important"></a>
+                                                                </td>                          
+                                                        </tr>
+                                                </tbody>
+                                        </table>
+                                </div>
+                        </div>
+                </div>
+        </div><!-- /.container-fluid -->
+</div><!-- /.content-wrapper -->

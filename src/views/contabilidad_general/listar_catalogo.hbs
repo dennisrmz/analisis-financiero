@@ -1,0 +1,57 @@
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">Contabilidad General</li>
+                <li class="breadcrumb-item active">Catalogo de Cuentas</li>
+                </ol>
+                <!-- DataTables -->
+                <div class="alert bold alert-info">
+                        <i class="fas fw fa-plus-circle"></i>
+                        <a href="{% url 'contabilidad:cuenta-crear' %}">
+                        <strong>¡Click Aquí para agregar una nueva cuenta al catálogo!</strong>
+                        </a>
+                </div>
+                <div class="card mb-3">
+                        <div class="card-header">
+                                <i class="fas fa-table"></i>
+                                Catálogo de Cuentas
+                        </div>
+                        <div class="card-body">
+                                <div class="form-group">
+                                        <div class="form-group">
+                                                <input style="width: 15%" type="text" class="search form-control" placeholder="Buscar">
+                                        </div>
+                                </div>
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                        <tr>
+                                                                <th>#</th>
+                                                                <th>Rubro</th>
+                                                                <th>Codigo Cuenta</th>
+                                                                <th>Nombre Cuenta</th>
+                                                                <th>Naturaleza</th>
+                                                                <th>Operaciones</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <tr id="id_cuenta">
+                                                                <td class="text-center">id_cuenta</td>
+                                                                <td>id_rubro</td>
+                                                                <td>codigo_cuenta</td>
+                                                                <td>nombre_cuenta</td>
+                                                                <td>ACREEDORA/DEUDORA</td>
+                                                                <td class="text">
+                                                                        <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important"></a>
+                                                                </td>                          
+                                                        </tr>
+                                                </tbody>
+                                        </table>
+                                </div>
+                        </div>
+                </div>
+        </div><!-- /.container-fluid -->
+</div><!-- /.content-wrapper -->
