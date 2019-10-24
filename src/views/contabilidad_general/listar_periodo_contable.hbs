@@ -8,7 +8,7 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="">
+                        <a href="/contabilidad_general/periodo_contable/agregar_periodo">
                         <strong>¡Click Aquí para iniciar periodo contable!</strong>
                         </a>
                 </div>
@@ -27,13 +27,21 @@
                                                                 <th>Fecha fin periodo</th>
                                                         </tr>
                                                 </thead>
+                                                {{#each periodocontable}}
                                                 <tbody>
-                                                        <tr id="id_cuenta">
-                                                                <td class="text-center">id periodo</td>
-                                                                <td>fecha inicio</td>
-                                                                <td>fecha fin</td>                          
+                                                        <tr id="ID_PERIODOCONTABLE">
+                                                                <td class="text-center">{{ID_PERIODOCONTABLE}}</td>
+                                                                <td>{{FECHAINICIO_PERIODO}}</td>
+                                                                <td>{{FECHAFINAL_PERIODO}}</td>                          
                                                         </tr>
                                                 </tbody>
+                                                {{else}}
+                                                <div class="col-md-4 mx-auto">
+                                                        <div class="card card-body text-center">
+                                                                <p>¡Opps! Parece que no tienes ninguna periodo contable registrado.</p>
+                                                        </div>
+                                                </div>
+                                                {{/each}}
                                         </table>
                                 </div>
                         </div>
