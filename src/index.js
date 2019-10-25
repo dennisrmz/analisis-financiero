@@ -41,6 +41,7 @@ app.use((req, res, next)=>{
 app.use(require('./routes'));
 app.use(require('./routes/authentication'));
 app.use('/costeo', require('./routes/costeo'));
+app.use('/contabilidad_general', require('./routes/contabilidad_general'));
 
 // public
 app.use(express.static(path.join(__dirname, 'public')));
