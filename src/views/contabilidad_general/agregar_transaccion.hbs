@@ -57,7 +57,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Seleccione subcuenta a afectar:</a>
-                                                                <select class="form-control" name="subcuenta" >
+                                                                <select class="form-control" name="sub_cuenta" >
                                                                         {{#each subcuenta}}
                                                                         <option value="{{CODIGO_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
                                                                         {{else}}
@@ -67,7 +67,7 @@
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Seleccione subcuenta menor a afectar:</a>
-                                                                <select class="form-control" name="sub_subcuenta">
+                                                                <select class="form-control" name="sub_sub_cuenta">
                                                                         {{#each sub_subcuenta}}
                                                                         <option value="{{CODIGO_CUENTA}}" >{{NOMBRE_CUENTA}}</option> 
                                                                         {{else}}
@@ -86,7 +86,7 @@
                                                                 <label for="cbox2">Cargar</label>
                                                         </div>
                                                         <div class="col-12 text-center" style="padding-bottom: 5%">    
-                                                                <button class="btn btn-primary btn-plus" type="button">
+                                                                <button class="btn btn-primary btn-plus" onclick="getData()" type="button">
                                                                         Registrar movimiento  
                                                                         <i class="fas fa-plus-circle"></i>
                                                                 </button>
@@ -128,10 +128,195 @@
         </div>
         <div class="form-group text-center">
                 <br>
-                <button id='aprobar' type="submit" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
+                <button id='aprobar' type="submit" onclick="sendData()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
                 <button class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>                    
         </div>
 </div>
+<script>
+        //Declarando variable globales
+        var count = 0;
+        var totalCargos = 0;
+        var totalAbonos = 0;
+        var codigo_cuentas = "";
+        var cargos = "";
+        var abonos = "";
+        var codigoTipo = null;
+        var monto = null;
+        var descripcion = null
+        function getData(){
+                console.log("ADDROWS")
+                count = count + 1;
+                var codigoCuenta = $("#cuenta_padre").val();
+                var codigoSubCuenta = $("#sub_cuenta").val();
+                var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
+
+                var cbCuenta = document.getElementById("cuenta_padre");
+                var cbSubCuenta = document.getElementById("sub_cuenta");
+                var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
+                
+                var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
+                var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
+                var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text;
+                    
+                var cargo = parseFloat($("#id_monto_cargo").val());
+                var abono = parseFloat($("#id_monto_abono").val());
+                $(".dataTables_empty").remove();
+
+                var correcto = false;
+
+                if( !isNaN(cargo) || !isNaN(abono)){
+                    if(!isNaN(cargo) && isNaN(abono)){
+                        if(cuenta!='' && cuenta!='---------' && subCuenta=='---------'){
+                            addRows(codigoCuenta, cuenta, cargo, abono);
+                            correcto = true;
+                        }else{
+                            if(subCuenta!='' && subCuenta!='---------' && subSubCuenta=='---------'){
+                                addRows(codigoSubCuenta, subCuenta, cargo, abono);
+                                correcto = true;
+                            }else{
+                                if(subSubCuenta!='' && subSubCuenta!='---------'){
+                                    addRows(codigoSubSubCuenta, subSubCuenta, cargo, abono);
+                                    correcto = true;
+                                }
+                            }
+                        }
+                    }else{
+                        if(isNaN(cargo) && !isNaN(abono)){
+                            if(cuenta!='' && cuenta!='---------' && subCuenta=='---------'){
+                               addRows(codigoCuenta, cuenta, cargo, abono);
+                                correcto = true;
+                            }else{
+                                if(subCuenta!='' && subCuenta!='---------' && subSubCuenta=='---------'){
+                                    addRows(codigoSubCuenta, subCuenta, cargo, abono);
+                                    correcto = true;
+                                }else{
+                                    if(subSubCuenta!='' && subSubCuenta!='---------'){
+                                        addRows(codigoSubSubCuenta, subSubCuenta, cargo, abono);
+                                        correcto = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if(correcto==true){
+                    $("#id_monto_abono").val("")
+                    $("#id_monto_cargo").val("")
+                }else{
+                    console.log("Correcto: "+correcto);
+                    header = 'No ha ingresado un Cargo o Abono';
+                    body = '<p class="alert bold alert-danger">Debe corroborar que ha ingresado un monto para abonar o cargar la cuenta seleccionada.'+
+                        '<br>También, debe corroborar que ha seleccionado la cuenta menor, es decir, la cuenta que se encuentra al el nivel más inferior.'+
+                        '<br>Seleccione una cuenta de los menús que pueden ser desplegados y debe llenar al menos uno de estos campos. Presione "Continuar"</p>';
+                    clase = 'btn btn-primary'
+                    showModal(header, body, clase);
+                }
+            }
+
+            function addRows(codigoSubCuenta, cuenta, cargo, abono){
+                if(isNaN(abono) && !(isNaN(cargo))){
+                    codigo_cuentas+=codigoSubCuenta+",";
+                    cargos+=cargo+",";
+                    abonos+="None,";
+                    totalCargos = totalCargos + cargo;
+
+                    console.log("CARGO")
+                    $("#tbBody").append(
+                        "<tr><td class='text-center'>"+count+"</td>"+
+                        "<td>"+cuenta+"</td>"+
+                        "<td class='text-center'>$ "+cargo+"</td><td></td></tr>"
+                    );
+                    $("#debe").empty();
+                    $("#debe").append("$ "+totalCargos);
+                };
+                if(isNaN(cargo) && !(isNaN(abono))){
+                    codigo_cuentas+=codigoSubCuenta+",";
+                    abonos+=abono+",";
+                    cargos+="None,";
+                    totalAbonos = totalAbonos + abono;                
+
+                    console.log("ABONO")
+                    $("#tbBody").append(
+                        "<tr><td class='text-center'>"+count+"</td>"+
+                        "<td>"+cuenta+"</td>"+
+                        "<td></td><td class='text-center'>$ "+abono+"</td></tr>"
+                    )
+                    $("#haber").empty();
+                    $("#haber").append("$ "+totalAbonos);
+                }
+            };
+        
+            function sendData(){
+                codigoTipo = $("#id_id_tipo").val();
+                cbTipo = document.getElementById("id_id_tipo");
+                tipo = cbTipo.options[cbTipo.selectedIndex].text;
+                monto = parseFloat($("#id_monto_transaccion").val());
+                descripcion = $("#id_descripcion_transaccion").val();
+                fecha = $("#id_fecha_transaccion").val();
+                console.log(fecha)
+
+                if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                    if(totalAbonos==totalCargos){
+                        if(totalAbonos==monto){
+                            console.log("Cuentas: "+codigo_cuentas+"\nAbonos: "+abonos+"\nCargos: "+cargos);
+                            $.ajax({
+                                url: "{% url 'contabilidad:ajax-transaccion' %}",
+                                type: "POST",
+                                data: {
+                                    'codigo_cuentas': codigo_cuentas,
+                                    'cargos': cargos,
+                                    'abonos': abonos,
+                                    'codigoTipo': codigoTipo,
+                                    'monto': monto,
+                                    'descripcion': descripcion,
+                                    'fecha': fecha
+                                },
+                                success: function(data){
+                                    console.log(data);
+                                    console.log("SUCCES");
+                                },
+                                dataType: "json"
+                            }).done(function(data){
+                                location.href = data.success_url;
+                            }).fail(function() {
+                                console.log("error");
+                                alert("La transaccion no pudo ser realizada");
+                            }).always(function() {
+                                console.log("complete");
+                            });
+                        }else{
+                            header = '!Datos incoherentes!'
+                            body = 'El monto de la partida doble no concuerda con el monto de la transaccion. Presione "Continuar"';
+                            clase = 'btn btn-danger'
+                            showModal(header, body, clase);
+                        }
+                    }else{
+                        header = '!Error en partida doble!'
+                        body = 'Los movimientos registrados para esta transacción no cumplen partida doble. Presione "Continuar"'
+                        clase = 'btn btn-danger'
+                        showModal(header, body, clase);
+                    }
+                }else{
+                    header = '!Error! Datos incompletos'
+                    body = 'Verifique que los campos de la "Transacción" estén completos. Presione "Continuar"'
+                    clase = 'btn btn-danger'
+                    showModal(header, body, clase);
+                }
+            }
+            
+            function showModal(header, body, clase){
+                $('#headModal').empty();
+                $('#headModal').append(
+                "<strong>"+header+"</strong>"
+                );
+                $('#bodyModal').empty();
+                $('#bodyModal').append(
+                body
+                );
+                $('#btnError').attr('class', clase)
+                $('#countErrorModal').modal('show');
+            }
+        </script>
 
 
 

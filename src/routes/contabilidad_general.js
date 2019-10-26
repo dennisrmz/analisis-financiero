@@ -4,6 +4,9 @@ const router = express.Router();
 const pool = require('../database');
 
 //--------------------------------------ELI---------------------------------
+router.get('/', (req, res) => {
+        res.render('contabilidad_general/index_contabilidad');
+});
 //mostrar transacciones
 router.get('/transaccion', async (req, res) => {
         const transaccion = await pool.query('SELECT * FROM transaccion');

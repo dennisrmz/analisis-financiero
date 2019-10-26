@@ -18,24 +18,23 @@
                                 Catálogo de Cuentas
                         </div>
                         <div class="card-body">
-                                <div class="form-group">
-                                        <div class="form-group">
-                                                <input style="width: 15%" type="text" class="search form-control" placeholder="Buscar">
+                                <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                        <div id="example_filter" class="dataTables_filter">
+                                                <input style="width: 29%" type="search" class="form-control form-control-sm" placeholder="Buscar..." aria-controls="example">
                                         </div>
-                                </div>
-                                <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <span class="counter pull-right"></span>
+                                        <table class="table table-bordered dataTable" id="example" width="100%" cellspacing="0" role="grid" aria-describedby="example_info">
                                                 <thead>
                                                         <tr>
-                                                                <th># Id</th>
-                                                                <th>Codigo Cuenta</th>
-                                                                <th>Nombre Cuenta</th>
-                                                                <th>Operaciones</th>
+                                                                <th aria-controls="example"># Id</th>
+                                                                <th aria-controls="example">Codigo Cuenta</th>
+                                                                <th aria-controls="example">Nombre Cuenta</th>
+                                                                <th aria-controls="example">Operaciones</th>
                                                         </tr>
                                                 </thead>
                                                 {{#each cuenta}}
-                                                <tbody>
-                                                        <tr id="ID_CUENTA">
+                                                <tbody >
+                                                        <tr class="odd" id="ID_CUENTA">
                                                                 <td class="text-center">{{ ID_CUENTA }}</td>
                                                                 <td>{{ CODIGO_CUENTA }}</td>
                                                                 <td>{{ NOMBRE_CUENTA }}</td>
@@ -58,3 +57,9 @@
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+<script>
+        $(document).ready(function() {
+                $('#example').DataTable();
+        } );
+</script>
+
