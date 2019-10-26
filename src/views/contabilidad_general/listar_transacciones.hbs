@@ -3,7 +3,7 @@
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item">Contabilidad General</li>
-                <li class="breadcrumb-item active">Transacciones</li>
+                <li class="breadcrumb-item active">Transaccion</li>
                 </ol>
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
@@ -44,10 +44,12 @@
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
-                                                <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no tienes ninguna cuenta registrada.</p>
-                                                </div>
-                                                {{/each}}
+                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
+                                                        <div class="alert bold alert-danger text-center" >
+                                                                <strong>¡Opps! Parece que no tienes ninguna transacción registrada.</strong>
+                                                        </div>
+                                                </table>
+                                                {{/each}} 
                                         </table>
                                 </div>
                         </div>

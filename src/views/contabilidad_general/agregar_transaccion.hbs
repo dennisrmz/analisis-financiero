@@ -20,9 +20,11 @@
                                                         <div class="form-group">
                                                                 <a>Seleccione el tipo de transacción:</a>
                                                                 <select class="form-control" name="select">
-                                                                        <option value="value1" >Value 1</option> 
-                                                                        <option value="value2" selected>Value 2</option>
-                                                                        <option value="value3">Value 3</option>
+                                                                        {{#each tipo_transaccion}}
+                                                                        <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
+                                                                        {{else}}
+                                                                        <option value="0" selected>---------------</option>
+                                                                        {{/each}}
                                                                 </select>
                                                         </div>
                                                         <div class="form-group">
@@ -38,10 +40,6 @@
                                                                 <a>Ingrese descripcion de transacción:</a>
                                                                 <textarea type="text" name="descripcion" class="form-control" placeholder="Descripcion"></textarea>
                                                         </div>
-                                                        <div class="form-group">
-                                                                <input type="checkbox" id="cbox2" value="second_checkbox"> 
-                                                                <label for="cbox2">Ajuste</label>
-                                                        </div>
                                                 </form>
                                         </div>
                                         <div  class="col-lg-6 col-xs-12 border rounded">
@@ -49,26 +47,32 @@
                                                         <h4 class="mb-3 text-center header_id">MOVIMIENTOS</h4>
                                                         <div class="form-group">
                                                                 <a>Seleccione cuenta mayor a afectar:</a>
-                                                                <select class="form-control" name="select">
-                                                                        <option value="value1" selected>Value 1</option> 
-                                                                        <option value="value2">Value 2</option>
-                                                                        <option value="value3">Value 3</option>
+                                                                <select class="form-control" name="cuenta_padre">
+                                                                        {{#each cuenta_padre}}
+                                                                        <option value="{{CODIGO_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
+                                                                        {{else}}
+                                                                        <option value="0" selected>---------------</option>
+                                                                        {{/each}}
                                                                 </select>
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Seleccione subcuenta a afectar:</a>
-                                                                <select class="form-control" name="select">
-                                                                        <option value="value1" >Value 1</option> 
-                                                                        <option value="value2" selected>Value 2</option>
-                                                                        <option value="value3">Value 3</option>
+                                                                <select class="form-control" name="subcuenta" >
+                                                                        {{#each subcuenta}}
+                                                                        <option value="{{CODIGO_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
+                                                                        {{else}}
+                                                                        <option value="0" selected>---------------</option>
+                                                                        {{/each}}
                                                                 </select>
                                                         </div>
                                                         <div class="form-group">
-                                                                <a>Seleccione subcuenta menir a afectar:</a>
-                                                                <select class="form-control" name="select">
-                                                                        <option value="value1" >Value 1</option> 
-                                                                        <option value="value2">Value 2</option>
-                                                                        <option value="value3" selected>Value 3</option>
+                                                                <a>Seleccione subcuenta menor a afectar:</a>
+                                                                <select class="form-control" name="sub_subcuenta">
+                                                                        {{#each sub_subcuenta}}
+                                                                        <option value="{{CODIGO_CUENTA}}" >{{NOMBRE_CUENTA}}</option> 
+                                                                        {{else}}
+                                                                        <option value="0" selected>---------------</option>
+                                                                        {{/each}}
                                                                 </select>
                                                         </div>
                                                         <div class="form-group">
@@ -76,8 +80,10 @@
                                                                 <input type="number" name="monto" class="form-control" placeholder="Monto">
                                                         </div>
                                                         <div class="form-group">
-                                                                <input type="checkbox" id="cbox2" value="second_checkbox"> 
+                                                                <input type="checkbox" id="cbox1" value="second_checkbox" checked> 
                                                                 <label for="cbox2">Abonar</label>
+                                                                <input type="checkbox" id="cbox2" value="second_checkbox"> 
+                                                                <label for="cbox2">Cargar</label>
                                                         </div>
                                                         <div class="col-12 text-center" style="padding-bottom: 5%">    
                                                                 <button class="btn btn-primary btn-plus" type="button">

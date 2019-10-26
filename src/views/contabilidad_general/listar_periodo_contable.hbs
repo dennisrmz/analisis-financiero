@@ -36,9 +36,11 @@
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
-                                                <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no tienes ninguna periodo contable registrado.</p>
-                                                </div>
+                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
+                                                        <div class="alert bold alert-danger text-center" >
+                                                                <strong>¡Opps! Parece que no tienes ninguna periodo contable registrada.</strong>
+                                                        </div>
+                                                </table>
                                                 {{/each}}
                                         </table>
                                 </div>
