@@ -1,0 +1,70 @@
+<div class="container p-4">
+    <div class="row">
+        <div class="col-md-9 mx-auto">
+            <div class="card">
+                <h2 class="text-center">Ingresar Productos a Procesos</h2>
+                <div class="card-body">
+                    <form action="#" method="POST">
+                        <div class="form-group">
+                            <select class="m-2 form-control" name="productos-proceso" id="productos-proceso">
+                                <option value="silla">Silla</option>
+                                <option value="mesa" selected>Mesa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad a Realizar</label>
+                             <input type="number" name="numero-producto" min="1" class="form-control" placeholder="Cantidad a Realizar">
+                        </div>
+                        <div class="form-group">
+                            <label>Numero de Orden</label>
+                             <input type="number" name="numero-orden" min="1" class="form-control" placeholder="Numero de Orden">
+                        </div>
+                        <div class="form-group">
+                            <label>Seleccione Materia Prima</label>
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Materia Prima</th>
+                                        <th>Cantidad</th>
+                                        <th><a href="#" class="addRow"><i class="fas fa-plus-circle"></i></a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="materia-prima[]" class="form-control" required="">
+                                                {{!-- @if($productos) --}}
+                                                {{!-- @foreach ($productos as $producto) --}}
+                                                {{!-- <option value="{{ $producto->id }}"> {{ $producto->nombre }} </option> --}}
+                                                {{!-- @endforeach --}}
+                                                {{!-- @else --}}
+                                                {{!-- <option>No existen Productos</option> --}}
+                                                {{!-- @endif --}}
+                                            </select>
+                                            {{!-- {{-- <input type="text" name="product_name[]" class="form-control" required=""> --}}
+                                        </td>
+                                        <td><input type="number" name="cantidad[]" required=""
+                                                class="form-control quantity" min="1"></td>
+                                        <td class="remover"><a href="#" class="remove"><i
+                                                    class="fas fa-minus-circle"></i></a></td>
+                                    </tr>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="form-group">
+                            <Label>Digite el numero de Procesos</Label>
+                            <input type="number" name="numero-procesos" min="1" class="form-control" placeholder="Numero de Procesos">
+                        </div>
+                        <div class="from-group">
+                            <button class="btn btn-success btn-block">
+                                Registrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
