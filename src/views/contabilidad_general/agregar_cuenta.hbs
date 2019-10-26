@@ -1,23 +1,27 @@
 <div class="container-fluid">
         <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">Catalogo de cuentas</li>
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general/catalogo/">
+                        Catalogo de cuentas
+                        </a>
+                </li>
                 <li class="breadcrumb-item active">Modificar | Agregar Cuenta</li>
                 </ol>
         <div class="row">
                 <div class="col-md-6 mx-auto">
+                        <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                        <a class="nav-link active" href="/contabilidad_general/catalogo/agregar_cuenta">Cuenta padre</a>
+                                </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" href="/contabilidad_general/catalogo/agregar_subcuenta">Sub cuenta</a>
+                                </li>
+                                <li class="nav-item">
+                                        <a class="nav-link" href="/contabilidad_general/catalogo/agregar_subsubcuenta">Sub sub cuenta</a>
+                                </li>
+                        </ul>
                         <div class="card">
-                                <ul class="nav nav-tabs">
-                                        <li class="nav-item">
-                                                <a class="nav-link active" href="/contabilidad_general/catalogo/agregar_cuenta">Cuenta padre</a>
-                                        </li>
-                                        <li class="nav-item">
-                                                <a class="nav-link" href="/contabilidad_general/catalogo/agregar_subcuenta">Sub cuenta</a>
-                                        </li>
-                                        <li class="nav-item">
-                                                <a class="nav-link" href="/contabilidad_general/catalogo/agregar_subsubcuenta">Sub sub cuenta</a>
-                                        </li>
-                                </ul>
                                 <div class="card-body">
                                         <form action="/contabilidad_general/catalogo/agregar_cuenta" method="POST">
                                                 <div class="form-group">
@@ -48,13 +52,14 @@
                                                                 {{/each}}
                                                         </select>
                                                 </div>
-                                                
                                                 <div class="form-group">
                                                         <button style="width: 50%" class="btn btn-primary">Guardar</button>
                                                         <button style="width: 49%" class="btn btn-secondary">Cancelar</button>
                                                 </div>
                                         </form>
                                 </div>
+                        </div>
+                        <div class="form-group">
                         </div>
                 </div>
         </div>
