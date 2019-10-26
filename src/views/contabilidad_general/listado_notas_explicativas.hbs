@@ -2,38 +2,31 @@
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">Contabilidad General</li>
-                <li class="breadcrumb-item active">Estados Financieros</li>
+                <li class="breadcrumb-item">Estados Financieros</li>
+                <li class="breadcrumb-item active">Notas Explicativas</li>
                 </ol>
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/estados_financieros/listado">
-                        <strong>¡Click Aquí para cerrar el período contable!</strong>
+                        <a href="/contabilidad_general/estados_financieros/notas_explicativas/listado">
+                        <strong>¡Click aquí para agregar una nota explicativa!</strong>
                         </a>
                 </div>
                 <div class="card mb-3">
                         <div class="card-header">
                                 <i class="fas fa-table"></i>
-                                Estados Financieros
+                                Notas Explicativas
                         </div>
                         <div class="card-body">
-                                <div class="form-group">
-                                        <div class="form-group">
-                                                <input style="width: 15%" type="text" class="search form-control" placeholder="Buscar">
-                                        </div>
-                                </div>
                                 <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
-                                                                <th>N°</th>
-                                                                <th>Período Contable</th>
-                                                                <th>Nombre del Estado Financiero</th>
-                                                                <th>Operación</th>
+                                                                <th>Nombre</th>
+                                                                <th>Descripción</th>
                                                         </tr>
                                                 </thead>
-                                                {{#each estadofinanciero}}
+                                                <!--{{#each estadofinanciero}}
                                                 <tbody>
                                                         <tr id="ID_ESTADOFINANCIERO">
                                                                 <td class="text-center">{{ ID_ESTADOFINANCIERO }}</td>
@@ -48,7 +41,7 @@
                                                 <div class="card card-body text-center">
                                                         <p>¡Opps! Parece que no tienes ningún estado financiero hasta el momento.</p>
                                                 </div>
-                                                {{/each}}
+                                                {{/each}}-->
                                         </table>
                                 </div>
                         </div>
