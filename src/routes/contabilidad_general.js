@@ -14,17 +14,6 @@ router.get('/estados_financieros/balance_comprobacion', async (req, res) => {
     res.render('contabilidad_general/balance_de_comprobacion');
 });
 
-//Consultar cuentas del Balance de Comprobacion
-/*router.get('/estados_financieros/balance_comprobacion', async (req, res) => {
-    const balanceCoomprobacion = await pool.query('SELECT cuenta.nombre_cuenta FROM cuenta ' + 
-    'INNER JOIN movimiento ON cuenta.id_cuenta = movimiento.id_cuenta ' + 
-    'INNER JOIN mayorizacion ON movimiento.id_mayorizacion = mayorizacion.id_mayorizacion ' +
-    'INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.id_mayorizacion = estadofinanciero_mayorizacion.id_mayorizacion ' +
-    'INNER JOIN estadofinanciero ON estadofinanciero_mayorizacion.id_estadofinanciero = estadofinanciero.id_estadofinanciero ' +
-    'WHERE estadofinanciero.id_estadofinanciero = ?');
-    res.render('contabilidad_general/listado_estados_financieros', {balanceComprobacion});
-});*/
-
 //Balance General
 router.get('/estados_financieros/balance_general', async (req, res) => {
     res.render('contabilidad_general/balance_general');
