@@ -135,12 +135,11 @@ create table TRANSACCION
    ID_TRANSACCION       int not null AUTO_INCREMENT,
    CODIGO_TIPO_TRANSACCION int,
    ID_PERIODOCONTABLE   int,
-   CODIGO_TRANSACCION   int not null,
    FECHA_TRANSACCION    date not null,
    NUMERO_TRANSACCION   int,
    DESCRIPCION_TRANSACCION varchar(50) not null,
    MONTO_TRANSACCION    decimal not null,
-   ES_AJUSTE            bool not null,
+   ES_AJUSTE            bool,
    primary key (ID_TRANSACCION)
 );
 

@@ -23,7 +23,7 @@
                                                         <h4 class="mb-3 text-center header_id">TRANSACCION</h4>
                                                         <div class="form-group">
                                                                 <a>Seleccione el tipo de transacción:</a>
-                                                                <select class="form-control" name="select">
+                                                                <select id="id_tipo_transaccion" class="form-control" name="select">
                                                                         {{#each tipo_transaccion}}
                                                                         <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
                                                                         {{else}}
@@ -33,16 +33,16 @@
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Fecha en que se realiza:</a>
-                                                                <input name="fecha" class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" disabled>
+                                                                <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
                                                                 {{> fecha }}
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Ingrese el monto:</a>
-                                                                <input type="number" name="monto" class="form-control" placeholder="Monto">
+                                                                <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto">
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Ingrese descripcion de transacción:</a>
-                                                                <textarea type="text" name="descripcion" class="form-control" placeholder="Descripcion"></textarea>
+                                                                <textarea id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripcion"></textarea>
                                                         </div>
                                                 </form>
                                         </div>
@@ -50,47 +50,47 @@
                                                 <form name="movimiento_form" novalidate>
                                                         <h4 class="mb-3 text-center header_id">MOVIMIENTOS</h4>
                                                         <div class="form-group">
-                                                                <a>Seleccione cuenta mayor a afectar:</a>
-                                                                <select class="form-control" name="cuenta_padre">
-                                                                        {{#each cuenta_padre}}
-                                                                        <option value="{{CODIGO_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
-                                                                        {{else}}
-                                                                        <option value="0" selected>---------------</option>
-                                                                        {{/each}}
-                                                                </select>
+                                                            <a>Seleccione cuenta mayor a afectar:</a>
+                                                            <select id="cuenta" class="form-control" name="cuenta_padre">
+                                                                {{#each cuenta_padre}}
+                                                                <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
+                                                                {{else}}
+                                                                <option value="0">-----------------</option>
+                                                                {{/each}}
+                                                            </select>
                                                         </div>
                                                         <div class="form-group">
-                                                                <a>Seleccione subcuenta a afectar:</a>
-                                                                <select class="form-control" name="sub_cuenta" >
-                                                                        {{#each subcuenta}}
-                                                                        <option value="{{CODIGO_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
-                                                                        {{else}}
-                                                                        <option value="0" selected>---------------</option>
-                                                                        {{/each}}
-                                                                </select>
+                                                            <a>Seleccione subcuenta a afectar:</a>
+                                                            <select id="sub_cuenta" class="form-control" name="sub_cuenta" >
+                                                                {{#each subcuenta}}
+                                                                <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
+                                                                {{else}}
+                                                                <option value="0">-----------------</option>
+                                                                {{/each}}
+                                                            </select>
                                                         </div>
                                                         <div class="form-group">
-                                                                <a>Seleccione subcuenta menor a afectar:</a>
-                                                                <select class="form-control" name="sub_sub_cuenta">
-                                                                        {{#each sub_subcuenta}}
-                                                                        <option value="{{CODIGO_CUENTA}}" >{{NOMBRE_CUENTA}}</option> 
-                                                                        {{else}}
-                                                                        <option value="0" selected>---------------</option>
-                                                                        {{/each}}
-                                                                </select>
+                                                            <a>Seleccione subcuenta menor a afectar:</a>
+                                                            <select id="sub_sub_cuenta" class="form-control" name="sub_sub_cuenta">
+                                                                {{#each sub_subcuenta}}
+                                                                <option value="{{ID_CUENTA}}" >{{NOMBRE_CUENTA}}</option> 
+                                                                {{else}}
+                                                                <option value="0">-----------------</option>
+                                                                {{/each}}
+                                                            </select>
                                                         </div>
                                                         <div class="form-group">
                                                                 <a>Ingrese el monto de la cuenta:</a>
-                                                                <input type="number" name="monto" class="form-control" placeholder="Monto">
+                                                                <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto">
                                                         </div>
                                                         <div class="form-group">
-                                                                <input type="checkbox" id="cbox1" value="second_checkbox" checked> 
+                                                                <input type="checkbox" id="cb_abonar" value="second_checkbox" onclick=""> 
                                                                 <label for="cbox2">Abonar</label>
-                                                                <input type="checkbox" id="cbox2" value="second_checkbox"> 
+                                                                <input type="checkbox" id="cb_cargar" value="second_checkbox" onclick=""> 
                                                                 <label for="cbox2">Cargar</label>
                                                         </div>
                                                         <div class="col-12 text-center" style="padding-bottom: 5%">    
-                                                                <button class="btn btn-primary btn-plus" onclick="getData()" type="button">
+                                                                <button class="btn btn-outline-primary btn-plus" onclick="obtenerDatos()" type="button">
                                                                         Registrar movimiento  
                                                                         <i class="fas fa-plus-circle"></i>
                                                                 </button>
@@ -131,13 +131,14 @@
                 </div>     
         </div>
         <div class="form-group text-center">
-                <br>
-                <button id='aprobar' type="submit" onclick="sendData()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
-                <button class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>                    
+                <button id='aprobar' type="submit" onclick="guardarDato()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
+                <button class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>         
+                <br>     
+                <br>     
         </div>
 </div>
-<script>
-        //Declarando variable globales
+    <script type="text/javascript">
+        //Declaracion de variables
         var count = 0;
         var totalCargos = 0;
         var totalAbonos = 0;
@@ -146,181 +147,176 @@
         var abonos = "";
         var codigoTipo = null;
         var monto = null;
-        var descripcion = null
-        function getData(){
-                console.log("ADDROWS")
-                count = count + 1;
-                var codigoCuenta = $("#cuenta_padre").val();
-                var codigoSubCuenta = $("#sub_cuenta").val();
-                var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
+        var descripcion = null;
 
-                var cbCuenta = document.getElementById("cuenta_padre");
-                var cbSubCuenta = document.getElementById("sub_cuenta");
-                var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
+        //Validad que solo un chechbox este seleccionado
+        /*function check1(checkbox) {
+                if (checkbox.checked) {
+                    check2.checked = false;
+                }
+            }
+
+            function check2(checkbox) {
+                if (checkbox.checked) {
+                    check1.checked = false;
+                }
+            }*/
+            
+        function obtenerDatos(){
+            console.log("agregarFila")
+            count = count + 1;
+            var codigoCuenta = $("#cuenta").val();
+            var codigoSubCuenta = $("#sub_cuenta").val();
+            var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
+
+            var cbCuenta = document.getElementById("cuenta");
+            var cbSubCuenta = document.getElementById("sub_cuenta");
+            var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
                 
-                var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
-                var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
-                var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text;
-                    
-                var cargo = parseFloat($("#id_monto_cargo").val());
-                var abono = parseFloat($("#id_monto_abono").val());
-                $(".dataTables_empty").remove();
+            var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
+            var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
+            var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text;
+                
+            var monto_mov = parseFloat($("#monto_movimiento").val());
+            var abonar = document.getElementById('cb_abonar').checked;
+            $(".dataTables_empty").remove();
 
-                var correcto = false;
-
-                if( !isNaN(cargo) || !isNaN(abono)){
-                    if(!isNaN(cargo) && isNaN(abono)){
-                        if(cuenta!='' && cuenta!='---------' && subCuenta=='---------'){
-                            addRows(codigoCuenta, cuenta, cargo, abono);
+            var correcto = false;
+            
+            if(!isNaN(monto_mov) && abonar==false){//si es un numero NAN devuelve true --> !(devuelve false)=true
+                if(cuenta!='' && cuenta!='---------------' && subCuenta=='---------------'){
+                    agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                    correcto = true;
+                }else{
+                    if(subCuenta!='' && subCuenta!='---------------' && subSubCuenta=='---------------'){
+                        agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
+                        correcto = true;
+                    }else{
+                        if(subSubCuenta!='' && subSubCuenta!='---------------'){
+                            agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
+                            correcto = true;
+                        }
+                    }
+                }
+            }else{
+                if(!isNaN(monto_mov) && abonar==true){
+                    if(cuenta!='' && cuenta!='---------------' && subCuenta=='---------------'){
+                        agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                        correcto = true;
+                    }else{
+                        if(subCuenta!='' && subCuenta!='---------------' && subSubCuenta=='---------------'){
+                            agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
                             correcto = true;
                         }else{
-                            if(subCuenta!='' && subCuenta!='---------' && subSubCuenta=='---------'){
-                                addRows(codigoSubCuenta, subCuenta, cargo, abono);
+                            if(subSubCuenta!='' && subSubCuenta!='---------------'){
+                                agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
                                 correcto = true;
-                            }else{
-                                if(subSubCuenta!='' && subSubCuenta!='---------'){
-                                    addRows(codigoSubSubCuenta, subSubCuenta, cargo, abono);
-                                    correcto = true;
-                                }
-                            }
-                        }
-                    }else{
-                        if(isNaN(cargo) && !isNaN(abono)){
-                            if(cuenta!='' && cuenta!='---------' && subCuenta=='---------'){
-                               addRows(codigoCuenta, cuenta, cargo, abono);
-                                correcto = true;
-                            }else{
-                                if(subCuenta!='' && subCuenta!='---------' && subSubCuenta=='---------'){
-                                    addRows(codigoSubCuenta, subCuenta, cargo, abono);
-                                    correcto = true;
-                                }else{
-                                    if(subSubCuenta!='' && subSubCuenta!='---------'){
-                                        addRows(codigoSubSubCuenta, subSubCuenta, cargo, abono);
-                                        correcto = true;
-                                    }
-                                }
                             }
                         }
                     }
                 }
-                if(correcto==true){
-                    $("#id_monto_abono").val("")
-                    $("#id_monto_cargo").val("")
-                }else{
-                    console.log("Correcto: "+correcto);
-                    header = 'No ha ingresado un Cargo o Abono';
-                    body = '<p class="alert bold alert-danger">Debe corroborar que ha ingresado un monto para abonar o cargar la cuenta seleccionada.'+
-                        '<br>También, debe corroborar que ha seleccionado la cuenta menor, es decir, la cuenta que se encuentra al el nivel más inferior.'+
-                        '<br>Seleccione una cuenta de los menús que pueden ser desplegados y debe llenar al menos uno de estos campos. Presione "Continuar"</p>';
-                    clase = 'btn btn-primary'
-                    showModal(header, body, clase);
-                }
             }
+            if(correcto==true){
+                $("#monto_mov").val("")
+            }else{
+                console.log("Correcto: "+correcto);
+                alerta_error();
+            }
+        }
+        function alerta_error(){
+            alert("Oops... Falta completar o seleccionar algunos campos");
+            /*Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+                footer: '<a href>Why do I have this issue?</a>'
+                });*/
+        }
 
-            function addRows(codigoSubCuenta, cuenta, cargo, abono){
-                if(isNaN(abono) && !(isNaN(cargo))){
-                    codigo_cuentas+=codigoSubCuenta+",";
-                    cargos+=cargo+",";
-                    abonos+="None,";
-                    totalCargos = totalCargos + cargo;
+        function agregarFila(codigoSubCuenta, cuenta, monto_mov, abonar){
+            if(abonar==false){
+                //codigo_cuentas+=codigoSubCuenta+",";
+                codigo_cuentas+=codigoSubCuenta+",";
+                cargos+=monto_mov+",";
+                abonos+="0,";
+                totalCargos = totalCargos + monto_mov;
 
-                    console.log("CARGO")
-                    $("#tbBody").append(
-                        "<tr><td class='text-center'>"+count+"</td>"+
-                        "<td>"+cuenta+"</td>"+
-                        "<td class='text-center'>$ "+cargo+"</td><td></td></tr>"
-                    );
-                    $("#debe").empty();
-                    $("#debe").append("$ "+totalCargos);
-                };
-                if(isNaN(cargo) && !(isNaN(abono))){
-                    codigo_cuentas+=codigoSubCuenta+",";
-                    abonos+=abono+",";
-                    cargos+="None,";
-                    totalAbonos = totalAbonos + abono;                
-
-                    console.log("ABONO")
-                    $("#tbBody").append(
-                        "<tr><td class='text-center'>"+count+"</td>"+
-                        "<td>"+cuenta+"</td>"+
-                        "<td></td><td class='text-center'>$ "+abono+"</td></tr>"
-                    )
-                    $("#haber").empty();
-                    $("#haber").append("$ "+totalAbonos);
-                }
+                console.log("CARGO")
+                $("#tbBody").append(
+                    "<tr><td class='text-center'>"+count+"</td>"+
+                    "<td>"+cuenta+"</td>"+
+                    "<td class='text-center'>$ "+monto_mov+"</td><td></td></tr>"
+                );
+                $("#debe").empty();
+                $("#debe").append("$ "+totalCargos);
             };
-        
-            function sendData(){
-                codigoTipo = $("#id_id_tipo").val();
-                cbTipo = document.getElementById("id_id_tipo");
-                tipo = cbTipo.options[cbTipo.selectedIndex].text;
-                monto = parseFloat($("#id_monto_transaccion").val());
-                descripcion = $("#id_descripcion_transaccion").val();
-                fecha = $("#id_fecha_transaccion").val();
-                console.log(fecha)
+            if(abonar==true){
+                codigo_cuentas+=codigoSubCuenta+",";
+                abonos+=monto_mov+",";
+                cargos+="0,";
+                totalAbonos = totalAbonos + monto_mov;                
 
-                if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
-                    if(totalAbonos==totalCargos){
-                        if(totalAbonos==monto){
-                            console.log("Cuentas: "+codigo_cuentas+"\nAbonos: "+abonos+"\nCargos: "+cargos);
-                            $.ajax({
-                                url: "{% url 'contabilidad:ajax-transaccion' %}",
-                                type: "POST",
-                                data: {
-                                    'codigo_cuentas': codigo_cuentas,
-                                    'cargos': cargos,
-                                    'abonos': abonos,
-                                    'codigoTipo': codigoTipo,
-                                    'monto': monto,
-                                    'descripcion': descripcion,
-                                    'fecha': fecha
-                                },
-                                success: function(data){
-                                    console.log(data);
-                                    console.log("SUCCES");
-                                },
-                                dataType: "json"
-                            }).done(function(data){
-                                location.href = data.success_url;
-                            }).fail(function() {
-                                console.log("error");
-                                alert("La transaccion no pudo ser realizada");
-                            }).always(function() {
-                                console.log("complete");
-                            });
-                        }else{
-                            header = '!Datos incoherentes!'
-                            body = 'El monto de la partida doble no concuerda con el monto de la transaccion. Presione "Continuar"';
-                            clase = 'btn btn-danger'
-                            showModal(header, body, clase);
-                        }
+                console.log("ABONO")
+                $("#tbBody").append(
+                    "<tr><td class='text-center'>"+count+"</td>"+
+                    "<td>"+cuenta+"</td>"+
+                    "<td></td><td class='text-center'>$ "+monto_mov+"</td></tr>"
+                );
+                $("#haber").empty();
+                $("#haber").append("$ "+totalAbonos);
+            }
+        };
+        
+        function guardarDato(){
+            codigoTipo = $("#id_tipo_transaccion").val();
+            cbTipo = document.getElementById("id_tipo_transaccion");
+            tipo = cbTipo.options[cbTipo.selectedIndex].text;
+            monto = parseFloat($("#id_monto_transaccion").val());
+            descripcion = $("#id_descripcion_transaccion").val();
+            fecha = $("#datepicker").val();
+            //console.log(fecha);
+
+            if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                if(totalAbonos==totalCargos){
+                    if(totalAbonos==monto){
+                        //console.log("Cuentas: "+codigo_cuentas+"\nAbonos: "+abonos+"\nCargos: "+cargos);
+                        $.ajax({
+                            url: "/contabilidad_general/transaccion/agregar_transaccion",
+                            type: "POST",
+                            data: {
+                                'ID_CUENTA': codigo_cuentas,
+                                'MONTO_CARGO': cargos,
+                                'MONTO_ABONO': abonos,
+                                'CODIGO_TIPO_TRANSACCION': codigoTipo,
+                                'MONTO_TRANSACCION': monto,
+                                'DESCRIPCION_TRANSACCION': descripcion,
+                                'FECHA_TRANSACCION': fecha,
+                                'count' : count
+                            },
+                            success: function(data){
+                                console.log(data);
+                                console.log("SUCCESS");
+                            },
+                            dataType: "json"
+                        }).done(function(data){
+                            location.href = data.success_url;
+                        }).fail(function() {
+                            console.log("error");
+                            alert("La transaccion no pudo ser realizada");
+                        }).always(function() {
+                            console.log("complete");
+                        });
                     }else{
-                        header = '!Error en partida doble!'
-                        body = 'Los movimientos registrados para esta transacción no cumplen partida doble. Presione "Continuar"'
-                        clase = 'btn btn-danger'
-                        showModal(header, body, clase);
+                        alert("!Datos incoherentes! El monto de la partida doble no concuerda con el monto de la transaccion. Presione Aceptar");
                     }
                 }else{
-                    header = '!Error! Datos incompletos'
-                    body = 'Verifique que los campos de la "Transacción" estén completos. Presione "Continuar"'
-                    clase = 'btn btn-danger'
-                    showModal(header, body, clase);
+                    alert("!Error en partida doble! Los movimientos registrados para esta transacción no cumplen partida doble. Presione Aceptar");
                 }
+            }else{
+                alert("!Error! Datos incompletos. Verifique que los campos de la Transacción estén completos. Presione Aceptar");
             }
-            
-            function showModal(header, body, clase){
-                $('#headModal').empty();
-                $('#headModal').append(
-                "<strong>"+header+"</strong>"
-                );
-                $('#bodyModal').empty();
-                $('#bodyModal').append(
-                body
-                );
-                $('#btnError').attr('class', clase)
-                $('#countErrorModal').modal('show');
-            }
-        </script>
+        }
+    </script>
 
 
 
