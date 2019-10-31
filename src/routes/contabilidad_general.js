@@ -20,41 +20,41 @@ router.get('/transaccion/agregar_transaccion', async (req, res, next) => {
         const subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 4');
         const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5');
         const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
-        res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, subcuenta, sub_subcuenta, tipo_transaccion});
+        const periodo_contables = await pool.query('SELECT FECHAINICIO_PERIODO FROM periodocontable LIMIT 1');
+        console.log({periodo_contable: periodo_contables[0]});
+        res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, subcuenta, sub_subcuenta, tipo_transaccion, periodo_contable: periodo_contables[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
-        const { ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, count } = req.body;
+        const { ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION} = req.body;
+
+        var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
+        var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
+        var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
+        var cantidad = ID_CUENTA_NUM.length;
+        
         //Insertar transaccion realizada
-        /*const new_transaccion = {
+        const new_transaccion = {
                 CODIGO_TIPO_TRANSACCION, 
                 MONTO_TRANSACCION, 
                 DESCRIPCION_TRANSACCION, 
                 FECHA_TRANSACCION
         };
-        console.log({ ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, count });
-        await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ], (err, results, fields) => {
-                if (err) {
-                  return console.error(err.message);
-                }
-                console.log('Fila insertada de transaccion:' + results.affectedRows);
-        });*/
+        console.log(new_transaccion);
+        await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
+        console.log('Fila insertada correctamente de transaccion');
+
         //Insertar los movimientos realizados en una transaccion
-        //console.log({ ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, count });
-        const {ID_TRANSACCION} = await pool.query('SELECT ID_TRANSACCION FROM transaccion LIMIT 1');
-        for(var k = 1; k<=count; k++){
-                const new_movimiento = {
-                        ID_CUENTA:ID_CUENTA[k],  
-                        MONTO_CARGO:MONTO_CARGO[k], 
-                        MONTO_ABONO:MONTO_ABONO[k],
-                        ID_TRANSACCION:ID_TRANSACCION[k]
+        const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
+        for(var k = 0; k<cantidad-1; k++){
+                var new_movimiento = {
+                        ID_CUENTA:ID_CUENTA_NUM[k],  
+                        MONTO_CARGO:MONTO_CARGO_NUM[k], 
+                        MONTO_ABONO:MONTO_ABONO_NUM[k],
+                        ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION
                 };
                 console.log(new_movimiento);
-                await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ], (err, results, fields) => {
-                        if (err) {
-                          return console.error(err.message);
-                        }
-                        console.log('Fila insertada de movimiento[k]:' + results.affectedRows);
-                });
+                await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
+                console.log('Fila insertada correctamente de movimiento:'+k);
         }
         res.redirect('/contabilidad_general/transaccion');
 });
@@ -80,8 +80,8 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
 //Listar catalogo en un dataTable
 router.get('/catalogo', async (req, res, next) => {
-        //const cuenta = await pool.query('SELECT * FROM cuenta INNER JOIN naturaleza ON cuenta.ID_NATURALEZA_CUENTA=naturaleza.ID_NATURALEZA_CUENTA');
-        const cuenta = await pool.query('SELECT * FROM cuenta');
+        const cuenta = await pool.query('SELECT * FROM cuenta INNER JOIN naturaleza ON cuenta.ID_NATURALEZA_CUENTA=naturaleza.ID_NATURALEZA_CUENTA');
+        //const cuenta = await pool.query('SELECT * FROM cuenta');
         res.render('contabilidad_general/listar_catalogo', {cuenta});
 });
 //------------------------------------------------------------------------------------------------------------------------------------------------------

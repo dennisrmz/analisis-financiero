@@ -30,6 +30,7 @@
                                                                 <th aria-controls="example"># Id</th>
                                                                 <th aria-controls="example">Codigo Cuenta</th>
                                                                 <th aria-controls="example">Nombre Cuenta</th>
+                                                                <th aria-controls="example">Naturaleza</th>
                                                                 <th aria-controls="example">Operaciones</th>
                                                         </tr>
                                                 </thead>
@@ -39,9 +40,10 @@
                                                                 <td class="text-center">{{ ID_CUENTA }}</td>
                                                                 <td>{{ CODIGO_CUENTA }}</td>
                                                                 <td>{{ NOMBRE_CUENTA }}</td>
+                                                                <td>{{ TIPO_NATURALEZA_CUETA }}</td>
                                                                 <td class="text">
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/catalogo/ver_cuenta/{{ID_CUENTA}}" style="color:gray !important"></a>
-                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#"  style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/catalogo/ver_cuenta/{{ID_CUENTA}}" style="color:gray !important">Ver</a>
+                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#"  style="color:gray !important">Eliminar</a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>

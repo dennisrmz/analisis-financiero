@@ -26,10 +26,11 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
-                                                                <th>id transaccion</th>
+                                                                <th># Id </th>
                                                                 <th>Fecha</th>
                                                                 <th>Monto</th>
                                                                 <th>Tipo</th>
+                                                                <th>Descripción</th>
                                                                 <th>Operaciones</th>
                                                         </tr>
                                                 </thead>
@@ -40,10 +41,11 @@
                                                                 <td>{{FECHA_TRANSACCION}}</td>
                                                                 <td>{{MONTO_TRANSACCION}}</td>
                                                                 <td>{{NOMBRE_TIPO_TRANSACCION}}</td>
+                                                                <td>{{DESCRIPCION_TRANSACCION}}</td>
                                                                 <td class="text">
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="" onclick="" style="color:gray !important"></a>
-                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important"></a>
-                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important">Realizar ajuste</a>
+                                                                        <a class="fas fa-w fa-eye" name="ver" href="" onclick="" style="color:gray !important">Ver</a>
+                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important">Eliminar</a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
