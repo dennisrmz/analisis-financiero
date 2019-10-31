@@ -1,0 +1,34 @@
+<div class="container-fluid">
+        <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general/periodo_contable">
+                        Periodo Contable
+                        </a>
+                </li>
+                <li class="breadcrumb-item active">Agregar periodo contable</li>
+                </ol>
+        <div class="row">
+                <div class="col-md-4 mx-auto">
+                        <div class="card">
+                                <div class="card-header">
+                                         <i class="fas fa-clock"></i>
+                                        Periodo contable
+                                </div>
+                                <div class="card-body">
+                                        <form action="/contabilidad_general/periodo_contable/agregar_periodo" method="POST">
+                                                <div class="form-group">
+                                                        <a>Fecha inicio:</a>
+                                                        <input name="fecha" class="form-control" data-date-format="yyyy-mm-dd" id="datepicker">
+                                                        {{> fecha }}
+                                                </div>
+                                                <div class="form-group">
+                                                        <button style="width: 58%" class="btn btn-primary">Iniciar periodo contable</button>
+                                                        <button style="width: 40%" class="btn btn-secondary">Cancelar</button>
+                                                </div>
+                                        </form>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
