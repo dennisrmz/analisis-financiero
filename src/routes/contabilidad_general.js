@@ -3,21 +3,22 @@ const router = express.Router();
 
 const pool = require('../database');
 
-//--------------------------------------ELI----------------------------------------------------------------------------------------------
+//--------------------------------------------------------------ELI----------------------------------------------------------------------------
 router.get('/', (req, res) => {
         res.render('contabilidad_general/index_contabilidad');
 });
-//----------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //mostrar transacciones
 router.get('/transaccion', async (req, res) => {
         const transaccion = await pool.query('SELECT * FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION');
         res.render('contabilidad_general/listar_transacciones', {transaccion});
 });
-//----------------------------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------------------------
 //agregar transacciones GET y POST
-router.get('/transaccion/agregar_transaccion', async (req, res, next) => {
+router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
-        const subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 4');
+        var subcuenta = subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 4');
+        //subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 4 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA);
         const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5');
         const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
         const periodo_contables = await pool.query('SELECT FECHAINICIO_PERIODO FROM periodocontable LIMIT 1');
@@ -26,7 +27,6 @@ router.get('/transaccion/agregar_transaccion', async (req, res, next) => {
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
         const { ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION} = req.body;
-
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
@@ -56,9 +56,26 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                 await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
                 console.log('Fila insertada correctamente de movimiento:'+k);
         }
+        //req.flash('success', 'Registro guardado correctamente');
         res.redirect('/contabilidad_general/transaccion');
 });
-//------------------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------LLENAR SELECT----------------------------------------------------------------------------------
+//Llenar select subcuenta
+router.get('/transaccion/agregar_transaccion/select_subcuenta/:ID_CUENTA', async (req, res, next) => {
+        const {ID_CUENTA} = req.params;
+        const subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 4 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA);
+        console.log({subcuenta});
+        res.render('contabilidad_general/select_subcuenta', {subcuenta});
+});
+//Llenar select sub_subcuenta
+router.get('/transaccion/agregar_transaccion/select_subsubcuenta/:CODIGO_CUENTA', async (req, res, next) => {
+        const {CODIGO_CUENTA} = req.params;
+        const ID_CUENTA_S = await pool.query('SELECT ID_CUENTA FROM cuenta WHERE CODIGO_CUENTA = ? ', CODIGO_CUENTA);
+        const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA_S[0].ID_CUENTA);
+        console.log({sub_subcuenta});
+        res.render('contabilidad_general/select_subsubcuenta', {sub_subcuenta});
+});
+//-------------------------------------------------------PERIODO CONTABLE---------------------------------------------------------------------
 //mostrar periodo contable
 router.get('/periodo_contable', async (req, res) => {
         const periodocontable = await pool.query('SELECT ID_PERIODOCONTABLE, FECHAINICIO_PERIODO, FECHAFINAL_PERIODO FROM periodocontable');
@@ -77,7 +94,7 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
         await pool.query('INSERT INTO periodocontable (FECHAINICIO_PERIODO) VALUES (?)', [fecha]);
         res.redirect('/contabilidad_general/periodo_contable');
 });
-//-------------------------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------CATALOGO-----------------------------------------------------------------------------
 //Listar catalogo en un dataTable
 router.get('/catalogo', async (req, res, next) => {
         const cuenta = await pool.query('SELECT * FROM cuenta INNER JOIN naturaleza ON cuenta.ID_NATURALEZA_CUENTA=naturaleza.ID_NATURALEZA_CUENTA');
@@ -116,7 +133,6 @@ router.post('/catalogo/agregar_cuenta', async (req, res, next) => {
                 if (err) {
                   return console.error(err.message);
                 }
-                // get inserted rows
                 console.log('Fila insertada de cuenta padre:' + results.affectedRows);
                 res.redirect('/contabilidad_general/catalogo');
         });
@@ -145,28 +161,10 @@ router.post('/catalogo/agregar_subcuenta', async (req, res, next) => {
                 if (err) {
                   return console.error(err.message);
                 }
-                // get inserted rows
                 console.log('Fila insertada de subcuenta:' + results.affectedRows);
                res.redirect('/contabilidad_general/catalogo');
         });
 });
-//------------------------------------------------------------------------------------------------------------------------------------------
-//Llenar Select dependiendo de otro
-router.get('/catalogo/agregar_subcuenta/:ID_CUENTA', async (req, res) => {
-        const { ID_CUENTA } = req.params;
-        const NIVELH = 3;
-        const cuenta_padre = await pool.query("SELECT ID_CUENTA, NOMBRE_CUENTA FROM cuenta WHERE NIVELH = "+ NIVELH +" AND CODIGO_CUENTA_PADRE = " + ID_CUENTA);
-        console.log(cuenta_padre);
-        res.render('contabilidad_general/agregar_subcuenta', cuenta_padre);
-});
-/*router.post('/catalogo/agregar_subcuenta/:ID_CUENTA', async (req, res, next) => {
-        const { ID_CUENTA } = req.params;
-        const NIVELH = 3;
-        console.log({ID_CUENTA});
-        const cuenta_padre = await pool.query("SELECT * FROM cuenta WHERE NIVELH = "+ NIVELH +" AND CODIGO_CUENTA_PADRE = ?", ID_CUENTA);
-        console.log(cuenta_padre);
-        res.render('contabilidad_general/agregar_subcuenta', { cuenta_padres :cuenta_padre[0] });
-});*/
 //------------------------------------------------------------------------------------------------------------------------------------------
 //agregar sub cuenta de la sub cuenta de la cuenta padre a catalogo GET y POST
 router.get('/catalogo/agregar_subsubcuenta', async (req, res, next) => {
@@ -195,13 +193,12 @@ router.post('/catalogo/agregar_subsubcuenta', async (req, res, next) => {
                res.redirect('/contabilidad_general/catalogo');
         });
 });
-//------------------------------------------------------------------------------------------------------------------------------------------
-//Ejemplo 
+//-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
 router.get('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: "AJAX is great!"});
-    });
-    router.post('/ajax', function(req, res){
+});
+router.post('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: req.body.quote});
-    });
+});
 
 module.exports = router;
