@@ -19,12 +19,12 @@
                 <div class="card-body" id="1">
                     <div class="">
                         <a>Periodo contable Actual:</a>
-                        <label>{{periodo_contable.FECHAINICIO_PERIODO}}</label>        
+                        <label id="periodo_conta" value="{{idperiodo.ID_PERIODOCONTABLE}}">{{periodo.FECHA_PERIODO}}</label>        
                     </div>
                     <div class="row">
                         <div class="col-lg-6 col-xs-12 border rounded">
                             <form name="transaccion_form" novalidate>
-                                <h4 class="mb-3 text-center header_id">TRANSACCION</h4>
+                                <h4 class="mb-3 text-center header_id">TRANSACCIÓN</h4>
                                 <div class="form-group">
                                     <a>Seleccione el tipo de transacción:</a>
                                         <select id="id_tipo_transaccion" class="form-control" name="select">
@@ -42,11 +42,11 @@
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese el monto:</a>
-                                    <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto">
+                                    <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese descripcion de transacción:</a>
-                                    <textarea id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripcion"></textarea>
+                                    <textarea rows="5" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                 </div>
                             </form>
                         </div>
@@ -77,7 +77,7 @@
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese el monto de la cuenta:</a>
-                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto">
+                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
                                 </div>
                                 <div class="form-group">
                                     <input type="radio" name="Tipo" id="cb_cargar" value="second_checkbox">Cargar
@@ -126,7 +126,7 @@
         </div>
         <div class="form-group text-center">
             <button id='aprobar' type="submit" onclick="guardarDato()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
-            <button class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>         
+            <button id="cancel" class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>         
             <br>     
             <br>     
         </div>
@@ -137,11 +137,28 @@
         function unselect(){
             document.querySelectorAll('[name=Tipo]').forEach((x) => x.checked=false);
         }
+        
         $(document).ready(function(){
+            //Funcion para el boton "cancelar"
+            $("#cancel").click(function() {
+                swal.fire({
+                    title: '¿Esta seguro de cancelar el registro?',
+                    text: "No podrá recuperar los datos registrados.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.value) {
+                        location.href="/contabilidad_general/transaccion/";
+                    }
+                });
+            });
+
             //Funcion para llenar select dependiendo de la seleccion de otro
             $('#cuenta').change(function(){            
                 var seleccionada = $('#cuenta').val();
-                var url_nueva = "/contabilidad_general/transaccion/agregar_transaccion/select_subcuenta/"+seleccionada;
+                var url_nueva = "/contabilidad_general/select_subcuenta/"+seleccionada;
                 console.log("AJAX: "+seleccionada);
                 if(seleccionada != ''){
                     $.ajax({
@@ -163,7 +180,7 @@
             });
             $('#sub_cuenta').change(function(){            
                 var seleccionada = $('#sub_cuenta').val();
-                var url_nueva = "/contabilidad_general/transaccion/agregar_transaccion/select_subsubcuenta/"+seleccionada;
+                var url_nueva = "/contabilidad_general/select_subsubcuenta/"+seleccionada;
                 console.log("AJAX: "+seleccionada);
                 if(seleccionada != ''){
                     $.ajax({
@@ -195,6 +212,9 @@
         var codigoTipo = null;
         var monto = null;
         var descripcion = null;
+        var ajuste = "";
+        var periodo = "";
+        var periodo_contable = "";
 
         //Funcion para obtener los datos de los movimientos
         function obtenerDatos(){
@@ -214,19 +234,20 @@
                 
             var monto_mov = parseFloat($("#monto_movimiento").val());
             var abonar = document.getElementById('cb_abonar').checked;
+            
             $(".dataTables_empty").remove();
             var correcto = false;
             
             if(!isNaN(monto_mov) && abonar==false){//si es un numero NAN devuelve true --> !(devuelve false)=true
-                if(cuenta!='' && cuenta!='---------------' && subCuenta=='---------------'){
+                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
                     agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                     correcto = true;
                 }else{
-                    if(subCuenta!='' && subCuenta!='---------------' && subSubCuenta=='---------------'){
+                    if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
                         agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
                         correcto = true;
                     }else{
-                        if(subSubCuenta!='' && subSubCuenta!='---------------'){
+                        if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
                             agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
                             correcto = true;
                         }
@@ -234,15 +255,15 @@
                 }
             }else{
                 if(!isNaN(monto_mov) && abonar==true){
-                    if(cuenta!='' && cuenta!='---------------' && subCuenta=='---------------'){
+                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
                         agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                         correcto = true;
                     }else{
-                        if(subCuenta!='' && subCuenta!='---------------' && subSubCuenta=='---------------'){
+                        if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
                             agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
                             correcto = true;
                         }else{
-                            if(subSubCuenta!='' && subSubCuenta!='---------------'){
+                            if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
                                 agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
                                 correcto = true;
                             }
@@ -295,6 +316,12 @@
                 $("#haber").append("$ "+totalAbonos);
             }
         };
+
+        //Convertir fecha en forma para MYSQL
+        function convertDateFormat(string) {
+            var info = string.split('/');
+            return info[2] + '-' + info[1] + '-' + info[0];
+        }
         
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
@@ -304,6 +331,11 @@
             monto = parseFloat($("#id_monto_transaccion").val());
             descripcion = $("#id_descripcion_transaccion").val();
             fecha = $("#datepicker").val();
+            ajuste = 0;
+
+            periodo = document.getElementById("periodo_conta").innerHTML;
+            console.log("PERIODO");
+            console.log(periodo);
 
             if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                 if(totalAbonos==totalCargos){
@@ -318,7 +350,9 @@
                                 'CODIGO_TIPO_TRANSACCION': codigoTipo,
                                 'MONTO_TRANSACCION': monto,
                                 'DESCRIPCION_TRANSACCION': descripcion,
-                                'FECHA_TRANSACCION': fecha
+                                'FECHA_TRANSACCION': fecha,
+                                'FECHAINICIO_PERIODO': periodo,
+                                'ES_AJUSTE': ajuste
                             },
                             success: function(data){
                                 console.log(data);

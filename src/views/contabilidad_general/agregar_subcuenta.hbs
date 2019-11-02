@@ -2,14 +2,14 @@
         <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                        <a href="/contabilidad_general/catalogo/select_subcuenta">
+                        <a href="/contabilidad_general/catalogo">
                         Catalogo de cuentas
                         </a>
                 </li>
                 <li class="breadcrumb-item active">Modificar | Agregar SubCuenta</li>
                 </ol>
         <div class="row">
-                <div class="col-md-6 mx-auto">
+                <div class="col-md-5 mx-auto">
                         <ul class="nav nav-tabs">
                                 <li class="nav-item">
                                         <a class="nav-link" href="/contabilidad_general/catalogo/agregar_cuenta">Cuenta padre</a>
@@ -26,7 +26,7 @@
                                         <form action="/contabilidad_general/catalogo/agregar_subcuenta" method="POST">
                                                 <div class="form-group">
                                                         <a>Rubro:</a>
-                                                        <select id="lista1" class="form-control" name="CODIGO_CUENTA_PADRE_SELEC">
+                                                        <select id="cuenta" class="form-control" name="CODIGO_CUENTA_PADRE_SELEC" autofocus>
                                                                 {{#each rubro}}
                                                                 <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
                                                                 {{else}}
@@ -35,17 +35,13 @@
                                                         </select>
                                                 </div>
                                                 <div class="form-group">
-                                                        <select id="lista2" class="form-control" name="CODIGO_CUENTA_PADRE">
-                                                                {{#each cuenta_padre}}
-                                                                <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
-                                                                {{else}}
+                                                        <select id="sub_cuenta" class="form-control" name="CODIGO_CUENTA_PADRE" disabled>
                                                                 <option value="0" selected>---------------</option>
-                                                                {{/each}}
                                                         </select>
                                                 </div>
                                                 <div class="form-group">
                                                         <a>Codigo cuenta:</a>
-                                                        <input type="number" name="CODIGO_CUENTA" class="form-control" placeholder="Codigo cuenta" autofocus>
+                                                        <input type="number" name="CODIGO_CUENTA" class="form-control" placeholder="Codigo cuenta">
                                                 </div>
                                                 <div class="form-group">
                                                         <a>Nombre cuenta:</a>
@@ -62,11 +58,12 @@
                                                         </select>
                                                 </div>
                                                 <div class="form-group">
-                                                        <button style="width: 50%" class="btn btn-primary">Guardar</button>
-                                                        <button style="width: 49%" class="btn btn-secondary">Cancelar</button>
+                                                        <button class="btn btn-primary btn-block">Guardar</button>
                                                 </div>
                                         </form>
-                                        
+                                        <div class="form-group">
+                                                <button id="cancel" class="btn btn-secondary btn-block">Cancelar</button>
+                                        </div>       
                                 </div>
                         </div>
                         <div class="form-group">
@@ -76,63 +73,43 @@
 </div>
 <script type="text/javascript">
         $(document).ready(function(){
-                recargarLista();
-                $('#lista1').change(function(){
-                        recargarLista();
+            //Funcion para el boton "cancelar"
+            $("#cancel").click(function() {
+                swal.fire({
+                    title: '¿Esta seguro de cancelar el registro?',
+                    text: "No podrá recuperar los datos registrados.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.value) {
+                        location.href="/contabilidad_general/catalogo/";
+                    }
                 });
-        })
-</script>
-<script type="text/javascript">
-        function recargarLista(){
-                var seleccionada = $('#lista1').val();
-                var selec = $('#lista2');
-                var cuenta = $(this);
-                var url_nueva = "/contabilidad_general/catalogo/agregar_subcuenta/"+seleccionada;
+            });
+
+            //Funcion para llenar select dependiendo de la seleccion de otro
+            $('#cuenta').change(function(){            
+                var seleccionada = $('#cuenta').val();
+                var url_nueva = "/contabilidad_general/select_cuenta/"+seleccionada;
                 console.log("AJAX: "+seleccionada);
-                if(seleccionada != '')
-                {
-                        $.ajax({
-                                type: 'post',
-                                url: url_nueva,
-                                success:function(r){
-                                        $('#lista2').find('option').remove();
-                                        //var r_nueva = JSON.parse(r.toString('utf8').replace(/^\uFEFF/, ''));
-                                        //var r_nueva = $.parseJSON(r);
-                                        //console.log(typeof(r));
-                                        
-                                        $(r).each(function(i, v){
-                                                //selec.append('<option value=1>HOLAAAAAAAA</option>');
-                                                //$('#lista2').append('<option value="'+v.CODIGO_CUENTA+'">'+v.NOMBRE_CUENTA+'</option>');                                         
-                                                $('#lista2').append('<option value={{CODIGO_CUENTA}}>{{NOMBRE_CUENTA}}</option>');                                         
-                                        });
-                                        $('#lista2').prop('disabled',false);
-                                        console.log("Success");
-                                }
-                                //error: function() {
-                                //        alert("Ocurrio un error en el servidor ..");
-                                //        cuenta.prop('disabled', false);
-                                //}
+                if(seleccionada != ''){
+                    $.ajax({
+                        type: 'get',
+                        url: url_nueva,
+                        success: function(data){
+                                console.log("SUCCESS");
+                                $('#sub_cuenta').find('option').remove();
+                                $('#sub_cuenta').html(data);
+                                $('#sub_cuenta').prop('disabled',false);
+                            },
                         });
-                        /*$.ajax({
-                                data: {ID_CUENTA:seleccionada},
-                                type: 'get',
-                                url: url_nueva,
-                                dataType: 'json',
-                                success:function(data){
-                                        $.each(data, function(index, registro){
-                                                $('#lista2').append("<option value='"+registro.ID_CUENTA+"'>'"+registro.NOMBRE_CUENTA+'"</option>');                                         
-                                        });
-                                        $('#lista2').removeAttr('disabled');
-                                        console.log("Success");
-                                },
-                                error: function(data) {
-                                        alert("Error");
-                                }
-                        });*/
-                }
+                    }
                 else{
-                        $('#lista2').find('option').remove();
-                        $('#lista2').prop('disabled', true);
+                    $('#sub_cuenta').find('option').remove();
+                    $('#sub_cuenta').prop('disabled', true);
                 }
-        }
+            });
+        });
 </script>
