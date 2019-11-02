@@ -29,8 +29,9 @@
                                                         <tr>
                                                                 <th>N°</th>
                                                                 <th>Período Contable</th>
-                                                                <th>Nombre del Estado Financiero</th>
-                                                                <th>Operación</th>
+                                                                <th style="width: 40%">Nombre del Estado Financiero</th>
+                                                                <th class="text-center" style="width: 15%">Visualizar</th>
+                                                                <th class="text-center" style="width: 15%">Notas Explicativas</th>
                                                         </tr>
                                                 </thead>
                                                 {{#each estadofinanciero}}
@@ -39,9 +40,12 @@
                                                                 <td class="text-center">{{ ID_ESTADOFINANCIERO }}</td>
                                                                 <td>{{ ID_PERIODOCONTABLE  }}</td>
                                                                 <td>{{ NOMBRE_ESTADOFINANCIERO }}</td>
-                                                                <td class="text">
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
-                                                                </td>                          
+                                                                <td class="text-center">
+                                                                        <a class="fas fa-w fa-eye"  name="ver" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" onclick="" style="color:gray !important"></a>
+                                                                </td> 
+                                                                <td class="text-center">
+                                                                        <a class="fa fa-folder" name="ver" value="{{ID_ESTADOFINANCIERO}}" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado" onclick="" style="color:gray !important"></a>
+                                                                </td>                            
                                                         </tr>
                                                 </tbody>
                                                 {{else}}

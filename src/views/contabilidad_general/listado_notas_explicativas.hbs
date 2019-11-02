@@ -8,7 +8,7 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/estados_financieros/agregar_nota_explicativa">
+                        <a id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" onClick="return enviar();" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar">
                         <strong>¡Click aquí para agregar una nota explicativa!</strong>
                         </a>
                 </div>
@@ -22,16 +22,18 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
+                                                                <th>N°</th>
                                                                 <th>Nombre</th>
                                                                 <th>Descripción</th>
+                                                                <th>Operación</th>
                                                         </tr>
                                                 </thead>
-                                                <!--{{#each estadofinanciero}}
+                                                {{#each notasexplicativas}}
                                                 <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                                <td class="text-center">{{ ID_ESTADOFINANCIERO }}</td>
-                                                                <td>{{ ID_PERIODOCONTABLE  }}</td>
-                                                                <td>{{ NOMBRE_ESTADOFINANCIERO }}</td>
+                                                        <tr id="ID_NOTA">
+                                                                <td class="text-center">{{ ID_NOTA }}</td>
+                                                                <td>{{ TITULO_NOTA  }}</td>
+                                                                <td>{{ DESCRIPCION_NOTA }}</td>
                                                                 <td class="text">
                                                                         <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
                                                                 </td>                          
@@ -39,12 +41,29 @@
                                                 </tbody>
                                                 {{else}}
                                                 <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no tienes ningún estado financiero hasta el momento.</p>
+                                                        <p>¡Opps! Parece que no tienes ninguna nota explicativa hasta el momento.</p>
                                                 </div>
-                                                {{/each}}-->
+                                                {{/each}}
                                         </table>
                                 </div>
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+<script type="text/javascrip">
+$(document).ready(function(){
+        enviar();
+});
+        function enviar(){
+                var seleccionada = $('#parametro').val();
+                var url_nueva = "/contabilidad_general/estados_financieros/"+seleccionada+"/notas_explicativas/listado/agregar";
+                $.ajax({
+                        type: 'get',
+                        url: url_nueva,
+                        success: function(data){
+                                console.log("SUCESS");
+                        }
+                });
+        }
+});
+</script>
