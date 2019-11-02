@@ -17,7 +17,8 @@ router.get('/transaccion', async (req, res) => {
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
         const {ID_TRANSACCION} = req.params;
         const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
-        res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0]});
+        const movimientos = await pool.query('SELECT * FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?', [ID_TRANSACCION]);
+        res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0], movimientos});
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------
 //agregar transacciones GET y POST
@@ -195,10 +196,12 @@ router.get('/select_subcuenta/:ID_CUENTA', async (req, res, next) => {
         res.render('contabilidad_general/select_subcuenta', {subcuenta});
 });
 //Llenar select sub_subcuenta
-router.get('/select_subsubcuenta/:CODIGO_CUENTA', async (req, res, next) => {
-        const {CODIGO_CUENTA} = req.params;
-        const ID_CUENTA_S = await pool.query('SELECT ID_CUENTA FROM cuenta WHERE CODIGO_CUENTA = ? ', CODIGO_CUENTA);
-        const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA_S[0].ID_CUENTA);
+router.get('/select_subsubcuenta/:ID_CUENTA', async (req, res, next) => {
+        const {ID_CUENTA} = req.params;
+        const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', [ID_CUENTA]);
+        //const {CODIGO_CUENTA} = req.params;
+        //const ID_CUENTA_S = await pool.query('SELECT ID_CUENTA FROM cuenta WHERE CODIGO_CUENTA = ? ', CODIGO_CUENTA);
+        //const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA_S[0].ID_CUENTA);
         res.render('contabilidad_general/select_subsubcuenta', {sub_subcuenta});
 });
 //-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
