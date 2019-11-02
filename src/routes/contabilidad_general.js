@@ -41,10 +41,10 @@ router.get('/estados_financieros/estado_flujo_efectivo/:ID_ESTADOFINANCIERO', as
 //------------------------------------------NOTAS EXPLICATIVAS------------------------------------------------------
 
 //Mostrar listado de notas explicativas del estado financiero elegido
-router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',async (req, res,next) => {
+router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',async (req, res) => {
     const { NOMBRE_ESTADOFINANCIERO } = req.params;
     const { ID_ESTADOFINANCIERO } = req.params;
-    const notasexplicativas = pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
+    const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
     'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
     console.log("ID_ESTADOFINANCIERO");
     console.log({ID_ESTADOFINANCIERO});

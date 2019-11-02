@@ -22,10 +22,10 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
-                                                                <th>N°</th>
-                                                                <th>Nombre</th>
-                                                                <th>Descripción</th>
-                                                                <th>Operación</th>
+                                                                <th class="text-center">Identificador</th>
+                                                                <th class="text-center" style="width: 40%">Nombre Nota Explicativa</th>
+                                                                <th class="text-center" style="width: 40%">Descripción</th>
+                                                                <th class="text-center">Operación</th>
                                                         </tr>
                                                 </thead>
                                                 {{#each notasexplicativas}}
@@ -34,8 +34,9 @@
                                                                 <td class="text-center">{{ ID_NOTA }}</td>
                                                                 <td>{{ TITULO_NOTA  }}</td>
                                                                 <td>{{ DESCRIPCION_NOTA }}</td>
-                                                                <td class="text">
+                                                                <td class="text-center">
                                                                         <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important"></a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
