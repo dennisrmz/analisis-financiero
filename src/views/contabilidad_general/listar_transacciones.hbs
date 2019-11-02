@@ -16,6 +16,12 @@
                         <strong>¡Click Aquí para agregar una nueva transaccion!</strong>
                         </a>
                 </div>
+                <div class="alert bold alert-info">
+                        <i class="fas fw fa-plus-circle"></i>
+                        <a id="realizar_transaccion" href="#">
+                        <strong>¡Click Aquí para empezar a realizar ajuste!</strong>
+                        </a>
+                </div>
                 <div class="card mb-3">
                         <div class="card-header">
                                 <i class="fas fa-table"></i>
@@ -43,7 +49,7 @@
                                                                 <td>{{FECHA_TRANSACCION_FORMATO}}</td>
                                                                 <td>${{MONTO_TRANSACCION}}</td>
                                                                 <td class="text">
-                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important">Realizar ajuste</a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="/contabilidad_general/transaccion/agregar_ajuste" style="color:gray !important" onclick="deshabilitar(this)">Realizar ajuste</a>
                                                                         <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/transaccion/ver_transaccion/{{ID_TRANSACCION}}" onclick="" style="color:gray !important">Ver</a>
                                                                 </td>                          
                                                         </tr>
@@ -61,3 +67,28 @@
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+<script type="text/javascript">
+        $("#realizar_transaccion").click(function() {
+                swal.fire({
+                    title: '¿Esta seguro de realizar ajuste a esta transacción?',
+                    text: 'NOTA: Se generará un balance de comprobacion inicial. Puede verificarlo en la parte de Estads Financieros',
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                    if (result.value) {
+                        location.href="/contabilidad_general/transaccion";
+                    }
+                });
+            });
+        function deshabilitar( link ){
+                link.style.pointerEvents = 'none';
+                link.style.color = '#bbb';
+
+                setTimeout(function(){
+                        link.style.pointerEvents = null;
+                        link.style.color = 'blue';
+                }, 3000);
+        }
+</script>

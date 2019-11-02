@@ -1,0 +1,137 @@
+<div id="content-wrapper">
+    <div class="container-fluid">
+    <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/contabilidad_general/transaccion">
+                    Transacción
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Agregar ajuste</li>
+            </ol>
+            <!-- DataTables Example -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i>
+                    Creación
+                </div>
+                <div class="card-body" id="1">
+                    <div class="row">
+                        <div class="col-lg-6 col-xs-12 border rounded">
+                            <form name="transaccion_form" novalidate>
+                                <h4 class="mb-3 text-center header_id">TRANSACCIÓN DE AJUSTE</h4>
+                                <div class="form-group">
+                                    <a>Periodo contable Actual:</a>
+                                    <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
+                                    <br>
+                                    <a>Seleccione el tipo de ajuste:</a>
+                                        <select id="id_tipo_transaccion" class="form-control" name="select">
+                                            {{#each tipo_transaccion}}
+                                            <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
+                                            {{else}}
+                                            <option value="0" selected>---------------</option>
+                                            {{/each}}
+                                        </select>
+                                    </div>
+                                <div class="form-group">
+                                    <a>Fecha en que se realiza:</a>
+                                    <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
+                                    {{> fecha }}
+                                </div>
+                                <div class="form-group">
+                                    <a>Ingrese el monto:</a>
+                                    <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
+                                </div>
+                                <div class="form-group">
+                                    <a>Ingrese descripcion de transacción:</a>
+                                    <textarea rows="5" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div  class="col-lg-6 col-xs-12 border rounded">
+                            <form name="movimiento_form" novalidate>
+                                <h4 class="mb-3 text-center header_id">MOVIMIENTOS</h4>
+                                <div class="form-group">
+                                    <a>Seleccione cuenta mayor a afectar:</a>
+                                    <select id="cuenta" class="form-control" name="cuenta_padre">
+                                        {{#each cuenta_padre}}
+                                        <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
+                                        {{else}}
+                                        <option value="0">-----------------</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <a>Seleccione subcuenta a afectar:</a>
+                                    <select id="sub_cuenta" class="form-control" name="sub_cuenta" disabled>
+                                        <option value="0">-----------------</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <a>Seleccione subcuenta menor a afectar:</a>
+                                    <select id="sub_sub_cuenta" class="form-control" name="sub_sub_cuenta" disabled>
+                                        <option value="0">-----------------</option>
+                                   </select>
+                                </div>
+                                <div class="form-group">
+                                    <a>Ingrese el monto de la cuenta:</a>
+                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
+                                </div>
+                                <div class="form-group">
+                                    <a>Ingrese detalle del movimiento:</a>
+                                    <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <input type="radio" name="Tipo" id="cb_cargar" value="second_checkbox">Cargar
+                                    <input type="radio" name="Tipo" id="cb_abonar" value="second_checkbox">Abonar
+                                </div>
+                                <div class="col-12 text-center" style="padding-bottom: 5%">    
+                                    <button class="btn btn-primary btn-plus" onclick="obtenerDatos()" type="button">
+                                        Registrar movimiento  
+                                        <i class="fas fa-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i>
+                    Movimientos
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Cuenta</th>
+                                    <th class="text-center">Detalle</th>               
+                                    <th class="text-center">Debe</th>
+                                    <th class="text-center">Haber</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbBody">                                                
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-right">Comprobación</th>
+                                    <th class="text-center" id="debe">$ 0.00</th>
+                                    <th class="text-center" id="haber">$ 0.00</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>     
+        </div>
+        <div class="form-group text-center">
+            <button id='aprobar' type="submit" onclick="guardarDato()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
+            <button id="cancel" class='btn btn-secondary' style="width: 30%" type='button'>Cancelar</button>         
+            <br>     
+            <br>     
+        </div>
+    </div>
+</div>

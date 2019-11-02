@@ -7,67 +7,6 @@ const pool = require('../database');
 router.get('/', (req, res) => {
         res.render('contabilidad_general/index_contabilidad');
 });
-//-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
-//Listar transacciones
-router.get('/transaccion', async (req, res) => {
-        const transaccion = await pool.query("SELECT transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
-        res.render('contabilidad_general/listar_transacciones', {transaccion});
-});
-//Mostrar transaccion
-router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
-        const {ID_TRANSACCION} = req.params;
-        const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
-        const movimientos = await pool.query('SELECT * FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?', [ID_TRANSACCION]);
-        res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0], movimientos});
-});
-//---------------------------------------------------------------------------------------------------------------------------------------------
-//agregar transacciones GET y POST
-router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
-        const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
-        const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
-        const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y-%m-%d') AS FECHA_PERIODO FROM periodocontable LIMIT 1");
-        const idperiodo_contable = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable LIMIT 1");
-        res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
-});
-router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
-                const { ID_CUENTA, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE} = req.body;
-                var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
-                var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
-                var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
-                var cantidad = ID_CUENTA_NUM.length;
-                const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
-                
-                //Insertar transaccion realizada
-                const new_transaccion = {
-                        CODIGO_TIPO_TRANSACCION, 
-                        MONTO_TRANSACCION, 
-                        DESCRIPCION_TRANSACCION, 
-                        FECHA_TRANSACCION,
-                        ID_PERIODOCONTABLE: ID_PERIODOCONTABLE_k[0].ID_PERIODOCONTABLE,
-                        ES_AJUSTE
-                };
-                await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
-                console.log('Fila insertada correctamente de transaccion');
-
-        try {
-                //Insertar los movimientos realizados en una transaccion
-                const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
-                for(var k = 0; k<cantidad-1; k++){
-                        var new_movimiento = {
-                                ID_CUENTA:ID_CUENTA_NUM[k],  
-                                MONTO_CARGO:MONTO_CARGO_NUM[k], 
-                                MONTO_ABONO:MONTO_ABONO_NUM[k],
-                                ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION
-                        };
-                        await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
-                        console.log('Fila insertada correctamente de movimiento:'+k);
-                }
-                //req.flash('success', 'Registro guardado correctamente');
-                res.redirect('/contabilidad_general/transaccion');
-        }catch(err){
-                console.log(err);
-        }
-});
 //-------------------------------------------------------PERIODO CONTABLE---------------------------------------------------------------------
 //Listar periodo contable
 router.get('/periodo_contable', async (req, res) => {
@@ -83,6 +22,71 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
         const { fecha } = req.body;
         await pool.query('INSERT INTO periodocontable (FECHAINICIO_PERIODO) VALUES (?)', [fecha]);
         res.redirect('/contabilidad_general/periodo_contable');
+});
+//-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
+//Listar transacciones
+router.get('/transaccion', async (req, res) => {
+        const transaccion = await pool.query("SELECT transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
+        res.render('contabilidad_general/listar_transacciones', {transaccion});
+});
+//Mostrar transaccion
+router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
+        const {ID_TRANSACCION} = req.params;
+        const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0], movimientos});
+});
+//---------------------------------------------------------------------------------------------------------------------------------------------
+//agregar transacciones GET y POST
+router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
+        const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
+        const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
+        const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO FROM periodocontable LIMIT 1");
+        const idperiodo_contable = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable LIMIT 1");
+        res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
+});
+router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
+                const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, CODIGO_TIPO_AJUSTE} = req.body;
+                var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
+                var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
+                var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
+                var cantidad = ID_CUENTA_NUM.length;
+                const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
+                
+                //Insertar transaccion realizada
+                const new_transaccion = {
+                        CODIGO_TIPO_TRANSACCION, 
+                        MONTO_TRANSACCION, 
+                        DESCRIPCION_TRANSACCION, 
+                        FECHA_TRANSACCION,
+                        ID_PERIODOCONTABLE: ID_PERIODOCONTABLE_k[0].ID_PERIODOCONTABLE,
+                        ES_AJUSTE,
+                        CODIGO_TIPO_AJUSTE
+                };
+                await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
+                console.log('Fila insertada correctamente de transaccion');
+
+        //Insertar los movimientos realizados en una transaccion
+        const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
+        for(var k = 0; k<cantidad-1; k++){
+                var new_movimiento = {
+                        ID_CUENTA:ID_CUENTA_NUM[k],
+                        FECHA_MOVIMIENTO,
+                        DETALLE_MOVIMIENTO,  
+                        MONTO_CARGO:MONTO_CARGO_NUM[k], 
+                        MONTO_ABONO:MONTO_ABONO_NUM[k],
+                        ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION
+                };
+                await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
+                console.log('Fila insertada correctamente de movimiento:'+k);
+        }
+        //req.flash('success', 'Registro guardado correctamente');
+        res.redirect('/contabilidad_general/transaccion');
+});
+//-----------------------------------------------------------AJUSTE------------------------------------------------------------------------------
+//agregar ajuste a transacciones GET y POST
+router.get('/transaccion/agregar_ajuste/', async (req, res) => {
+        res.render('contabilidad_general/agregar_ajuste');
 });
 //----------------------------------------------------------CATALOGO-----------------------------------------------------------------------------
 //Listar catalogo en un dataTable

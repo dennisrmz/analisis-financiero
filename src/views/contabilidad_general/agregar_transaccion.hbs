@@ -7,25 +7,23 @@
                     Transacción
                 </a>
             </li>
-            <li class="breadcrumb-item active">Modificar | Agregar transacción</li>
+            <li class="breadcrumb-item active">Agregar transacción</li>
             </ol>
             <!-- DataTables Example -->
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-edit"></i>
-                    Edición | Creación
-                    <i class="fas fa-plus-circle"></i>
+                    Creación
                 </div>
                 <div class="card-body" id="1">
-                    <div class="">
-                        <a>Periodo contable Actual:</a>
-                        <label id="periodo_conta" value="{{idperiodo.ID_PERIODOCONTABLE}}">{{periodo.FECHA_PERIODO}}</label>        
-                    </div>
                     <div class="row">
                         <div class="col-lg-6 col-xs-12 border rounded">
                             <form name="transaccion_form" novalidate>
                                 <h4 class="mb-3 text-center header_id">TRANSACCIÓN</h4>
                                 <div class="form-group">
+                                    <a>Periodo contable Actual:</a>
+                                    <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
+                                    <br>
                                     <a>Seleccione el tipo de transacción:</a>
                                         <select id="id_tipo_transaccion" class="form-control" name="select">
                                             {{#each tipo_transaccion}}
@@ -45,7 +43,7 @@
                                     <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
                                 </div>
                                 <div class="form-group">
-                                    <a>Ingrese descripcion de transacción:</a>
+                                    <a>Ingrese descripción de transacción:</a>
                                     <textarea rows="5" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                 </div>
                             </form>
@@ -80,6 +78,10 @@
                                     <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
                                 </div>
                                 <div class="form-group">
+                                    <a>Ingrese detalle del movimiento:</a>
+                                    <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle"></textarea>
+                                </div>
+                                <div class="form-group">
                                     <input type="radio" name="Tipo" id="cb_cargar" value="second_checkbox">Cargar
                                     <input type="radio" name="Tipo" id="cb_abonar" value="second_checkbox">Abonar
                                 </div>
@@ -104,8 +106,9 @@
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th class="text-center">#</th>
-                                    <th class="text-center">Cuenta</th>                
+                                    <th class="text-center">Fecha</th>
+                                    <th class="text-center">Cuenta</th>
+                                    <th class="text-center">Detalle</th>               
                                     <th class="text-center">Debe</th>
                                     <th class="text-center">Haber</th>
                                 </tr>
@@ -114,7 +117,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="2" class="text-right">Comprobacion</th>
+                                    <th colspan="3" class="text-right">Comprobación</th>
                                     <th class="text-center" id="debe">$ 0.00</th>
                                     <th class="text-center" id="haber">$ 0.00</th>
                                 </tr>
@@ -214,7 +217,9 @@
         var descripcion = null;
         var ajuste = "";
         var periodo = "";
-        var periodo_contable = "";
+        var detalle_mov = "";
+        var fechas = "";
+        var detalles = "";
 
         //Funcion para obtener los datos de los movimientos
         function obtenerDatos(){
@@ -285,31 +290,37 @@
 
         //Funcion para agregar una nueva fila al registrar un nuevo movimiento
         function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
+            fecha = $("#datepicker").val();
+            detalle_mov =$("#detalle_movimiento").val();
             if(abonar==false){
+                fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
+                detalles+=detalle_mov+",";
                 cargos+=monto_mov+",";
                 abonos+="0,";
                 totalCargos = totalCargos + monto_mov;
 
                 console.log("CARGO")
                 $("#tbBody").append(
-                    "<tr><td class='text-center'>"+count+"</td>"+
-                    "<td>"+cuenta+"</td>"+
+                    "<tr><td class='text-center'>"+fecha+"</td>"+
+                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
                     "<td class='text-center'>$ "+monto_mov+"</td><td></td></tr>"
                 );
                 $("#debe").empty();
                 $("#debe").append("$ "+totalCargos);
             };
             if(abonar==true){
+                fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
+                detalles+=detalle_mov+",";
                 abonos+=monto_mov+",";
                 cargos+="0,";
                 totalAbonos = totalAbonos + monto_mov;                
 
                 console.log("ABONO")
                 $("#tbBody").append(
-                    "<tr><td class='text-center'>"+count+"</td>"+
-                    "<td>"+cuenta+"</td>"+
+                    "<tr><td class='text-center'>"+fecha+"</td>"+
+                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
                     "<td></td><td class='text-center'>$ "+monto_mov+"</td></tr>"
                 );
                 $("#haber").empty();
@@ -332,8 +343,9 @@
             descripcion = $("#id_descripcion_transaccion").val();
             fecha = $("#datepicker").val();
             ajuste = 0;
+            var codigo_ajuste = 0;
 
-            periodo = document.getElementById("periodo_conta").innerHTML;
+            periodo = $("#periodo_conta").val();
             console.log("PERIODO");
             console.log(periodo);
 
@@ -345,6 +357,8 @@
                             type: "POST",
                             data: {
                                 'ID_CUENTA': codigo_cuentas,
+                                'FECHA_MOVIMIENTO': fecha,
+                                'DETALLE_MOVIMIENTO': detalle_mov,
                                 'MONTO_CARGO': cargos,
                                 'MONTO_ABONO': abonos,
                                 'CODIGO_TIPO_TRANSACCION': codigoTipo,
@@ -352,7 +366,8 @@
                                 'DESCRIPCION_TRANSACCION': descripcion,
                                 'FECHA_TRANSACCION': fecha,
                                 'FECHAINICIO_PERIODO': periodo,
-                                'ES_AJUSTE': ajuste
+                                'ES_AJUSTE': ajuste,
+                                'CODIGO_TIPO_AJUSTE': codigo_ajuste
                             },
                             success: function(data){
                                 console.log(data);
