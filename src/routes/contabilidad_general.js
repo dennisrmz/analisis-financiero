@@ -27,7 +27,6 @@ router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
         const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y-%m-%d') AS FECHA_PERIODO FROM periodocontable LIMIT 1");
         const idperiodo_contable = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable LIMIT 1");
-        console.log({idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
         res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
@@ -47,7 +46,6 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                         ID_PERIODOCONTABLE: ID_PERIODOCONTABLE_k[0].ID_PERIODOCONTABLE,
                         ES_AJUSTE
                 };
-                console.log(new_transaccion);
                 await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
                 console.log('Fila insertada correctamente de transaccion');
 
@@ -61,7 +59,6 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                                 MONTO_ABONO:MONTO_ABONO_NUM[k],
                                 ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION
                         };
-                        console.log(new_movimiento);
                         await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
                         console.log('Fila insertada correctamente de movimiento:'+k);
                 }
@@ -119,7 +116,6 @@ router.post('/catalogo/agregar_cuenta', async (req, res, next) => {
                 NIVELH,
                 CODIGO_CUENTA_PADRE,
         };
-        console.log({ CODIGO_CUENTA_PADRE, CODIGO_CUENTA, NOMBRE_CUENTA, NIVELH, ID_NATURALEZA_CUENTA });
         //res.send('recibido');
         await pool.query('INSERT INTO cuenta set ?', [new_cuenta ], (err, results, fields) => {
                 if (err) {
@@ -146,7 +142,6 @@ router.post('/catalogo/agregar_subcuenta', async (req, res, next) => {
                 ID_NATURALEZA_CUENTA, 
                 NIVELH
         };
-        console.log({ CODIGO_CUENTA_PADRE, CODIGO_CUENTA_PADRE_SELEC, CODIGO_CUENTA, NOMBRE_CUENTA, ID_NATURALEZA_CUENTA, NIVELH });
         //res.send('recibido');
         await pool.query('INSERT INTO cuenta set ?', [ new_cuenta ], (err, results, fields) => {
                 if (err) {
@@ -173,7 +168,6 @@ router.post('/catalogo/agregar_subsubcuenta', async (req, res, next) => {
                 ID_NATURALEZA_CUENTA, 
                 NIVELH
         };
-        console.log({ CODIGO_CUENTA_PADRE, CODIGO_CUENTA_RUBRO_SELEC, CODIGO_CUENTA_PADRE_SELEC, CODIGO_CUENTA, NOMBRE_CUENTA, ID_NATURALEZA_CUENTA, NIVELH });
         await pool.query('INSERT INTO cuenta set ?', [ new_cuenta ], (err, results, fields) => {
                 if (err) {
                   return console.error(err.message);
@@ -199,9 +193,6 @@ router.get('/select_subcuenta/:ID_CUENTA', async (req, res, next) => {
 router.get('/select_subsubcuenta/:ID_CUENTA', async (req, res, next) => {
         const {ID_CUENTA} = req.params;
         const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', [ID_CUENTA]);
-        //const {CODIGO_CUENTA} = req.params;
-        //const ID_CUENTA_S = await pool.query('SELECT ID_CUENTA FROM cuenta WHERE CODIGO_CUENTA = ? ', CODIGO_CUENTA);
-        //const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', ID_CUENTA_S[0].ID_CUENTA);
         res.render('contabilidad_general/select_subsubcuenta', {sub_subcuenta});
 });
 //-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
