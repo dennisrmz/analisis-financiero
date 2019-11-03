@@ -1,0 +1,91 @@
+<h1>Quote: </h1>
+<div id="divh2">
+
+</div>
+<form method="post" id="changeQuote">
+    <input id="quote" type="text" placeholder="Set quote of the day" name="quote"/>
+    <input type="submit" value="Save">
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("form#changeQuote").on('submit', function(e){
+            e.preventDefault();
+            var dato = $('#quote').val();
+            alert($('#quote').val());
+            $.ajax({
+                type: 'post',
+                url: '/contabilidad_general/ajax',
+                data: dato,
+                dataType: 'text'
+            }).done(function(data){
+                    $('#divh2').append("<h2>'"+ dato +"'</h2>");
+            });
+        });
+    });                                     
+</script>
+<!--/*
+
+
+//$('#lista2').append('{{#each cuenta_padre }}');
+                                        $.each(data, function(index, registro){
+                                                
+                                                $('#lista2').append('<option value='+registro.ID_CUENTA+'>'+registro.NOMBRE_CUENTA+'</option>');
+                                                
+                                        });
+                                        $('#lista2').removeAttr('disabled');
+                                        //$('#lista2').append('{{else}}');
+                                        //alert(data.success);
+                                        console.log("Success");
+                                        //$('#lista2').append('<option value="0" selected>---------</option>');
+                                        //$('#lista2').append('{{/each}}');
+
+
+
+
+                                        
+                var seleccionada = $('#lista1').val();
+                var url_nueva = "/contabilidad_general/catalogo/select_subcuenta/" + seleccionada;
+                console.log("AJAX: "+seleccionada);
+                $.ajax({
+                        type:"GET",
+                        url:url_nueva,
+                        success:function(r){
+                                $('#lista2').html(r);
+                        }
+                });
+
+                console.log("NUEVO HOLA");
+                var seleccionada = $('#lista1').val();
+                console.log("AJAX: "+seleccionada);
+                $.ajax({
+                        type:"GET",
+                        url:"/contabilidad_general/catalogo/select_subcuenta",
+                        data: {
+                                "CODIGO_CUENTA" : seleccionada,
+                        },
+                        success:function(data){
+                                console.log(data.message);
+                                console.log(data);
+                                console.log("Success");
+                        }
+                        dataType: "json"
+                }).DONE(function(data){
+                        $('#lista2').append('<option value="" selected="">---------</option>');
+                        $.each(data.seleccionadas, function(index, value){
+                            $('#lista2').append(
+                                "<option id='"+value.CODIGO_CUENTA + "' value='" +
+                                value.CODIGO_CUENTA + "'>" + value.NOMBRE_CUENTA + "</option>");
+                        });
+                        $('#lista2').removeAttr('disabled');
+                });*/
+
+
+<a>Naturaleza:</a>
+<select class="form-control" name="ID_NATURALEZA_CUENTA">
+        {{#each cuenta}}
+        <option value="{{ID_CUENTA}}" >{{NOMBRE_CUENTA}}</option>
+        {{else}}
+        <option value="0" selected>-</option>
+        {{/each}}
+</select>-->
