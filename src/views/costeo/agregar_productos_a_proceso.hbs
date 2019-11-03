@@ -4,11 +4,11 @@
             <div class="card">
                 <h2 class="text-center">Ingresar Productos a Procesos</h2>
                 <div class="card-body">
-                    <form action="#" method="POST">
+                    <form action="/agregar_productos_proceso" method="POST">
                         <div class="form-group">
                             <select class="m-2 form-control" name="productos-proceso" id="productos-proceso">
-                                <option value="silla">Silla</option>
-                                <option value="mesa" selected>Mesa</option>
+                                <option value="1">Silla</option>
+                                <option value="2" selected>Mesa</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -33,13 +33,13 @@
                                     <tr>
                                         <td>
                                             <select name="materia-prima[]" class="form-control" required="">
-                                                {{!-- @if($productos) --}}
-                                                {{!-- @foreach ($productos as $producto) --}}
-                                                {{!-- <option value="{{ $producto->id }}"> {{ $producto->nombre }} </option> --}}
-                                                {{!-- @endforeach --}}
-                                                {{!-- @else --}}
-                                                {{!-- <option>No existen Productos</option> --}}
-                                                {{!-- @endif --}}
+                                                {{ @if($productos) }}
+                                                {{ @foreach ($productos as $producto) }}
+                                                {{ <option value="{{ $producto->id }}"> {{ $producto->nombre }} </option> }}
+                                                {{ @endforeach }}
+                                                {{ @else }}
+                                                {{ <option>No existen Productos</option> }}
+                                                {{ @endif }}
                                             </select>
                                             {{!-- {{-- <input type="text" name="product_name[]" class="form-control" required=""> --}}
                                         </td>

@@ -36,9 +36,15 @@ router.get('/producto_proceso', async (req, res) => {
     res.render('costeo/productos_procesos');
     });
     
-router.get('/agregar_productos_proceso', (req, res) => {
-    res.render('costeo/agregar_productos_a_proceso');
+router.get('/agregar_productos_proceso',async (req, res) => {
+    productos =  await pool.query('SELECT * FROM inv_materiaprima');   
+    console.log(productos);
+    res.render('costeo/agregar_productos_a_proceso', {productos});
     })
+router.post('/agregar_productos_proceso', (req, res) => {
+        console.log(req);
+        res.render('costeo/agregar_productos_a_proceso');
+        })
 
 router.get('/detalle_producto_proceso', async (req, res) => {
     res.render('costeo/detalle_producto_proceso');
