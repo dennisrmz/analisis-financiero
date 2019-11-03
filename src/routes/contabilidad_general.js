@@ -26,8 +26,9 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
-        const transaccion = await pool.query("SELECT transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
-        res.render('contabilidad_general/listar_transacciones', {transaccion});
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
+        const transaccion_con_ajuste = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipoajuste.NOMBRE_TIPO_AJUSTE, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipoajuste ON transaccion.CODIGO_TIPO_AJUSTE = tipoajuste.CODIGO_TIPO_AJUSTE");
+        res.render('contabilidad_general/listar_transacciones', {transaccion, transaccion_con_ajuste});
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
@@ -41,8 +42,8 @@ router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
 router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
         const tipo_transaccion = await pool.query('SELECT * FROM tipotransaccion');
-        const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO FROM periodocontable LIMIT 1");
-        const idperiodo_contable = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable LIMIT 1");
+        const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
+        const idperiodo_contable = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
         res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
@@ -63,6 +64,7 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                         ES_AJUSTE,
                         CODIGO_TIPO_AJUSTE
                 };
+                console.log({new_transaccion});
                 await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
                 console.log('Fila insertada correctamente de transaccion');
 
@@ -83,10 +85,29 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
         //req.flash('success', 'Registro guardado correctamente');
         res.redirect('/contabilidad_general/transaccion');
 });
-//-----------------------------------------------------------AJUSTE------------------------------------------------------------------------------
+//---------------------------------------------------------------ASIENTO-DE-AJUSTE----------------------------------------------------------------
+//listar transacciones para posteriormente realizarle ajuste
+router.get('/asiento_ajuste', async (req, res, next) => {
+        const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
+        //const transaccion_con_ajuste = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipoajuste.NOMBRE_TIPO_AJUSTE, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipoajuste ON transaccion.CODIGO_TIPO_AJUSTE = tipoajuste.CODIGO_TIPO_AJUSTE");
+        res.render('contabilidad_general/listar_asiento_ajuste', {transaccion, periodos:periodo[0]});
+});
+//Mostrar ajuste de transaccion
+router.get('/transaccion/ver_ajuste/:ID_TRANSACCION', async (req, res) => {
+        const {ID_TRANSACCION} = req.params;
+        const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        res.render('contabilidad_general/mostrar_ajuste', {transaccion: transacciones[0], movimientos});
+});
 //agregar ajuste a transacciones GET y POST
-router.get('/transaccion/agregar_ajuste/', async (req, res) => {
-        res.render('contabilidad_general/agregar_ajuste');
+router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res) => {
+        const {ID_TRANSACCION} = req.params;
+        const tipoajuste = await pool.query("SELECT * FROM tipoajuste");
+        const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
+        const transaccion = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        res.render('contabilidad_general/agregar_ajuste', {tipoajuste, cuenta_padre, transaccions:transaccion[0], movimientos});
 });
 //----------------------------------------------------------CATALOGO-----------------------------------------------------------------------------
 //Listar catalogo en un dataTable
@@ -199,6 +220,7 @@ router.get('/select_subsubcuenta/:ID_CUENTA', async (req, res, next) => {
         const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', [ID_CUENTA]);
         res.render('contabilidad_general/select_subsubcuenta', {sub_subcuenta});
 });
+
 //-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
 router.get('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: "AJAX is great!"});

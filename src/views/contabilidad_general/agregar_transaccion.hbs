@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-lg-6 col-xs-12 border rounded">
                             <form name="transaccion_form" novalidate>
-                                <h4 class="mb-3 text-center header_id">TRANSACCIÓN</h4>
+                                <h5 class="mb-3 text-center header_id">TRANSACCIÓN</h5>
                                 <div class="form-group">
                                     <a>Periodo contable Actual:</a>
                                     <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
@@ -50,7 +50,7 @@
                         </div>
                         <div  class="col-lg-6 col-xs-12 border rounded">
                             <form name="movimiento_form" novalidate>
-                                <h4 class="mb-3 text-center header_id">MOVIMIENTOS</h4>
+                                <h5 class="mb-3 text-center header_id">MOVIMIENTOS</h5>
                                 <div class="form-group">
                                     <a>Seleccione cuenta mayor a afectar:</a>
                                     <select id="cuenta" class="form-control" name="cuenta_padre">
@@ -81,9 +81,9 @@
                                     <a>Ingrese detalle del movimiento:</a>
                                     <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle"></textarea>
                                 </div>
-                                <div class="form-group">
-                                    <input type="radio" name="Tipo" id="cb_cargar" value="second_checkbox">Cargar
-                                    <input type="radio" name="Tipo" id="cb_abonar" value="second_checkbox">Abonar
+                                <div id="myForm" class="form-group">
+                                    <input type="radio" name="Tipo" id="cb_cargar" value="false">Cargar
+                                    <input type="radio" name="Tipo" id="cb_abonar" value="true">Abonar
                                 </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
                                     <button class="btn btn-primary btn-plus" onclick="obtenerDatos()" type="button">
@@ -136,10 +136,33 @@
     </div>
 </div>
     <script type="text/javascript">
+        //Declaracion de variables
+        var count = 0;
+        var totalCargos = 0;
+        var totalAbonos = 0;
+        var codigo_cuentas = "";
+        var cargos = "";
+        var abonos = "";
+        var codigoTipo = null;
+        var monto = null;
+        var descripcion = null;
+        var ajuste = "";
+        var periodo = "";
+        var detalle_mov = "";
+        var fechas = "";
+        var detalles = "";
+        var abonar = "";
+
         //Validad que solo un chechbox este seleccionado
         function unselect(){
             document.querySelectorAll('[name=Tipo]').forEach((x) => x.checked=false);
         }
+
+        //Funcion para saber cual radiobutton esta seleccionado
+            $('#myForm input').on('change', function() {
+                abonar = $('input[name=Tipo]:checked', '#myForm').val();
+                //alert(abonar);
+            });
         
         $(document).ready(function(){
             //Funcion para el boton "cancelar"
@@ -157,8 +180,8 @@
                     }
                 });
             });
-
-            //Funcion para llenar select dependiendo de la seleccion de otro
+            
+            //Funcion para llenar select de subcuenta dependiendo de la seleccion del select de cuenta
             $('#cuenta').change(function(){            
                 var seleccionada = $('#cuenta').val();
                 var url_nueva = "/contabilidad_general/select_subcuenta/"+seleccionada;
@@ -181,6 +204,8 @@
                     $('#sub_cuenta').prop('disabled', true);
                 }
             });
+
+            //Funcion para llenar select de subsubcuenta dependiendo de la seleccion del select de subcuenta
             $('#sub_cuenta').change(function(){            
                 var seleccionada = $('#sub_cuenta').val();
                 var url_nueva = "/contabilidad_general/select_subsubcuenta/"+seleccionada;
@@ -205,22 +230,6 @@
             });
         });
         
-        //Declaracion de variables
-        var count = 0;
-        var totalCargos = 0;
-        var totalAbonos = 0;
-        var codigo_cuentas = "";
-        var cargos = "";
-        var abonos = "";
-        var codigoTipo = null;
-        var monto = null;
-        var descripcion = null;
-        var ajuste = "";
-        var periodo = "";
-        var detalle_mov = "";
-        var fechas = "";
-        var detalles = "";
-
         //Funcion para obtener los datos de los movimientos
         function obtenerDatos(){
             console.log("agregarFila")
@@ -228,22 +237,18 @@
             var codigoCuenta = $("#cuenta").val();
             var codigoSubCuenta = $("#sub_cuenta").val();
             var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
-
             var cbCuenta = document.getElementById("cuenta");
             var cbSubCuenta = document.getElementById("sub_cuenta");
             var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
-                
             var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
             var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
-            var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text;
-                
+            var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
             var monto_mov = parseFloat($("#monto_movimiento").val());
-            var abonar = document.getElementById('cb_abonar').checked;
-            
-            $(".dataTables_empty").remove();
             var correcto = false;
             
-            if(!isNaN(monto_mov) && abonar==false){//si es un numero NAN devuelve true --> !(devuelve false)=true
+            $(".dataTables_empty").remove();
+            
+            if(!isNaN(monto_mov) && abonar=="false"){//si es un numero NAN devuelve true --> !(devuelve false)=true
                 if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
                     agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                     correcto = true;
@@ -259,7 +264,7 @@
                     }
                 }
             }else{
-                if(!isNaN(monto_mov) && abonar==true){
+                if(!isNaN(monto_mov) && abonar=="true"){
                     if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
                         agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                         correcto = true;
@@ -287,19 +292,17 @@
                 });
             }
         }
-
         //Funcion para agregar una nueva fila al registrar un nuevo movimiento
         function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
             fecha = $("#datepicker").val();
             detalle_mov =$("#detalle_movimiento").val();
-            if(abonar==false){
+            if(abonar=="false"){
                 fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
                 detalles+=detalle_mov+",";
                 cargos+=monto_mov+",";
                 abonos+="0,";
                 totalCargos = totalCargos + monto_mov;
-
                 console.log("CARGO")
                 $("#tbBody").append(
                     "<tr><td class='text-center'>"+fecha+"</td>"+
@@ -309,14 +312,13 @@
                 $("#debe").empty();
                 $("#debe").append("$ "+totalCargos);
             };
-            if(abonar==true){
+            if(abonar=="true"){
                 fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
                 detalles+=detalle_mov+",";
                 abonos+=monto_mov+",";
                 cargos+="0,";
                 totalAbonos = totalAbonos + monto_mov;                
-
                 console.log("ABONO")
                 $("#tbBody").append(
                     "<tr><td class='text-center'>"+fecha+"</td>"+
@@ -327,7 +329,7 @@
                 $("#haber").append("$ "+totalAbonos);
             }
         };
-
+        
         //Convertir fecha en forma para MYSQL
         function convertDateFormat(string) {
             var info = string.split('/');
@@ -344,11 +346,9 @@
             fecha = $("#datepicker").val();
             ajuste = 0;
             var codigo_ajuste = 0;
-
             periodo = $("#periodo_conta").val();
             console.log("PERIODO");
             console.log(periodo);
-
             if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                 if(totalAbonos==totalCargos){
                     if(totalAbonos==monto){

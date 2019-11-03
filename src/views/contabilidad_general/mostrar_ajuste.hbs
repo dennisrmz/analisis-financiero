@@ -1,0 +1,99 @@
+<div class="container-fluid">
+        <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general/asiento_ajuste">
+                        Asiento de ajuste
+                        </a>
+                </li>
+                <li class="breadcrumb-item active">Ver Ajuste</li>
+        </ol>
+        <div class="col-md-9 mx-auto">
+                <div class="card">
+                        <div class="card-header">
+                                <i class="fas fa-list"></i>
+                                Detalle transacción con ajuste
+                        </div>
+                        <div class="card-body">
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                        <tr>
+                                                                <th colspan="3" class="text-center">Transacción N°{{transaccion.ID_TRANSACCION}}</th>
+                                                        </tr>
+                                                </thead>
+                                                <tbody>
+                                                        <tr>
+                                                                <th>Tipo de ajuste:</th>
+                                                                <td>{{transaccion.NOMBRE_TIPO_TRANSACCION}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Descripción de ajuste:</th>
+                                                                <td>{{transaccion.DESCRIPCION_TRANSACCION}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Fecha de ajuste:</th>
+                                                                <td>{{transaccion.FECHA_TRANSACCION_FORMATO}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Monto de ajuste:</th>
+                                                                <td>${{transaccion.MONTO_TRANSACCION}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Tipo de transacción:</th>
+                                                                <td>{{transaccion.NOMBRE_TIPO_TRANSACCION}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Descripción de transacción:</th>
+                                                                <td>{{transaccion.DESCRIPCION_TRANSACCION}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Fecha de transacción:</th>
+                                                                <td>{{transaccion.FECHA_TRANSACCION_FORMATO}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Monto de transacción:</th>
+                                                                <td>${{transaccion.MONTO_TRANSACCION}}</td>
+                                                        </tr>
+                                                </tbody>
+                                        </table>
+                                </div>
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                        <tr>
+                                                                <th colspan="5" class="text-center">Movimientos</th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>Fecha</th>
+                                                                <th>Cuenta</th>
+                                                                <th>Detalle</th>
+                                                                <th>Monto cargo</th>
+                                                                <th>Monto abono</th>
+                                                        </tr>
+                                                </thead>
+                                                {{#each movimientos}}
+                                                <tbody>
+                                                        <tr id="ID_MOVIMIENTO">
+                                                                <td>{{FECHA_MOVIMIENTO_FORMATO}}</td>
+                                                                <td>{{NOMBRE_CUENTA}}</td>
+                                                                <td>{{DETALLE_MOVIMIENTO}}</td>
+                                                                <td>${{MONTO_CARGO}}</td>  
+                                                                <td>${{MONTO_ABONO}}</td>                        
+                                                        </tr>
+                                                </tbody>
+                                                {{else}}
+                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
+                                                        <div class="alert bold alert-danger text-center" >
+                                                                <strong>¡Opps! Parece que no tienes ninguna periodo contable registrada.</strong>
+                                                        </div>
+                                                </table>
+                                                {{/each}}
+                                        </table>
+                                        <div class="form-group">
+                                                <button onclick="window.location='/contabilidad_general/asiento_ajuste'" class="btn btn-primary btn-block">Aceptar</button>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
