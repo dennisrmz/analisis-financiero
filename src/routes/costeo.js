@@ -5,6 +5,9 @@ const pool = require('../database');
 
 //*******************Rutas Materia Prima******************* */ 
 router.get('/materia_prima_saldo', async (req, res) => {
+    res.render('materia-prima/agregar_materia_prima');
+    });
+router.get('/materia_prima_saldo', async (req, res) => {
     res.render('materia-prima/listar_saldos_materia_prima');
     });
 
