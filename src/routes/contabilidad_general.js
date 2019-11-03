@@ -4,38 +4,48 @@ const router = express.Router();
 const pool = require('../database')
 
 //-----------------------------------BALANCE DE COMPROBACION---------------------------------------------------------
-router.get('/estados_financieros/balance_comprobacion/:ID_ESTADOFINANCIERO', async (req, res) => {
+router.get('/estados_financieros/BALANCE_DE_COMPROBACION/:ID_ESTADOFINANCIERO', async (req, res) => {
     const { ID_ESTADOFINANCIERO } = req.params;
     const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-    res.render('contabilidad_general/balance_de_comprobacion', {estadofinanciero});
+    const idioma = await pool.query('SET lc_time_names = "es_VE"');
+    const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
+    res.render('contabilidad_general/balance_de_comprobacion', {estadofinanciero, periodocontable:periodoscontables[0], idioma});
 });
 
 //---------------------------------------BALANCE GENERAL---------------------------------------------------------
-router.get('/estados_financieros/balance_general/:ID_ESTADOFINANCIERO', async (req, res) => {
+router.get('/estados_financieros/BALANCE_GENERAL/:ID_ESTADOFINANCIERO', async (req, res) => {
     const { ID_ESTADOFINANCIERO } = req.params;
     const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-    res.render('contabilidad_general/balance_general', {estadofinanciero});
+    const idioma = await pool.query('SET lc_time_names = "es_VE"');
+    const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
+    res.render('contabilidad_general/balance_general', {estadofinanciero, periodocontable:periodoscontables[0], idioma});
 });
 
 //--------------------------------------ESTADO DE RESULTADOS---------------------------------------------------------
-router.get('/estados_financieros/estado_resultados/:ID_ESTADOFINANCIERO', async (req, res) => {
+router.get('/estados_financieros/ESTADO_DE_RESULTADOS/:ID_ESTADOFINANCIERO', async (req, res) => {
     const { ID_ESTADOFINANCIERO } = req.params;
     const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-    res.render('contabilidad_general/estado_de_resultados', {estadofinanciero});
+    const idioma = await pool.query('SET lc_time_names = "es_VE"');
+    const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
+    res.render('contabilidad_general/estado_de_resultados', {estadofinanciero, periodocontable:periodoscontables[0], idioma});
 });
 
 //----------------------------------------ESTADO DE CAPITAL---------------------------------------------------------
-router.get('/estados_financieros/estado_capital/:ID_ESTADOFINANCIERO', async (req, res) => {
+router.get('/estados_financieros/ESTADO_DE_CAPITAL/:ID_ESTADOFINANCIERO', async (req, res) => {
     const { ID_ESTADOFINANCIERO } = req.params;
     const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-    res.render('contabilidad_general/estado_de_capital', {estadofinanciero});
+    const idioma = await pool.query('SET lc_time_names = "es_VE"');
+    const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
+    res.render('contabilidad_general/estado_de_capital', {estadofinanciero, periodocontable:periodoscontables[0], idioma});
 });
 
 //-------------------------------------ESTADO DE FLUJO DE EFECTIVO--------------------------------------------------
-router.get('/estados_financieros/estado_flujo_efectivo/:ID_ESTADOFINANCIERO', async (req, res) => {
+router.get('/estados_financieros/ESTADO_DE_FLUJO_DE_EFECTIVO/:ID_ESTADOFINANCIERO', async (req, res) => {
     const { ID_ESTADOFINANCIERO } = req.params;
     const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-    res.render('contabilidad_general/estado_flujo_de_efectivo', {estadofinanciero});
+    const idioma = await pool.query('SET lc_time_names = "es_VE"');
+    const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
+    res.render('contabilidad_general/estado_flujo_de_efectivo', {estadofinanciero, periodocontable:periodoscontables[0], idioma});
 });
 
 //------------------------------------------NOTAS EXPLICATIVAS------------------------------------------------------
@@ -50,23 +60,63 @@ router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/n
     console.log({ID_ESTADOFINANCIERO});
     res.render('contabilidad_general/listado_notas_explicativas', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
 });
+/*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',async (req, res) => {
+    //const { NOMBRE_ESTADOFINANCIERO } = req.params;
+    const { ID_ESTADOFINANCIERO } = req.params;
+    /*const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
+    'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);*/
+    //console.log("ID_ESTADOFINANCIERO");
+    //console.log({ID_ESTADOFINANCIERO});
+    //res.render('contabilidad_general/listado_notas_explicativas', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
+    //res.send('recibido');
+//});
 
 //Agregar Notas Explicativas
 router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
-    const { ID_ESTADOFINANCIERO } = req.params;
-    console.log({ID_ESTADOFINANCIERO});
+    //const { ID_ESTADOFINANCIERO } = req.params;
+    //console.log({ID_ESTADOFINANCIERO});
     res.render('contabilidad_general/agregar');
 });
-router.post('/estados_financieros/agregar_nota_explicativa', (req, res) => {
+
+//prueba post notas explicativas
+router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', async (req, res) => {
+    const { ID_ESTADOFINANCIERO } = req.params;
+    const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
+    'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
+    console.log("ID_ESTADOFINANCIERO");
+    console.log({ID_ESTADOFINANCIERO});
+    //res.render('contabilidad_general/listado_estados_financieros', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
     console.log(req.body);
     res.send('recibido');
 });
+
+/*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
+    const { ID_ESTADOFINANCIERO } = req.params;
+    console.log({ID_ESTADOFINANCIERO});
+    //console.log(req.body);
+    res.send('recibido');
+});*/
+
+/*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', async (req, res, next) => {
+    const { NOMBRE_ESTADOFINANCIERO } = req.params;
+    const { ID_ESTADOFINANCIERO } = req.params;
+    const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
+    'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
+    console.log("ID_ESTADOFINANCIERO");
+    console.log({ID_ESTADOFINANCIERO});
+    res.render('contabilidad_general/agregar', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
+});*/
+/*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
+    const { ID_ESTADOFINANCIERO } = req.params;
+    console.log({ID_ESTADOFINANCIERO});
+    res.render('contabilidad_general/agregar');
+});*/
 
 //---------------------------------------ESTADOS FINANCIEROS---------------------------------------------------------
 
 //Mostrar listado de estados financieros
 router.get('/estados_financieros/listado', async (req, res) => {
-    const estadofinanciero = await pool.query('SELECT * FROM estadofinanciero');
+    const estadofinanciero = await pool.query('SELECT estadofinanciero.ID_ESTADOFINANCIERO, estadofinanciero.NOMBRE_ESTADOFINANCIERO, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d-%m-%Y") AS  FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d-%m-%Y") AS  FECHAFINAL FROM estadofinanciero INNER JOIN periodocontable WHERE estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE');
     res.render('contabilidad_general/listado_estados_financieros', {estadofinanciero});
 });
 

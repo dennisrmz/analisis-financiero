@@ -6,12 +6,12 @@
                 <li class="breadcrumb-item active">Balance de Comprobación</li>
                 </ol>
                 <!-- DataTables -->
-                <div class="alert bold alert-info">
+                <!--<div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
                         <a href="/contabilidad_general/estados_financieros/balance_comprobacion/{{estadosfinancieros.ID_ESTADOFINANCIERO}}/notas_explicativas/listado"> 
                                 <strong>¡Click aquí para visualizar las notas explicativas!</strong>
                         </a>
-                </div>
+                </div>-->
                 
                 <div class="card mb-3">
                         <div class="card-body">
@@ -25,7 +25,7 @@
                                                             <br>
                                                             Balance de Comprobacion
                                                             <br>
-                                                            Del  al </td>
+                                                            Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
                                                         </th>
                                                     </tr>
                                                 </thead>
