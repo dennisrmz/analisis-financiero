@@ -26,6 +26,13 @@ app.set('view engine', '.hbs');
 
 
 // Middlewares
+app.use(session({
+    secret: 'faztmysqlnodesession',
+    resave: false,
+    saveUninitialized: false,
+    store: new MySQLStore(database)
+}));
+app.use(flash());
 app.use(morgan('dev'));
 app.use(express.urlencoded({extended : false}));
 app.use(express.json());

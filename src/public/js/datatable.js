@@ -1,5 +1,5 @@
 $(document).ready( function () {
-    var table =  $('#datatable').DataTable({
+    $('#datatable').DataTable({
                     language: {
                       "sProcessing":     "Procesando...",
             "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -25,7 +25,5 @@ $(document).ready( function () {
             }
                     }
         });
-  
-        
       });
   

@@ -7,32 +7,36 @@
                     <form action="#" method="POST">
                         <div class="form-group">
                             <div class="form-group">
-                            <label>Nombre materia prima</label>
-                             <input type="text" name="nombre-materia" min="1" class="form-control" placeholder="nombre materia">
-                        </div>
+                                <label>Seleccione la materia Prima a Ingresar</label>
+                                <select id="lista_materia_prima" class="form-control" name="materiaprima_id">
+                                    {{#each materiasprimas}}
+                                    <option value="{{id}}">{{nombre}}</option>
+                                    {{else}}
+                                    <option value="0" selected>---------------</option>
+                                    {{/each}} --}}
+                                </select>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label>Cantidad a Realizar</label>
-                             <input type="number" name="numero-materia" min="1" class="form-control" placeholder="Cantidad a Realizar">
+                            <label>Cantidad a Ingresar</label>
+                            <input type="number" name="cantidad" class="form-control"
+                                placeholder="Cantidad a Realizar">
                         </div>
                         <div class="form-group">
                             <label>Precio Unitario</label>
-                             <input type="number" name="precio-mateia" min="1" class="form-control" placeholder="precio unitario">
+                            <input type="number" name="preciounitario" step="0.01" class="form-control"
+                                placeholder="precio unitario">
                         </div>
-                       
-                        </div>
-                        <div class="form-group">
-                            <Label>Fecha</Label>
-                            <input type="date" name="numero-procesos" class="form-control" placeholder="Fecha">
-                        </div>
-                        <div class="from-group">
-                            <button class="btn btn-success btn-block">
-                                Registrar Materia Prima
-                            </button>
-                        </div>
-                    </form>
+
                 </div>
+                <div class="from-group">
+                    <button class="btn btn-success btn-block">
+                        Agregar Materia Prima
+                    </button>
+                </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </div>
