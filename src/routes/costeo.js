@@ -3,10 +3,47 @@ const router = express.Router();
 
 const pool = require('../database');
 
-//*******************Rutas Materia Prima******************* */ 
-router.get('/materia_prima_saldo', async (req, res) => {
-    res.render('materia-prima/agregar_materia_prima');
+
+// ********************Rutas Crear Materia Prima *************** */
+router.get('/crear_materia_prima', async (req, res) => {
+    res.render('materia-prima/crear_materia_prima');
     });
+
+router.post('/crear_materia_prima', async (req, res) => {
+    const{ nombre } = req.body;
+    const newMateriaPrima = {
+        nombre,
+        existencias: 0
+    };
+    await pool.query('INSERT INTO materiasprimas set ?', [newMateriaPrima]);
+    req.flash('success', 'Materia Prima Creada');
+    res.redirect('/costeo/listar_materia_prima');
+    });
+        
+router.get('/listar_materia_prima', async (req, res) => {
+    const materiasprimas = await pool.query('SELECT * FROM materiasprimas');
+    res.render('materia-prima/listar_materia_prima', {materiasprimas});
+    });
+
+
+//*******************Rutas Materia Prima******************* */ 
+router.get('/entrada_materia_prima_saldo', async (req, res) => {
+    const materiasprimas = await pool.query('SELECT * FROM materiasprimas');
+    res.render('materia-prima/agregar_materia_prima', {materiasprimas});
+    });
+
+router.post('/entrada_materia_prima_saldo', async (req, res) => {
+    const { materiaprima_id, cantidad, preciounitario } = req.body;
+    const newEntradaMateriaPrima = {
+        materiaprima_id,
+        cantidad,
+        preciounitario,
+    }
+    await pool.query('INSERT INTO entradamp set ?', [newEntradaMateriaPrima]);
+    req.flash('success', 'Link Saved Succesfully');
+    res.redirect('/costeo/materia_prima_entrada');
+    });
+
 router.get('/materia_prima_saldo', async (req, res) => {
     res.render('materia-prima/listar_saldos_materia_prima');
     });
