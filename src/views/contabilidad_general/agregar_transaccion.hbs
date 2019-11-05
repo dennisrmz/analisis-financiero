@@ -282,7 +282,13 @@
                 }
             }
             if(correcto==true){
-                $("#monto_mov").val("")
+                $("#monto_mov").val("");
+                $("#detalle_movimiento").val("");
+                $("#cuenta").val('3');
+                $("#sub_cuenta").empty();
+                $("#sub_cuenta").append('<option value="0">---------------</option>');
+                $("#sub_sub_cuenta").empty();
+                $("#sub_sub_cuenta").append('<option value="0">---------------</option>');
             }else{
                 console.log("Correcto: "+correcto);
                 Swal.fire({
@@ -344,7 +350,7 @@
             monto = parseFloat($("#id_monto_transaccion").val());
             descripcion = $("#id_descripcion_transaccion").val();
             fecha = $("#datepicker").val();
-            ajuste = 0;
+            ajuste = "NO";
             var codigo_ajuste = 0;
             periodo = $("#periodo_conta").val();
             console.log("PERIODO");
@@ -367,7 +373,7 @@
                                 'FECHA_TRANSACCION': fecha,
                                 'FECHAINICIO_PERIODO': periodo,
                                 'ES_AJUSTE': ajuste,
-                                'CODIGO_TIPO_AJUSTE': codigo_ajuste
+                                'ID_TRANSACCION_AJUSTE': codigo_ajuste
                             },
                             success: function(data){
                                 console.log(data);
