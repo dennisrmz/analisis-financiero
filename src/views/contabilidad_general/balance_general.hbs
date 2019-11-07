@@ -5,13 +5,6 @@
                 <li class="breadcrumb-item">Estados Financieros</li>
                 <li class="breadcrumb-item active">Balance General</li>
                 </ol>
-                <!-- DataTables -->
-                <div class="alert bold alert-info">
-                        <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/estados_financieros/notas_explicativas/listado/{{notaexplicativa.NOMBRE_ESTADOFINANCIERO}}/{{notaexplicativa.ID_ESTADOFINANCIERO}}">
-                        <strong>¡Click aquí para visualizar las notas explicativas!</strong>
-                        </a>
-                </div>
                 <div class="card mb-3">
                         <div class="card-body">
                                 
@@ -28,33 +21,52 @@
                                                         </th>
                                                     </tr>
                                                 </thead>
+                                                <thead>
                                                     <tr>
                                                         <th>ACTIVO</th>
                                                     </tr>
+                                                </thead>
+                                                    {{#each cuentas_activo}}
                                                     <tbody>
-                                                        <tr>
-                                                        <th>Cuentas</th>
+                                                        <tr id="ID_ESTADOFINANCIERO">
+                                                            <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                            <td>{{ NOMBRE_CUENTA }}</td>
+                                                            <td>{{ MONTO_SALDO }}</td>
+                                                            <td></td>
                                                         </tr>
                                                     </tbody>
+                                                    {{/each}}
+                                                <thead>
                                                     <tr>
                                                         <th>PASIVO</th>
                                                     </tr>
+                                                </thead>
+                                                    {{#each cuentas_pasivo}}
                                                     <tbody>
-                                                        <tr>
-                                                        <th>Cuentas</th>
+                                                        <tr id="ID_ESTADOFINANCIERO">
+                                                            <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                            <td>{{ NOMBRE_CUENTA }}</td>
+                                                            <td>{{ MONTO_SALDO }}</td>
+                                                            <td></td>
                                                         </tr>
                                                     </tbody>
+                                                    {{/each}}
+                                                <thead>
                                                     <tr>
                                                         <th>PATRIMONIO</th>
                                                     </tr>
+                                                </thead>
+                                                    {{#each cuentas_patrimonio}}
                                                     <tbody>
-                                                        <tr>
-                                                        <th>Cuentas</th>
+                                                        <tr id="ID_ESTADOFINANCIERO">
+                                                            <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                            <td>{{ NOMBRE_CUENTA }}</td>
+                                                            <td>{{ MONTO_SALDO }}</td>
+                                                            <td></td>
                                                         </tr>
                                                     </tbody>
-                                                <tbody>
-                                                        
-                                                </tbody>
+                                                    {{/each}}
+                                                
                                                 
                                         </table>
                                 </div>
