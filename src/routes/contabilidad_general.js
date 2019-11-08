@@ -4,8 +4,10 @@ const router = express.Router();
 const pool = require('../database');
 
 //--------------------------------------------------------------ELI----------------------------------------------------------------------------
-router.get('/', (req, res) => {
-        res.render('contabilidad_general/index_contabilidad');
+router.get('/', async (req, res) => {
+        const periodo_finals = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
+        console.log(periodo_finals[0].FECHA_PERIODO_FINAL );
+        res.render('contabilidad_general/index_contabilidad', {periodo_final: periodo_finals[0]});
 });
 //-------------------------------------------------------PERIODO CONTABLE---------------------------------------------------------------------
 //Listar periodo contable
@@ -97,19 +99,14 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
 //---------------------------------------------------------------ASIENTO-DE-AJUSTE----------------------------------------------------------------
 //listar transacciones para posteriormente realizarle ajuste
 router.get('/asiento_ajuste', async (req, res, next) => {
-        //const periodo_final = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
-        //console.log(periodo_final[0] );
-        //console.log("hola");
-        //if(periodo_final[0] != null){
-                const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
-                "AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
-                const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
-                "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM "+
-                "transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
-                //const transaccion_con_ajuste = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipoajuste.NOMBRE_TIPO_AJUSTE, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipoajuste ON transaccion.CODIGO_TIPO_AJUSTE = tipoajuste.CODIGO_TIPO_AJUSTE");
-                res.render('contabilidad_general/listar_asiento_ajuste', {transaccion, periodos:periodo[0]});
-        //}
-        
+        const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
+        "AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
+        "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM "+
+        "transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
+        //const transaccion_con_ajuste = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipoajuste.NOMBRE_TIPO_AJUSTE, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipoajuste ON transaccion.CODIGO_TIPO_AJUSTE = tipoajuste.CODIGO_TIPO_AJUSTE");
+        res.render('contabilidad_general/listar_asiento_ajuste', {transaccion, periodos:periodo[0]});
+
 });
 //Mostrar ajuste de transaccion
 router.get('/asiento_ajuste/ver_ajuste/:ID_TRANSACCION', async (req, res) => {

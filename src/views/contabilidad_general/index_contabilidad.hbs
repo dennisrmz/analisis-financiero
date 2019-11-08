@@ -83,7 +83,7 @@
                                                         </a>
                                                 </div>
                                         </div>
-                                        <div class="col-xl-6 col-sm-6 mb-4" onclick="window.location.href='/contabilidad_general/asiento_ajuste'">
+                                        <div class="col-xl-6 col-sm-6 mb-4" onClick="enviar('{{periodo_final.FECHA_PERIODO_FINAL}}')">
                                                 <div class="card text-white" style="background-color:rgb(29, 122, 245)">
                                                         <div class="card-body">
                                                                 <div class="mr-5">
@@ -104,3 +104,18 @@
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+<script type="text/javascript">
+        //funcion para validar que antes que desee realizar un ajuste debe cerrar periodo
+        function enviar(string){
+                if(string != ''){
+                        window.location.href='/contabilidad_general/asiento_ajuste';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Oppss.. Error',
+                                text: 'Debe cerrar el periodo para realizar ajuste'
+                        });
+                }
+        }
+</script>
