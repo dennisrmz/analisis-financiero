@@ -23,16 +23,17 @@
                                 <div class="form-group">
                                     <a>Periodo contable Actual:</a>
                                     <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
-                                    <br>
+                                </div>
+                                <div class="form-group">
                                     <a>Seleccione el tipo de transacción:</a>
-                                        <select id="id_tipo_transaccion" class="form-control" name="select">
-                                            {{#each tipo_transaccion}}
-                                            <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
-                                            {{else}}
-                                            <option value="0" selected>---------------</option>
-                                            {{/each}}
-                                        </select>
-                                    </div>
+                                    <select id="id_tipo_transaccion" class="form-control" name="select" autofocus>
+                                        {{#each tipo_transaccion}}
+                                        <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
+                                        {{else}}
+                                        <option value="0" selected>---------------</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
                                 <div class="form-group">
                                     <a>Fecha en que se realiza:</a>
                                     <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
@@ -44,7 +45,13 @@
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese descripción de transacción:</a>
-                                    <textarea rows="5" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
+                                    <textarea rows="4" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
+                                </div>
+                                <div class="col-12 text-center" style="padding-bottom: 5%">    
+                                    <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
+                                        <i class="fas fa-plus-circle"></i>
+                                        Registrar transacción
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -86,9 +93,9 @@
                                     <input type="radio" name="Tipo" id="cb_abonar" value="true">Abonar
                                 </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
-                                    <button class="btn btn-primary btn-plus" onclick="obtenerDatos()" type="button">
-                                        Registrar movimiento  
+                                    <button class="btn btn-outline-primary btn-plus" onclick="obtenerDatos()" type="button">
                                         <i class="fas fa-plus-circle"></i>
+                                        Registrar movimiento  
                                     </button>
                                 </div>
                             </form>
@@ -143,15 +150,206 @@
         var codigo_cuentas = "";
         var cargos = "";
         var abonos = "";
-        var codigoTipo = null;
-        var monto = null;
-        var descripcion = null;
-        var ajuste = "";
-        var periodo = "";
-        var detalle_mov = "";
         var fechas = "";
         var detalles = "";
         var abonar = "";
+        //Para obtener datos
+        var codigoCuenta = $("#cuenta").val();
+        var codigoSubCuenta = $("#sub_cuenta").val();
+        var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
+        var cbCuenta = document.getElementById("cuenta");
+        var cbSubCuenta = document.getElementById("sub_cuenta");
+        var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
+        var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
+        var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
+        var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
+        var monto_mov = parseFloat($("#monto_movimiento").val());
+        var correcto = false;
+        var detalle_mov =$("#detalle_movimiento").val();
+        //Para Guardar los movimientos y la transaccion
+        var codigoTipo = $("#id_tipo_transaccion").val();
+        var cbTipo = document.getElementById("id_tipo_transaccion");
+        var tipo = cbTipo.options[cbTipo.selectedIndex].text;
+        var monto = parseFloat($("#id_monto_transaccion").val());
+        var descripcion = $("#id_descripcion_transaccion").val();
+        var fecha = $("#datepicker").val();
+        var ajuste = "NO";
+        var codigo_ajuste = 0;
+        var periodo = $("#periodo_conta").val();
+
+        //Funcion para desactivar componentes de transaccion
+        function desactivar(){
+            if( descripcion === '' && $("#id_monto_transaccion").val() === ''){
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Verifique que los campos de la transaccion que estén completos.'
+                });
+            }else{
+                document.getElementById("id_tipo_transaccion").disabled = true;
+                document.getElementById("datepicker").disabled = true;
+                document.getElementById("id_monto_transaccion").disabled = true;
+                document.getElementById("id_descripcion_transaccion").disabled = true;
+            }
+        }
+        
+        //Funcion para obtener los datos de los movimientos
+        function obtenerDatos(){
+            console.log("agregarFila");
+            count = count + 1;
+            
+            $(".dataTables_empty").remove();
+            
+            if(!isNaN(monto_mov) && abonar=="false"){//si es un numero NAN devuelve true --> !(devuelve false)=true
+                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
+                    agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                    correcto = true;
+                }else{
+                    if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
+                        agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
+                        correcto = true;
+                    }else{
+                        if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
+                            agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
+                            correcto = true;
+                        }
+                    }
+                }
+            }else{
+                if(!isNaN(monto_mov) && abonar=="true"){
+                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
+                        agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                        correcto = true;
+                    }else{
+                        if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
+                            agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
+                            correcto = true;
+                        }else{
+                            if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
+                                agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
+                                correcto = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if(correcto==true){
+                $("#monto_mov").val("");
+                $("#detalle_movimiento").val("");
+                $("#cuenta").val('3');
+                $("#sub_cuenta").empty();
+                $("#sub_cuenta").append('<option value="0">---------------</option>');
+                $("#sub_sub_cuenta").empty();
+                $("#sub_sub_cuenta").append('<option value="0">---------------</option>');
+            }else{
+                console.log("Correcto: "+correcto);
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Verifique que los campos de los Movimientos estén completos.'
+                });
+            }
+        }
+        //Funcion para agregar una nueva fila al registrar un nuevo movimiento
+        function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
+            if(abonar=="false"){
+                fechas+=fecha+",";
+                codigo_cuentas+=codigoCuenta+",";
+                detalles+=detalle_mov+",";
+                cargos+=monto_mov+",";
+                abonos+="0,";
+                totalCargos = totalCargos + monto_mov;
+                console.log("CARGO")
+                $("#tbBody").append(
+                    "<tr><td class='text-center'>"+fecha+"</td>"+
+                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
+                    "<td class='text-center'>$ "+monto_mov+"</td><td></td></tr>"
+                );
+                $("#debe").empty();
+                $("#debe").append("$ "+totalCargos);
+            };
+            if(abonar=="true"){
+                fechas+=fecha+",";
+                codigo_cuentas+=codigoCuenta+",";
+                detalles+=detalle_mov+",";
+                abonos+=monto_mov+",";
+                cargos+="0,";
+                totalAbonos = totalAbonos + monto_mov;                
+                console.log("ABONO")
+                $("#tbBody").append(
+                    "<tr><td class='text-center'>"+fecha+"</td>"+
+                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
+                    "<td></td><td class='text-center'>$ "+monto_mov+"</td></tr>"
+                );
+                $("#haber").empty();
+                $("#haber").append("$ "+totalAbonos);
+            }
+        };
+        
+        //Convertir fecha en forma para MYSQL
+        function convertDateFormat(string) {
+            var info = string.split('/');
+            return info[2] + '-' + info[1] + '-' + info[0];
+        }
+        
+        //Funcion para guardar los movimientos y transaccion realizada
+        function guardarDato(){
+            console.log("PERIODO");
+            console.log(periodo);
+            if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                if(totalAbonos==totalCargos){
+                    if(totalAbonos==monto){
+                        $.ajax({
+                            url: "/contabilidad_general/transaccion/agregar_transaccion",
+                            type: "POST",
+                            data: {
+                                'ID_CUENTA': codigo_cuentas,
+                                'FECHA_MOVIMIENTO': fecha,
+                                'DETALLE_MOVIMIENTO': detalle_mov,
+                                'MONTO_CARGO': cargos,
+                                'MONTO_ABONO': abonos,
+                                'CODIGO_TIPO_TRANSACCION': codigoTipo,
+                                'MONTO_TRANSACCION': monto,
+                                'DESCRIPCION_TRANSACCION': descripcion,
+                                'FECHA_TRANSACCION': fecha,
+                                'FECHAINICIO_PERIODO': periodo,
+                                'ES_AJUSTE': ajuste,
+                                'ID_TRANSACCION_AJUSTE': codigo_ajuste
+                            },
+                            success: function(data){
+                                console.log(data);
+                                console.log("SUCCESS");
+                            },
+                            dataType: "json"
+                        }).done(function(data){
+                            location.href = data.success_url;
+                        }).fail(function() {
+                            location.href = "/contabilidad_general/transaccion";
+                        }).always(function() {
+                            console.log("complete");
+                        });
+                    }else{
+                        Swal.fire({
+                            type: 'error',
+                            title: '!Datos incoherentes!',
+                            text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
+                        });
+                    }
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: '!Error en partida doble!',
+                        text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
+                    });
+                }
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Verifique que los campos de la Transacción estén completos.'
+                });
+            }
+        }
 
         //Validad que solo un chechbox este seleccionado
         function unselect(){
@@ -229,184 +427,4 @@
                 }
             });
         });
-        
-        //Funcion para obtener los datos de los movimientos
-        function obtenerDatos(){
-            console.log("agregarFila")
-            count = count + 1;
-            var codigoCuenta = $("#cuenta").val();
-            var codigoSubCuenta = $("#sub_cuenta").val();
-            var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
-            var cbCuenta = document.getElementById("cuenta");
-            var cbSubCuenta = document.getElementById("sub_cuenta");
-            var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
-            var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
-            var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
-            var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
-            var monto_mov = parseFloat($("#monto_movimiento").val());
-            var correcto = false;
-            
-            $(".dataTables_empty").remove();
-            
-            if(!isNaN(monto_mov) && abonar=="false"){//si es un numero NAN devuelve true --> !(devuelve false)=true
-                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
-                    agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
-                    correcto = true;
-                }else{
-                    if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
-                        agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
-                        correcto = true;
-                    }else{
-                        if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
-                            agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
-                            correcto = true;
-                        }
-                    }
-                }
-            }else{
-                if(!isNaN(monto_mov) && abonar=="true"){
-                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
-                        agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
-                        correcto = true;
-                    }else{
-                        if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
-                            agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
-                            correcto = true;
-                        }else{
-                            if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
-                                agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
-                                correcto = true;
-                            }
-                        }
-                    }
-                }
-            }
-            if(correcto==true){
-                $("#monto_mov").val("");
-                $("#detalle_movimiento").val("");
-                $("#cuenta").val('3');
-                $("#sub_cuenta").empty();
-                $("#sub_cuenta").append('<option value="0">---------------</option>');
-                $("#sub_sub_cuenta").empty();
-                $("#sub_sub_cuenta").append('<option value="0">---------------</option>');
-            }else{
-                console.log("Correcto: "+correcto);
-                Swal.fire({
-                    type: 'error',
-                    title: 'Datos incompletos.',
-                    text: 'Verifique que los campos de los Movimientos estén completos.'
-                });
-            }
-        }
-        //Funcion para agregar una nueva fila al registrar un nuevo movimiento
-        function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
-            fecha = $("#datepicker").val();
-            detalle_mov =$("#detalle_movimiento").val();
-            if(abonar=="false"){
-                fechas+=fecha+",";
-                codigo_cuentas+=codigoCuenta+",";
-                detalles+=detalle_mov+",";
-                cargos+=monto_mov+",";
-                abonos+="0,";
-                totalCargos = totalCargos + monto_mov;
-                console.log("CARGO")
-                $("#tbBody").append(
-                    "<tr><td class='text-center'>"+fecha+"</td>"+
-                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
-                    "<td class='text-center'>$ "+monto_mov+"</td><td></td></tr>"
-                );
-                $("#debe").empty();
-                $("#debe").append("$ "+totalCargos);
-            };
-            if(abonar=="true"){
-                fechas+=fecha+",";
-                codigo_cuentas+=codigoCuenta+",";
-                detalles+=detalle_mov+",";
-                abonos+=monto_mov+",";
-                cargos+="0,";
-                totalAbonos = totalAbonos + monto_mov;                
-                console.log("ABONO")
-                $("#tbBody").append(
-                    "<tr><td class='text-center'>"+fecha+"</td>"+
-                    "<td>"+cuenta+"</td><td>"+detalle_mov+"</td>"+
-                    "<td></td><td class='text-center'>$ "+monto_mov+"</td></tr>"
-                );
-                $("#haber").empty();
-                $("#haber").append("$ "+totalAbonos);
-            }
-        };
-        
-        //Convertir fecha en forma para MYSQL
-        function convertDateFormat(string) {
-            var info = string.split('/');
-            return info[2] + '-' + info[1] + '-' + info[0];
-        }
-        
-        //Funcion para guardar los movimientos y transaccion realizada
-        function guardarDato(){
-            codigoTipo = $("#id_tipo_transaccion").val();
-            cbTipo = document.getElementById("id_tipo_transaccion");
-            tipo = cbTipo.options[cbTipo.selectedIndex].text;
-            monto = parseFloat($("#id_monto_transaccion").val());
-            descripcion = $("#id_descripcion_transaccion").val();
-            fecha = $("#datepicker").val();
-            ajuste = "NO";
-            var codigo_ajuste = 0;
-            periodo = $("#periodo_conta").val();
-            console.log("PERIODO");
-            console.log(periodo);
-            if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
-                if(totalAbonos==totalCargos){
-                    if(totalAbonos==monto){
-                        $.ajax({
-                            url: "/contabilidad_general/transaccion/agregar_transaccion",
-                            type: "POST",
-                            data: {
-                                'ID_CUENTA': codigo_cuentas,
-                                'FECHA_MOVIMIENTO': fecha,
-                                'DETALLE_MOVIMIENTO': detalle_mov,
-                                'MONTO_CARGO': cargos,
-                                'MONTO_ABONO': abonos,
-                                'CODIGO_TIPO_TRANSACCION': codigoTipo,
-                                'MONTO_TRANSACCION': monto,
-                                'DESCRIPCION_TRANSACCION': descripcion,
-                                'FECHA_TRANSACCION': fecha,
-                                'FECHAINICIO_PERIODO': periodo,
-                                'ES_AJUSTE': ajuste,
-                                'ID_TRANSACCION_AJUSTE': codigo_ajuste
-                            },
-                            success: function(data){
-                                console.log(data);
-                                console.log("SUCCESS");
-                            },
-                            dataType: "json"
-                        }).done(function(data){
-                            location.href = data.success_url;
-                        }).fail(function() {
-                            location.href = "/contabilidad_general/transaccion";
-                        }).always(function() {
-                            console.log("complete");
-                        });
-                    }else{
-                        Swal.fire({
-                            type: 'error',
-                            title: '!Datos incoherentes!',
-                            text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
-                        });
-                    }
-                }else{
-                    Swal.fire({
-                        type: 'error',
-                        title: '!Error en partida doble!',
-                        text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
-                    });
-                }
-            }else{
-                Swal.fire({
-                    type: 'error',
-                    title: 'Datos incompletos.',
-                    text: 'Verifique que los campos de la Transacción estén completos.'
-                });
-            }
-        }
     </script>
