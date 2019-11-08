@@ -297,8 +297,4 @@ router.post('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: req.body.quote});
 });
 
-router.get('/ejemplo', function(req, res){
-        res.render('contabilidad_general/ejemplo', {title: 'An Ajax Example', quote: req.body.quote});
-});
-
 module.exports = router;
