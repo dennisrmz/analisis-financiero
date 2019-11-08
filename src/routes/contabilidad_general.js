@@ -11,9 +11,10 @@ router.get('/', async (req, res) => {
 });
 //-------------------------------------------------------PERIODO CONTABLE---------------------------------------------------------------------
 //Listar periodo contable
-router.get('/periodo_contable', async (req, res) => {
+router.get('/periodo_contable', async (req, res, next) => {
+        const periodo_finals = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
         const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
-        res.render('contabilidad_general/listar_periodo_contable', { periodocontable });
+        res.render('contabilidad_general/listar_periodo_contable', { periodocontable , periodo_final: periodo_finals[0]});
 });
 //-------------------------------------------------------------------------------------------------------------------------------------------------
 //agregar periodo contable GET y POST

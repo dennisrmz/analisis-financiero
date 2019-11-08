@@ -12,7 +12,7 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/periodo_contable/agregar_periodo">
+                        <a href="#" onClick="enviar('{{periodo_final.FECHA_PERIODO_FINAL}}')">
                         <strong>¡Click Aquí para iniciar periodo contable!</strong>
                         </a>
                 </div>
@@ -54,3 +54,18 @@
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+<script type="text/javascript">
+        //funcion para validar que antes que desee realizar un ajuste debe cerrar periodo
+        function enviar(string){
+                if(string != ''){
+                        window.location.href='/contabilidad_general/periodo_contable/agregar_periodo';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Oppss.. Error',
+                                text: 'Debe cerrar periodo actual para poder iniciar uno nuevo'
+                        });
+                }
+        }
+</script>
