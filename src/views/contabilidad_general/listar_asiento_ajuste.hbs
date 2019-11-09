@@ -71,15 +71,28 @@
                         $(".dataTables_empty").remove();
                 }
         });
-        function mostrar(string, transaccion){
-                console.log("Ajuste: "+string);
+        function mostrar(ajuste, transaccion){
+                console.log("Ajuste: "+ajuste);
                 console.log("Transaccion: "+transaccion);
                 var nueva_transaccion = transaccion;
-                if(string === "SI"){
+                if(ajuste === "SI"){
                         window.location.href="/contabilidad_general/asiento_ajuste/ver_ajuste/"+nueva_transaccion;
                 }
                 else{
                         window.location.href='/contabilidad_general/asiento_ajuste/ver_sin_ajuste/'+transaccion;
+                }
+        }
+
+        function validarRealizarAjuste(ajuste, transaccion){
+                if(ajuste === "SI"){
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Ya ha realizado ajuste a esta transacción'
+                        });   
+                }
+                else{
+                        window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion;
                 }
         }
 

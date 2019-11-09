@@ -23,7 +23,7 @@
                         <td>{{DESCRIPCION_TRANSACCION}}</td>
                         <td>${{MONTO_TRANSACCION}}</td>
                         <td id="operaciones" class="text">
-                                <a class="fas fa-w fa-edit" name="editar" href="/contabilidad_general/asiento_ajuste/agregar_ajuste/{{ID_TRANSACCION}}" style="color:gray !important">Realizar Ajuste</a>
+                                <a class="fas fa-w fa-edit" name="editar" href="#" onclick="validarRealizarAjuste('{{ES_AJUSTE}}', {{ID_TRANSACCION}})" style="color:gray !important">Realizar Ajuste</a>
                                 <a class="fas fa-w fa-eye" name="ver" href="#" onclick="mostrar('{{ES_AJUSTE}}', {{ID_TRANSACCION}})" style="color:gray !important">Ver</a>
                         </td>                          
                 </tr>
