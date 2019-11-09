@@ -1,9 +1,20 @@
 const express = require('express');
 
 const router = express.Router();
-
-router.get('/', (req, res) => {
-    res.render('index');
+const pool = require('../database');
+router.get('/', async (req, res) => {
+    const periodo1 = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY "+
+        "ID_PERIODOCONTABLE DESC LIMIT 1");
+    res.render('index', {periodo: periodo1[0]});
+});
+//agregar periodo contable GET y POST
+router.get('/agregar_periodo', (req, res) => {
+    res.render('contabilidad_general/agregar_periodo_contable');
+});
+router.post('/agregar_periodo', async (req, res) => {
+    const { fecha } = req.body;
+    await pool.query('INSERT INTO periodocontable (FECHAINICIO_PERIODO) VALUES (?)', [fecha]);
+    res.redirect('/contabilidad_general/periodo_contable');
 });
 
 module.exports = router;

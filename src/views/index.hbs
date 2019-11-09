@@ -1,25 +1,16 @@
-<!--<main class="index">
-
-    <header class="masthead d-flex">
-        <div class="container text-center my-auto">
-            <h1 class="mb-1">Analisis Financiero</h1>
-            <h3 class="mb-5">
-                <em>Tesis</em>
-            </h3>
-            <a href="#" class="btn btn-primary">
-               Vamos!
-            </a>
-        </div>
-    </header>
-
-
-</main>-->
+{{> navigation }}
 <div id="content-wrapper">
     <div class="container-fluid">
         <!-- Breadcrumbs-->
         <ol class="breadcrumb">
             <li class="breadcrumb-item">Sistema Administrativo</li>
         </ol>
+        <div class="alert bold alert-info">
+            <i class="fas fw fa-plus-circle"></i>
+            <a href="#" onClick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')">
+                <strong>¡Click Aquí para iniciar periodo contable!</strong>
+            </a>
+        </div>
     </div>
     <!-- Icon Cards-->
     <div class="container-fluid col-8 content-center">
@@ -82,4 +73,20 @@
             </div>
         </div>
     </div><!-- /.container-fluid -->
-</div><!-- /.content-wrapper -->
+</div>
+{{> footer }}
+<script type="text/javascript">
+        //funcion para validar que antes que cree un nuevo periodo deba cerrar el periodo actual
+        function enviar(string){
+                if(string != ''){
+                        window.location.href='/agregar_periodo';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción'
+                        });
+                }
+        }
+</script>

@@ -19,15 +19,7 @@ router.get('/periodo_contable', async (req, res, next) => {
         res.render('contabilidad_general/listar_periodo_contable', { periodocontable , periodo_final: periodo_finals[0]});
 });
 //-------------------------------------------------------------------------------------------------------------------------------------------------
-//agregar periodo contable GET y POST
-router.get('/periodo_contable/agregar_periodo', (req, res) => {
-        res.render('contabilidad_general/agregar_periodo_contable');
-});
-router.post('/periodo_contable/agregar_periodo', async (req, res) => {
-        const { fecha } = req.body;
-        await pool.query('INSERT INTO periodocontable (FECHAINICIO_PERIODO) VALUES (?)', [fecha]);
-        res.redirect('/contabilidad_general/periodo_contable');
-});
+
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
@@ -36,14 +28,6 @@ router.get('/transaccion', async (req, res) => {
         const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, "+
         "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
         res.render('contabilidad_general/listar_transacciones', {periodocontable , periodo: periodo1[0]});
-});
-router.get('/listar_transaccion_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
-        const { ID_PERIODOCONTABLE }=req.params;
-        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
-        "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION "+
-        "FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
-        "periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE = ?",[ID_PERIODOCONTABLE]);
-        res.render('contabilidad_general/listar_transaccion_select', {transaccion});
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
@@ -113,16 +97,6 @@ router.get('/asiento_ajuste', async (req, res, next) => {
         const periodo = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, "+
         "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
         res.render('contabilidad_general/listar_asiento_ajuste', {periodo});
-});
-router.get('/listar_asiento_ajuste_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
-        const { ID_PERIODOCONTABLE }=req.params;
-        const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
-        "AS FECHA_PERIODO_FINAL FROM periodocontable WHERE ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
-        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, "+
-        "transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN "+
-        "tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
-        "periodocontable.ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
-        res.render('contabilidad_general/listar_asiento_ajuste_select', {transaccion, periodos:periodo[0]});
 });
 //Mostrar ajuste de transaccion
 router.get('/asiento_ajuste/ver_ajuste/:ID_TRANSACCION', async (req, res) => {
@@ -304,7 +278,27 @@ router.get('/select_subsubcuenta/:ID_CUENTA', async (req, res, next) => {
         const sub_subcuenta = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 5 AND CODIGO_CUENTA_PADRE = ? ', [ID_CUENTA]);
         res.render('contabilidad_general/select_subsubcuenta', {sub_subcuenta});
 });
-
+//----------------------------------------------------------DATATABLE-------------------------------------------------------------------------
+//Llenar tabla de transacciones de acuerdo la seleccion del periodo
+router.get('/listar_transaccion_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
+        const { ID_PERIODOCONTABLE }=req.params;
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
+        "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION "+
+        "FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
+        "periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE = ?",[ID_PERIODOCONTABLE]);
+        res.render('contabilidad_general/listar_transaccion_select', {transaccion});
+});
+//Llenar tabla de transacciones de ajuste de acuerdo la seleccion del periodo
+router.get('/listar_asiento_ajuste_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
+        const { ID_PERIODOCONTABLE }=req.params;
+        const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
+        "AS FECHA_PERIODO_FINAL FROM periodocontable WHERE ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, "+
+        "transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN "+
+        "tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
+        "periodocontable.ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
+        res.render('contabilidad_general/listar_asiento_ajuste_select', {transaccion, periodos:periodo[0]});
+});
 //-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
 router.get('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: "AJAX is great!"});
