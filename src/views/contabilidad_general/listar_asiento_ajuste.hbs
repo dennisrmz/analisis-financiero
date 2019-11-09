@@ -16,7 +16,7 @@
                         </div>
                         <div class="card-body">
                                 <a>Seleccione el periodo para ver las transacciones con o sin ajuste de dicho periodo:</a>
-                                <select id="periodo" class="form-control" name="select">
+                                <select style="width: 35%" id="periodo" class="form-control" name="select">
                                         <option value="0" selected>Seleccione</option>
                                         {{#each periodo}}
                                         <option value="{{ID_PERIODOCONTABLE}}">DE  {{FECHA_PERIODO}}  A  {{FECHA_PERIODO_FINAL}}</option> 
@@ -71,4 +71,16 @@
                         $(".dataTables_empty").remove();
                 }
         });
+        function mostrar(string, transaccion){
+                console.log("Ajuste: "+string);
+                console.log("Transaccion: "+transaccion);
+                var nueva_transaccion = transaccion;
+                if(string === "SI"){
+                        window.location.href="/contabilidad_general/asiento_ajuste/ver_ajuste/"+nueva_transaccion;
+                }
+                else{
+                        window.location.href='/contabilidad_general/asiento_ajuste/ver_sin_ajuste/'+transaccion;
+                }
+        }
+
 </script>

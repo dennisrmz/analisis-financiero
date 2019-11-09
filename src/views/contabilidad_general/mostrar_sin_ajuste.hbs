@@ -8,11 +8,11 @@
                 </li>
                 <li class="breadcrumb-item active">Ver Ajuste</li>
         </ol>
-        <div class="col-md-9 mx-auto">
+        <div class="col-md-10 mx-auto">
                 <div class="card">
                         <div class="card-header">
                                 <i class="fas fa-list"></i>
-                                Detalle transacción con ajuste
+                                Detalle transacción sin ajuste
                         </div>
                         <div class="card-body">
                                 <div class="table-responsive">
@@ -24,23 +24,6 @@
                                                 </thead>
                                                 <tbody>
                                                         <tr>
-                                                                <th>Tipo de ajuste:</th>
-                                                                <td>{{transacciones_ajuste.NOMBRE_TIPO_AJUSTE}}</td>
-                                                                
-                                                        </tr>
-                                                        <tr>
-                                                                <th>Descripción de ajuste:</th>
-                                                                <td>{{transacciones_ajuste.DESCRIPCION_TRANSACCION_AJUSTE}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                                <th>Fecha de ajuste:</th>
-                                                                <td>{{transacciones_ajuste.FECHA_TRANSACCION_FORMATO_AJUSTE}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                                <th>Monto de ajuste:</th>
-                                                                <td>${{transacciones_ajuste.MONTO_TRANSACCION_AJUSTE}}</td>
-                                                        </tr>
-                                                        <tr>
                                                                 <th>Tipo de transacción:</th>
                                                                 <td>{{transaccion.NOMBRE_TIPO_TRANSACCION}}</td>
                                                         </tr>
@@ -49,7 +32,7 @@
                                                                 <td>{{transaccion.DESCRIPCION_TRANSACCION}}</td>
                                                         </tr>
                                                         <tr>
-                                                                <th>Fecha de transacción:</th>
+                                                                <th>Fecha en que se realizo:</th>
                                                                 <td>{{transaccion.FECHA_TRANSACCION_FORMATO}}</td>
                                                         </tr>
                                                         <tr>
@@ -84,7 +67,7 @@
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
-                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
                                                         <div class="alert bold alert-danger text-center" >
                                                                 <strong>¡Opps! Parece que no tienes ninguna periodo contable registrada.</strong>
                                                         </div>
@@ -98,5 +81,5 @@
                         </div>
                 </div>
         </div>
-</div>
+</div><!-- /.container-fluid -->
 {{> footer }}

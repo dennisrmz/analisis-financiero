@@ -98,7 +98,19 @@ router.get('/asiento_ajuste', async (req, res, next) => {
         "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
         res.render('contabilidad_general/listar_asiento_ajuste', {periodo});
 });
-//Mostrar ajuste de transaccion
+//Mostrar sin ajuste de transaccion
+router.get('/asiento_ajuste/ver_sin_ajuste/:ID_TRANSACCION', async (req, res) => {
+        const {ID_TRANSACCION} = req.params;
+        const ID_TRANSACCION_AJUSTE = 0;
+        const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
+        "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion "+
+        "ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
+        "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
+        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
+        res.render('contabilidad_general/mostrar_sin_ajuste', {transaccion: transacciones[0], movimientos});
+});
+//Mostrar con ajuste de transaccion
 router.get('/asiento_ajuste/ver_ajuste/:ID_TRANSACCION', async (req, res) => {
         const {ID_TRANSACCION} = req.params;
         const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
