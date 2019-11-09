@@ -218,29 +218,9 @@
         var fechas = "";
         var detalles = "";
         var abonar = "";
-        //Para obtener datos
-        var codigoCuenta = $("#cuenta").val();
-        var codigoSubCuenta = $("#sub_cuenta").val();
-        var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
-        var cbCuenta = document.getElementById("cuenta");
-        var cbSubCuenta = document.getElementById("sub_cuenta");
-        var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
-        var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
-        var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
-        var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
-        var monto_mov = parseFloat($("#monto_movimiento").val());
-        var correcto = false;
-        //Para guardar los movimientos y transaccion de ajuste
-        var total = $("#table11 tbody tr").find("td:first-child").text();
-        var codigoTipo = $("#id_tipo_ajuste").val();
-        var cbTipo = document.getElementById("id_tipo_ajuste");
-        var tipo = cbTipo.options[cbTipo.selectedIndex].text;
-        var monto = parseFloat($("#id_monto_ajuste").val());
         var descripcion = $("#id_descripcion_ajuste").val();
-        var fecha = $("#datepicker").val();
-        var ajuste = "SI";
-        var detalle_mov =$("#detalle_movimiento").val();
 
+        //Funcion para el scroll down
         $(function() {
             $('.scroll-down').click (function() {
                 $('html, body').animate({scrollTop: $('section.ok').offset().top }, 'slow');
@@ -268,18 +248,30 @@
         function obtenerDatos(){
             console.log("agregarFila");
             count = count + 1;
+            var codigoCuenta = $("#cuenta").val();
+            var codigoSubCuenta = $("#sub_cuenta").val();
+            var codigoSubSubCuenta = $("#sub_sub_cuenta").val();
+            var cbCuenta = document.getElementById("cuenta");
+            var cbSubCuenta = document.getElementById("sub_cuenta");
+            var cbSubSubCuenta = document.getElementById("sub_sub_cuenta");
+            var cuenta = cbCuenta.options[cbCuenta.selectedIndex].text;
+            var subCuenta = cbSubCuenta.options[cbSubCuenta.selectedIndex].text;
+            var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
+            var monto_mov = parseFloat($("#monto_movimiento").val());
+            var detalle_mov =$("#detalle_movimiento").val();
+            var correcto = false;
             $(".dataTables_empty").remove();
             
             if(!isNaN(monto_mov) && abonar=="false"){//si es un numero NAN devuelve true --> !(devuelve false)=true
-                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
+                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
                     agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                     correcto = true;
                 }else{
-                    if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
+                    if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0' && detalle_mov != ''){
                         agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
                         correcto = true;
                     }else{
-                        if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
+                        if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------' && detalle_mov != ''){
                             agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
                             correcto = true;
                         }
@@ -287,15 +279,15 @@
                 }
             }else{
                 if(!isNaN(monto_mov) && abonar=="true"){
-                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0'){
+                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
                         agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
                         correcto = true;
                     }else{
-                        if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0'){
+                        if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0' && detalle_mov != ''){
                             agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
                             correcto = true;
                         }else{
-                            if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------'){
+                            if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------' && detalle_mov != ''){
                                 agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
                                 correcto = true;
                             }
@@ -304,7 +296,7 @@
                 }
             }
             if(correcto==true){
-                $("#monto_mov").val("");
+                $("#monto_movimiento").val("");
                 $("#detalle_movimiento").val("");
                 $("#cuenta").val('3');
                 $("#sub_cuenta").empty();
@@ -322,6 +314,8 @@
         }
         //Funcion para agregar una nueva fila al registrar un nuevo movimiento
         function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
+            var fecha = $("#datepicker").val();
+            var detalle_mov =$("#detalle_movimiento").val();
             if(abonar=="false"){
                 fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
@@ -364,6 +358,15 @@
         
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
+            var total = $("#table11 tbody tr").find("td:first-child").text();
+            var codigoTipo = $("#id_tipo_ajuste").val();
+            var cbTipo = document.getElementById("id_tipo_ajuste");
+            var tipo = cbTipo.options[cbTipo.selectedIndex].text;
+            var monto = parseFloat($("#id_monto_ajuste").val());
+            var descripcion = $("#id_descripcion_ajuste").val();
+            var fecha = $("#datepicker").val();
+            var ajuste = "SI";
+            var detalle_mov =$("#detalle_movimiento").val();
             if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                 if(totalAbonos==totalCargos){
                     if(totalAbonos==monto){
@@ -497,4 +500,3 @@
             });
         });
     </script>
-    <!--$("#monto_movimiento")-->

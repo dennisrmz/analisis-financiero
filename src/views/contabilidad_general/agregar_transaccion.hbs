@@ -156,15 +156,7 @@
         var abonar = "";
         var detalle_mov ="";
         //Para Guardar los movimientos y la transaccion
-        var codigoTipo = $("#id_tipo_transaccion").val();
-        var cbTipo = document.getElementById("id_tipo_transaccion");
-        var tipo = cbTipo.options[cbTipo.selectedIndex].text;
-        var monto = parseFloat($("#id_monto_transaccion").val());
         var descripcion = $("#id_descripcion_transaccion").val();
-        var fecha = $("#datepicker").val();
-        var ajuste = "NO";
-        var codigo_ajuste = 0;
-        var periodo = $("#periodo_conta").val();
 
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
@@ -253,6 +245,7 @@
         //Funcion para agregar una nueva fila al registrar un nuevo movimiento
         function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
             detalle_mov =$("#detalle_movimiento").val();
+            var fecha = $("#datepicker").val();
             if(abonar=="false"){
                 fechas+=fecha+",";
                 codigo_cuentas+=codigoCuenta+",";
@@ -297,8 +290,15 @@
         
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
-            console.log("PERIODO");
-            console.log(periodo);
+            var codigoTipo = $("#id_tipo_transaccion").val();
+            var cbTipo = document.getElementById("id_tipo_transaccion");
+            var tipo = cbTipo.options[cbTipo.selectedIndex].text;
+            var monto = parseFloat($("#id_monto_transaccion").val());
+            var descripcion = $("#id_descripcion_transaccion").val();
+            var fecha = $("#datepicker").val();
+            var ajuste = "NO";
+            var codigo_ajuste = 0;
+            var periodo = $("#periodo_conta").val();
             if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                 if(totalAbonos==totalCargos){
                     if(totalAbonos==monto){
