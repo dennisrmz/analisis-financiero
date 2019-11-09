@@ -11,7 +11,7 @@
                 </ol>
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/transaccion/agregar_transaccion">
+                        <a href="#" onClick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')">
                         <strong>¡Click Aquí para agregar una nueva transaccion!</strong>
                         </a>
                 </div>
@@ -73,6 +73,20 @@
                         $(".dataTables_empty").remove();
                 }
         });
+
+        //funcion para validar que antes que desee realizar un ajuste debe cerrar periodo
+        function enviar(string){
+                if(string == ''){
+                        window.location.href='/contabilidad_general/transaccion/agregar_transaccion';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción'
+                        });
+                }
+        }
 
         /*$("#realizar_transaccion").click(function() {
                 swal.fire({

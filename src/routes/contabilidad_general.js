@@ -31,9 +31,11 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
+        const periodo1 = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY "+
+        "ID_PERIODOCONTABLE DESC LIMIT 1");
         const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, "+
         "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
-        res.render('contabilidad_general/listar_transacciones', {periodocontable});
+        res.render('contabilidad_general/listar_transacciones', {periodocontable , periodo: periodo1[0]});
 });
 router.get('/listar_transaccion_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
         const { ID_PERIODOCONTABLE }=req.params;
