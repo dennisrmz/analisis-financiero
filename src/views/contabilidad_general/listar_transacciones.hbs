@@ -1,3 +1,4 @@
+{{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
                 <ol class="breadcrumb">
@@ -20,6 +21,17 @@
                                 Transacciones
                         </div>
                         <div class="card-body">
+                                <a>Seleccione el periodo para ver tranasacciones:</a>
+                                <select id="periodo" class="form-control" name="select">
+                                        <option value="0" selected>---------------</option>
+                                        {{#each periodocontable}}
+                                        <option value="{{ID_PERIODOCONTABLE}}">{{FECHA_PERIODO}} A {{FECHA_PERIODO_FINAL}}</option> 
+                                        {{else}}
+                                        <option value="0" selected>---------------</option>
+                                        {{/each}}
+                                </select>
+                        </div>
+                        <div class="card-body">
                                 <div id="prueba" class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
@@ -32,34 +44,37 @@
                                                                 <th>Operaciones</th>
                                                         </tr>
                                                 </thead>
-                                                {{#each transaccion}}
-                                                <tbody>
-                                                        <tr id="ID_CUENTA">
-                                                                <td class="text-center">{{ID_TRANSACCION}}</td>
-                                                                <td>{{NOMBRE_TIPO_TRANSACCION}}</td>
-                                                                <td>{{DESCRIPCION_TRANSACCION}}</td>
-                                                                <td>{{FECHA_TRANSACCION_FORMATO}}</td>
-                                                                <td>${{MONTO_TRANSACCION}}</td>
-                                                                <td id="operaciones" class="text">
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/transaccion/ver_transaccion/{{ID_TRANSACCION}}" onclick="" style="color:gray !important">Ver</a>
-                                                                </td>                          
-                                                        </tr>
-                                                </tbody>
-                                                {{else}}
-                                                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0"></table>
-                                                        <div class="alert bold alert-danger text-center" >
-                                                                <strong>¡Opps! Parece que no tienes ninguna transacción registrada.</strong>
-                                                        </div>
-                                                </table>
-                                                {{/each}}
                                         </table>
                                 </div>
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+{{> footer }}
 <script type="text/javascript">
-        $("#realizar_transaccion").click(function() {
+        $('#periodo').change(function(){            
+                var seleccionada = $('#periodo').val();
+                var url_nueva = "/contabilidad_general/listar_transaccion_select/"+seleccionada;
+                console.log("AJAX: "+seleccionada);
+                if(seleccionada != ''){
+                        $.ajax({
+                                type: 'get',
+                                url: url_nueva,
+                                success: function(data){
+                                        console.log("SUCCESS");
+                                        $("#dataTable").remove();
+                                        $('#prueba').html(data);
+                                },
+                        }).done(function(data){
+                                
+                        });
+                    }
+                else{
+                        $(".dataTables_empty").remove();
+                }
+        });
+
+        /*$("#realizar_transaccion").click(function() {
                 swal.fire({
                         title: '¿Esta seguro de realizar ajuste a esta transacción?',
                         text: 'NOTA: Se generará un balance de comprobacion inicial. Puede verificarlo en la parte de Estados Financieros',
@@ -72,5 +87,5 @@
                                 location.href="/contabilidad_general/transaccion";
                         }
                 });
-        });
+        });*/
 </script>

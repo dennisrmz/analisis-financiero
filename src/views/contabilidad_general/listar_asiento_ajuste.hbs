@@ -1,3 +1,4 @@
+{{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
                 <ol class="breadcrumb">
@@ -46,7 +47,7 @@
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
-                                                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0"></table>
+                                                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
                                                         <div class="alert bold alert-danger text-center" >
                                                                 <strong>¡Opps! Parece que no tienes ninguna transacción registrada.</strong>
                                                         </div>
@@ -58,3 +59,4 @@
                 </div>
         </div>
 </div>
+{{> footer }}

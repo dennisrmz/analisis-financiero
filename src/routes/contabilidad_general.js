@@ -29,10 +29,16 @@ router.post('/periodo_contable/agregar_periodo', async (req, res) => {
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
-        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
+        const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
+        /*const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
         "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM "+
-        "transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");
-        res.render('contabilidad_general/listar_transacciones', {transaccion});
+        "transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION");*/
+        res.render('contabilidad_general/listar_transacciones', {periodocontable});
+});
+router.get('/listar_transaccion_select/:ID_PERIODOCONTABLE', async (req, res, next) => {
+        const { ID_PERIODOCONTABLE }=req.params;
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE = ?",[ID_PERIODOCONTABLE]);
+        res.render('contabilidad_general/listar_transaccion_select', {transaccion});
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
