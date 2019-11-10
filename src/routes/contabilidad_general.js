@@ -313,6 +313,14 @@ router.get('/listar_asiento_ajuste_select/:ID_PERIODOCONTABLE', async (req, res,
         "periodocontable.ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
         res.render('contabilidad_general/listar_asiento_ajuste_select', {transaccion, periodos:periodo[0]});
 });
+router.get('/check_impuesto', (req, res) => {
+        res.render('contabilidad_general/check_impuesto');
+});
+router.get('/monto_impuesto/:monto_tran', async (req, res) => {
+        const { monto_tran } = req.params;
+        var monto = 0.13*[monto_tran];
+        res.render('contabilidad_general/monto_impuesto', {monto});
+});
 //-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
 router.get('/ajax', function(req, res){
         res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: "AJAX is great!"});
