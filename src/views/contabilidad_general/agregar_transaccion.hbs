@@ -158,12 +158,11 @@
         var detalles = "";
         var abonar = "";
         var detalle_mov ="";
-        //Para Guardar los movimientos y la transaccion
         var descripcion = $("#id_descripcion_transaccion").val();
 
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
-            var valor = $('input[name=Tipo]:checked', '#impuesto_1').val();
+            var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
             if(valor == "false"){
                 if( descripcion === '' && $("#id_monto_transaccion").val() === ''){
                     Swal.fire({
@@ -253,6 +252,8 @@
                 $("#sub_cuenta").append('<option value="0">---------------</option>');
                 $("#sub_sub_cuenta").empty();
                 $("#sub_sub_cuenta").append('<option value="0">---------------</option>');
+                document.getElementById("cb_cargar").checked = false;
+                document.getElementById("cb_abonar").checked = false;
             }else{
                 console.log("Correcto: "+correcto);
                 Swal.fire({
@@ -458,24 +459,46 @@
             abonar = $('input[name=Tipo]:checked', '#myForm').val();
         });
 
-        function agregar_campo() {
-            console.log("holaaaaaaa");
-            var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
-            console.log(valor);
-            var monto_tran = parseFloat($("#id_monto_transaccion").val());
-            var url_nueva = "/contabilidad_general/monto_impuesto/"+monto_tran;
-            if(valor == "false"){
-                $.ajax({
-                    type: 'get',
-                    url: url_nueva,
-                    success: function(data){
-                        $('#iva_calculado').html(data);
-                        console.log("SUCCESS");
-                    },
-                });
+        //Validar check de aplicar impuesto
+        function check() {
+            var monto = parseFloat($("#id_monto_transaccion").val());
+            if( monto != ''){
+                document.getElementById("myCheck").checked = true;
             }
             else{
+                Swal.fire({
+                        type: 'error',
+                        title: 'Datos incompletos.',
+                        text: 'Debe llenar el campo del monto de transacción para poder aplicar iva'
+                    });
+            }
+        }
+
+        //Funcion para agregar el campo del monto de iva calculado
+        function agregar_campo() {
+            var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
+            var monto_tran = parseFloat($("#id_monto_transaccion").val());
+            var url_nueva = "/contabilidad_general/monto_impuesto/"+monto_tran;
+            console.log(valor);
+            console.log("monto"+monto_tran);
+            //Validar que para aplicar iva debe haber ingresado el monto de la transaccion
+            if(valor == "false" && !(isNaN(monto_tran))){
+                $.ajax({
+                        type: 'get',
+                        url: url_nueva,
+                        success: function(data){
+                            $('#iva_calculado').html(data);
+                            console.log("SUCCESS");
+                        },
+                    });
+            }else{
                 $('#iva_calculado_1').remove();
+                document.getElementById("cb_impuesto").checked = false;
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Debe llenar el campo del monto de transacción para poder aplicar iva'
+                });
             }
         }
 
