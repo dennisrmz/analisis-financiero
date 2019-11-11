@@ -71,6 +71,7 @@
                         $(".dataTables_empty").remove();
                 }
         });
+
         function mostrar(ajuste, transaccion){
                 console.log("Ajuste: "+ajuste);
                 console.log("Transaccion: "+transaccion);
@@ -83,16 +84,24 @@
                 }
         }
 
-        function validarRealizarAjuste(ajuste, transaccion){
-                if(ajuste === "SI"){
+        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo){
+                if(nombre_tipo == "COMPRA AL CONTADO" || nombre_tipo == "COMPRA AL CREDITO" || nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO"){
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
-                                text: 'Ya ha realizado ajuste a esta transacción'
-                        });   
-                }
-                else{
-                        window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion;
+                                text: 'A este tipo de transaccion no se le realiza ajuste'
+                        });
+                }else{
+                        if(ajuste === "SI"){
+                                Swal.fire({
+                                        type: 'warning',
+                                        title: 'Permiso denegado',
+                                        text: 'Ya ha realizado ajuste a esta transacción'
+                                });   
+                        }
+                        else{
+                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion;
+                        }
                 }
         }
 
