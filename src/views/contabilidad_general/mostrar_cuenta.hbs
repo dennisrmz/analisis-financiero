@@ -1,6 +1,5 @@
 {{> navigation }}
 <div class="container-fluid">
-        <!-- Breadcrumbs-->
         <ol class="breadcrumb">
                 <li class="breadcrumb-item">
                         <a href="/contabilidad_general/catalogo">
@@ -33,7 +32,7 @@
                                                         </tr>
                                                         <tr>
                                                                 <th>Saldo:</th>
-                                                                <td>$0.00</td>
+                                                                <td>${{cuenta.SALDO_CUENTA}}</td>
                                                         </tr>
                                                 </tbody>
                                         </table>
@@ -44,5 +43,5 @@
                         </div>
                 </div>
         </div>
-</div><!-- /.container-fluid -->
+</div>
 {{> footer }}
