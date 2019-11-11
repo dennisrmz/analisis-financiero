@@ -1,7 +1,6 @@
 {{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
-                <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/contabilidad_general">
@@ -10,7 +9,6 @@
                         </li>
                         <li class="breadcrumb-item active">Catalogo de Cuentas</li>
                 </ol>
-                <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
                         <a href="/contabilidad_general/catalogo/agregar_cuenta">
@@ -30,6 +28,7 @@
                                                                 <th aria-controls="example"># Id</th>
                                                                 <th aria-controls="example">Codigo Cuenta</th>
                                                                 <th aria-controls="example">Nombre Cuenta</th>
+                                                                <th aria-controls="example">Naturaleza</th>
                                                                 <th aria-controls="example">Operaciones</th>
                                                         </tr>
                                                 </thead>
@@ -39,9 +38,9 @@
                                                                 <td class="text-center">{{ ID_CUENTA }}</td>
                                                                 <td>{{ CODIGO_CUENTA }}</td>
                                                                 <td>{{ NOMBRE_CUENTA }}</td>
+                                                                <td>{{ TIPO_NATURALEZA_CUETA }}</td>
                                                                 <td class="text">
                                                                         <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/catalogo/ver_cuenta/{{ID_CUENTA}}" style="color:gray !important">Ver</a>
-                                                                        <a class="fas fa-w fa fa-edit" name="eliminar" href="#"  style="color:gray !important">Editar</a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
@@ -56,8 +55,8 @@
                                 </div>
                         </div>
                 </div>
-        </div><!-- /.container-fluid -->
-</div><!-- /.content-wrapper -->
+        </div>
+</div>
 {{> footer }}
 <script type="text/javascript">
         $(document).ready(function() {

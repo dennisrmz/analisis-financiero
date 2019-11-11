@@ -196,7 +196,9 @@ res.redirect('/contabilidad_general/asiento_ajuste');
 //Listar catalogo en un dataTable
 router.get('/catalogo', async (req, res, next) => {
         //const cuenta = await pool.query('SELECT * FROM cuenta INNER JOIN naturaleza ON cuenta.ID_NATURALEZA_CUENTA=naturaleza.ID_NATURALEZA_CUENTA');
-        const cuenta = await pool.query('SELECT * FROM cuenta');
+        const cuenta = await pool.query("SELECT cuenta.ID_CUENTA, cuenta.ID_NATURALEZA_CUENTA, cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, "+
+        "naturaleza.TIPO_NATURALEZA_CUETA FROM cuenta INNER JOIN naturaleza ON cuenta.ID_NATURALEZA_CUENTA=naturaleza.ID_NATURALEZA_CUENTA "+
+        "ORDER BY cuenta.ID_CUENTA");
         res.render('contabilidad_general/listar_catalogo', {cuenta});
 });
 //------------------------------------------------------------------------------------------------------------------------------------------------------
