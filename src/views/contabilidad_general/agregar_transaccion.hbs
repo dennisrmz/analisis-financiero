@@ -323,9 +323,13 @@
             var val_impuesto = $('#monto_iva').val();
             var totalAbonos_imp = totalAbonos + val_impuesto;
             var totalCargos_imp = totalCargos + val_impuesto;
+            var is_impuesto = "";
+            var monto_impuesto = "";
             console.log("impuesto"+val_impuesto);
             console.log(valor);
             if(valor == "false"){
+                is_impuesto = "SI";
+                monto_impuesto = $('#monto_iva').val();
                 if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                     if(totalCargos_imp==totalAbonos_imp){
                         $.ajax({
@@ -343,7 +347,9 @@
                                 'FECHA_TRANSACCION': fecha,
                                 'FECHAINICIO_PERIODO': periodo,
                                 'ES_AJUSTE': ajuste,
-                                'ID_TRANSACCION_AJUSTE': codigo_ajuste
+                                'ID_TRANSACCION_AJUSTE': codigo_ajuste,
+                                'ES_IMPUESTO': is_impuesto, 
+                                'MONTO_IMPUESTO': monto_impuesto
                             },
                             success: function(data){
                                 console.log(data);
@@ -372,6 +378,8 @@
                     });
                 }
             }else{
+                is_impuesto = "NO";
+                monto_impuesto = 0;
                 if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
@@ -390,7 +398,9 @@
                                     'FECHA_TRANSACCION': fecha,
                                     'FECHAINICIO_PERIODO': periodo,
                                     'ES_AJUSTE': ajuste,
-                                    'ID_TRANSACCION_AJUSTE': codigo_ajuste
+                                    'ID_TRANSACCION_AJUSTE': codigo_ajuste,
+                                    'ES_IMPUESTO': is_impuesto, 
+                                    'MONTO_IMPUESTO': monto_impuesto
                                 },
                                 success: function(data){
                                     console.log(data);

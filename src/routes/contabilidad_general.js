@@ -41,6 +41,18 @@ router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
         "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
         res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0], movimientos});
 });
+//Mostrar transaccion con impuesto
+router.get('/transaccion/ver_transaccion_impuesto/:ID_TRANSACCION/:ES_IMPUESTO', async (req, res) => {
+        const {ID_TRANSACCION, ES_IMPUESTO} = req.params;
+        const ID_TRANSACCION_AJUSTE = 0;
+        const transacciones = await pool.query("SELECT transaccion.MONTO_IMPUESTO, transaccion.ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
+        "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion "+
+        "INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = "+[ID_TRANSACCION]+" AND transaccion.ES_IMPUESTO = 'SI'", [ES_IMPUESTO]);
+        const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
+        "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
+        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
+        res.render('contabilidad_general/mostrar_transaccion_impuesto', {transaccion: transacciones[0], movimientos});
+});
 //---------------------------------------------------------------------------------------------------------------------------------------------
 //agregar transacciones GET y POST
 router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
@@ -52,26 +64,28 @@ router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
-                const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE} = req.body;
-                var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
-                var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
-                var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
-                var cantidad = ID_CUENTA_NUM.length;
-                const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
+        const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE, ES_IMPUESTO, MONTO_IMPUESTO,  } = req.body;
+        var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
+        var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
+        var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
+        var cantidad = ID_CUENTA_NUM.length;
+        const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
                 
-                //Insertar transaccion realizada
-                const new_transaccion = {
-                        CODIGO_TIPO_TRANSACCION, 
-                        MONTO_TRANSACCION, 
-                        DESCRIPCION_TRANSACCION, 
-                        FECHA_TRANSACCION,
-                        ID_PERIODOCONTABLE: ID_PERIODOCONTABLE_k[0].ID_PERIODOCONTABLE,
-                        ES_AJUSTE,
-                        ID_TRANSACCION_AJUSTE
-                };
-                console.log({new_transaccion});
-                await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
-                console.log('Fila insertada correctamente de transaccion');
+        //Insertar transaccion realizada
+        const new_transaccion = {
+                CODIGO_TIPO_TRANSACCION, 
+                MONTO_TRANSACCION, 
+                DESCRIPCION_TRANSACCION, 
+                FECHA_TRANSACCION,
+                ID_PERIODOCONTABLE: ID_PERIODOCONTABLE_k[0].ID_PERIODOCONTABLE,
+                ES_AJUSTE,
+                ID_TRANSACCION_AJUSTE,
+                ES_IMPUESTO, 
+                MONTO_IMPUESTO
+        };
+        console.log({new_transaccion});
+        await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
+        console.log('Fila insertada correctamente de transaccion');
 
         //Insertar los movimientos realizados en una transaccion
         const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
@@ -296,7 +310,7 @@ router.get('/listar_transaccion_select/:ID_PERIODOCONTABLE', async (req, res, ne
         const { ID_PERIODOCONTABLE }=req.params;
         const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
         "AS FECHA_PERIODO_FINAL FROM periodocontable WHERE ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
-        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
+        const transaccion = await pool.query("SELECT transaccion.ES_IMPUESTO, transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
         "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION "+
         "FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
         "periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE = ?",[ID_PERIODOCONTABLE]);

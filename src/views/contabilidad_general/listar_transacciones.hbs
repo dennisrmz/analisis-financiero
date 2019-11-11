@@ -40,6 +40,7 @@
                                                         </tr>
                                                         <tr>
                                                                 <th># Id </th>
+                                                                <th>Con impuesto </th>
                                                                 <th>Tipo de transacción</th>
                                                                 <th>Descripción</th>
                                                                 <th>Fecha</th>
@@ -88,6 +89,18 @@
                                 title: 'Permiso denegado',
                                 text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción'
                         });
+                }
+        }
+
+        function mostrar(impuesto, transaccion){
+                console.log("IMPUESTO: "+impuesto);
+                console.log("Transaccion: "+transaccion);
+                var nueva_transaccion = impuesto;
+                if(impuesto != "SI"){
+                        window.location.href="/contabilidad_general/transaccion/ver_transaccion/"+transaccion;
+                }
+                else{
+                        window.location.href='/contabilidad_general/transaccion/ver_transaccion_impuesto/'+transaccion+"/"+impuesto;
                 }
         }
 
