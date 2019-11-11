@@ -26,6 +26,7 @@
                                 <div class="form-group">
                                     <a>Seleccione el tipo de transacción:</a>
                                     <select id="id_tipo_transaccion" class="form-control" name="select" autofocus>
+                                        <option value="0" selected>Seleccione</option>
                                         {{#each tipo_transaccion}}
                                         <option value="{{CODIGO_TIPO_TRANSACCION}}">{{NOMBRE_TIPO_TRANSACCION}}</option> 
                                         {{else}}
@@ -64,6 +65,7 @@
                                 <div class="form-group">
                                     <a>Seleccione cuenta mayor a afectar:</a>
                                     <select id="cuenta" class="form-control" name="cuenta_padre">
+                                        <option value="0" selected>Seleccione</option>
                                         {{#each cuenta_padre}}
                                         <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
                                         {{else}}
