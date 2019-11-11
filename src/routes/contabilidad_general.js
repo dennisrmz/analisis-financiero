@@ -149,9 +149,22 @@ router.get('/asiento_ajuste/ver_ajuste/:ID_TRANSACCION', async (req, res) => {
         res.render('contabilidad_general/mostrar_ajuste', {transaccion: transacciones[0], movimientos, transacciones_ajuste: transacciones_ajustes[0]});
 });
 //agregar ajuste a transacciones GET y POST
-router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res) => {
-        const {ID_TRANSACCION} = req.params;
-        const tipoajuste = await pool.query("SELECT * FROM tipoajuste");
+router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACCION/:MONTO_TRANSACCION', async (req, res) => {
+        const {ID_TRANSACCION, NOMBRE_TIPO_TRANSACCION, MONTO_TRANSACCION} = req.params;
+        var NOMBRE_TIPO_TRANSACCION_SE = NOMBRE_TIPO_TRANSACCION.replace(/_/g," ");
+        var tipoajuste = "";
+        var monto = 0;
+        if(NOMBRE_TIPO_TRANSACCION_SE == "PAGO DE ALQUILER" || NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE SEGURO"){
+                tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 1");
+        }else{
+                if(NOMBRE_TIPO_TRANSACCION_SE == "PRESTAMO BANCARIO" || NOMBRE_TIPO_TRANSACCION_SE == "PAGO DE PLANILLA"){
+                        tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 2");
+                }else{
+                        if(NOMBRE_TIPO_TRANSACCION_SE == "PRESTAMO A UN EMPLEADO"){
+                                tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 3");
+                        }
+                }
+        }
         const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
         const transaccion = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
         "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion "+
@@ -163,8 +176,8 @@ router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res) =>
         "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         res.render('contabilidad_general/agregar_ajuste', {tipoajuste, cuenta_padre, transaccions:transaccion[0], movimientos, count});
 });
-router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, next) => {
-        const { ID_TRANSACCION } = req.params;
+router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACCION/:MONTO_TRANSACCION', async (req, res, next) => {
+        const { ID_TRANSACCION, NOMBRE_TIPO_TRANSACCION, MONTO_TRANSACCION } = req.params;
         const { ES_AJUSTE, ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_AJUSTE, MONTO_TRANSACCION_AJUSTE, DESCRIPCION_TRANSACCION_AJUSTE, FECHA_TRANSACCION_AJUSTE} = req.body;
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);

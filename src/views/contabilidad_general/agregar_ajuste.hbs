@@ -92,8 +92,7 @@
                                     </div>
                                     <div class="form-group">
                                         <a>Seleccione el tipo de ajuste:</a>
-                                        <select id="id_tipo_ajuste" class="form-control" name="select">
-                                            <option value="0" selected>Seleccione</option>
+                                        <select id="id_tipo_ajuste" class="form-control" name="select" disabled>
                                             {{#each tipoajuste}}
                                             <option value="{{CODIGO_TIPO_AJUSTE}}">{{NOMBRE_TIPO_AJUSTE}}</option> 
                                             {{else}}
@@ -234,7 +233,7 @@
             var descripcion = $("#id_descripcion_ajuste").val();
             var cbTipo = document.getElementById("id_tipo_ajuste");
             var monto = parseFloat($("#id_monto_ajuste").val());
-            if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
+            if(descripcion != '' && !isNaN(monto)){
                 document.getElementById("id_tipo_ajuste").disabled = true;
                 document.getElementById("datepicker").disabled = true;
                 document.getElementById("id_monto_ajuste").disabled = true;

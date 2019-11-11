@@ -84,8 +84,9 @@
                 }
         }
 
-        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo){
-                if(nombre_tipo == "COMPRA AL CONTADO" || nombre_tipo == "COMPRA AL CREDITO" || nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO" || nombre_tipo == "PAGO DE PLANILLA"){
+        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo, monto_transaccion){
+                var nombre_tipo_sin_espacio = nombre_tipo.replace(/ /g,"_");
+                if(nombre_tipo == "COMPRA AL CONTADO" || nombre_tipo == "COMPRA AL CREDITO" || nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO"){
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
@@ -100,7 +101,7 @@
                                 });   
                         }
                         else{
-                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion;
+                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion+"/"+nombre_tipo_sin_espacio+"/"+monto_transaccion;
                         }
                 }
         }
