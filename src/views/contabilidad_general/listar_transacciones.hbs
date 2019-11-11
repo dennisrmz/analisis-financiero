@@ -93,7 +93,7 @@
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
-                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción'
+                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción.'
                         });
                 }
         }
@@ -114,7 +114,7 @@
                 if(FECHA_PERIODO_FINAL == ''){
                         swal.fire({
                                 title: '¿Esta seguro de cerrar periodo?',
-                                text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo',
+                                text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo.',
                                 type: 'question',
                                 showCancelButton: true,
                                 confirmButtonText: 'Aceptar',
@@ -153,22 +153,8 @@
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
-                                text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo'
+                                text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo.'
                         });
                 }
         }
-        /*$("#realizar_transaccion").click(function() {
-                swal.fire({
-                        title: '¿Esta seguro de realizar ajuste a esta transacción?',
-                        text: 'NOTA: Se generará un balance de comprobacion inicial. Puede verificarlo en la parte de Estados Financieros',
-                        type: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Aceptar',
-                        cancelButtonText: 'Cancelar',
-                }).then((result) => {
-                        if (result.value) {
-                                location.href="/contabilidad_general/transaccion";
-                        }
-                });
-        });*/
 </script>

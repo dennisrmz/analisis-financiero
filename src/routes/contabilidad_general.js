@@ -76,6 +76,7 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
+        var DETALLE_MOV = DETALLE_MOVIMIENTO.split(',');
         var cantidad = ID_CUENTA_NUM.length;
         const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
                 
@@ -101,7 +102,7 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                 var new_movimiento = {
                         ID_CUENTA:ID_CUENTA_NUM[k],
                         FECHA_MOVIMIENTO,
-                        DETALLE_MOVIMIENTO,  
+                        DETALLE_MOVIMIENTO:DETALLE_MOV[k],
                         MONTO_CARGO:MONTO_CARGO_NUM[k], 
                         MONTO_ABONO:MONTO_ABONO_NUM[k],
                         ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION,
@@ -168,6 +169,7 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
+        var DETALLE_MOV = DETALLE_MOVIMIENTO.split(',');
         var cantidad = ID_CUENTA_NUM.length;
         
         //Insertar transaccion realizada
@@ -184,16 +186,18 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
 //Insertar los movimientos realizados en una transaccion
 const id_transaccion_ajuste = await pool.query('SELECT ID_TRANSACCION_AJUSTE FROM transaccionajuste ORDER BY ID_TRANSACCION_AJUSTE DESC LIMIT 1');
 await pool.query("UPDATE transaccion SET ID_TRANSACCION_AJUSTE = ?, ES_AJUSTE = ? WHERE ID_TRANSACCION = ? ", [id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE, ES_AJUSTE, ID_TRANSACCION]);
+const ID_TRANSACCION_AJUSTE = id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE;
 for(var k = 0; k<cantidad-1; k++){
         var new_movimiento = {
                 ID_CUENTA:ID_CUENTA_NUM[k],
                 FECHA_MOVIMIENTO,
-                DETALLE_MOVIMIENTO,  
+                DETALLE_MOVIMIENTO:DETALLE_MOV[k], 
                 MONTO_CARGO:MONTO_CARGO_NUM[k], 
                 MONTO_ABONO:MONTO_ABONO_NUM[k],
                 ID_TRANSACCION,
-                ID_TRANSACCION_AJUSTE: id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE
+                ID_TRANSACCION_AJUSTE
         };
+        console.log(new_movimiento);
         await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
         console.log('Fila insertada correctamente de movimiento:'+k);
 }

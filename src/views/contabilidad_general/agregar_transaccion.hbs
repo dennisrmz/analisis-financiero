@@ -24,6 +24,11 @@
                                     <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
                                 </div>
                                 <div class="form-group">
+                                    <a>Fecha en que se realiza:</a>
+                                    <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
+                                    {{> fecha }}
+                                </div>
+                                <div class="form-group">
                                     <a>Seleccione el tipo de transacción:</a>
                                     <select id="id_tipo_transaccion" class="form-control" name="select" autofocus>
                                         <option value="0" selected>Seleccione</option>
@@ -35,17 +40,12 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <a>Fecha en que se realiza:</a>
-                                    <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
-                                    {{> fecha }}
+                                    <a>Ingrese descripción de transacción:</a>
+                                    <textarea rows="2" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese el monto:</a>
                                     <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
-                                </div>
-                                <div class="form-group">
-                                    <a>Ingrese descripción de transacción:</a>
-                                    <textarea rows="2" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                 </div>
                                 <div id="impuesto" class="form-group">
                                 </div>
@@ -65,7 +65,7 @@
                                 <div class="form-group">
                                     <a>Seleccione cuenta mayor a afectar:</a>
                                     <select id="cuenta" class="form-control" name="cuenta_padre">
-                                        <option value="0" selected>Seleccione</option>
+                                        <option value="" selected>Seleccione</option>
                                         {{#each cuenta_padre}}
                                         <option value="{{ID_CUENTA}}">{{NOMBRE_CUENTA}}</option> 
                                         {{else}}
@@ -85,13 +85,13 @@
                                         <option value="0">-----------------</option>
                                    </select>
                                 </div>
-                                <div id="monto" class="form-group">
-                                    <a>Ingrese el monto de la cuenta:</a>
-                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
-                                </div>
                                 <div id="descripción" class="form-group">
                                     <a>Ingrese detalle del movimiento:</a>
                                     <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle"></textarea>
+                                </div>
+                                <div id="monto" class="form-group">
+                                    <a>Ingrese el monto de la cuenta:</a>
+                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
                                 </div>
                                 <div id="myForm" class="form-group">
                                     <input type="radio" name="Tipo" id="cb_cargar" value="false">Cargar
@@ -159,38 +159,40 @@
         var fechas = "";
         var detalles = "";
         var abonar = "";
-        var detalle_mov ="";
         var descripcion = $("#id_descripcion_transaccion").val();
 
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
             var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
+            var descripcion = $("#id_descripcion_transaccion").val();
+            var cbTipo = document.getElementById("id_tipo_transaccion");
+            var monto = parseFloat($("#id_monto_transaccion").val());
             if(valor == "false"){
-                if( descripcion === '' && $("#id_monto_transaccion").val() === ''){
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Verifique que los campos de la transaccion que estén completos.'
-                    });
-                }else{
+                if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     document.getElementById("id_tipo_transaccion").disabled = true;
                     document.getElementById("datepicker").disabled = true;
                     document.getElementById("id_monto_transaccion").disabled = true;
                     document.getElementById("id_descripcion_transaccion").disabled = true;
                     document.getElementById("cb_impuesto").disabled = true;
-                }
-            }else{
-                if( descripcion === '' && $("#id_monto_transaccion").val() === ''){
+                }else{
                     Swal.fire({
                         type: 'error',
                         title: 'Datos incompletos.',
                         text: 'Verifique que los campos de la transaccion que estén completos.'
                     });
-                }else{
+                }
+            }else{
+                if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     document.getElementById("id_tipo_transaccion").disabled = true;
                     document.getElementById("datepicker").disabled = true;
                     document.getElementById("id_monto_transaccion").disabled = true;
                     document.getElementById("id_descripcion_transaccion").disabled = true;
+                }else{
+                    Swal.fire({
+                        type: 'error',
+                        title: 'Datos incompletos.',
+                        text: 'Verifique que los campos de la transaccion que estén completos.'
+                    });
                 }
             }
         }
@@ -210,36 +212,36 @@
             var subSubCuenta = cbSubSubCuenta.options[cbSubSubCuenta.selectedIndex].text; 
             var monto_mov = parseFloat($("#monto_movimiento").val());
             var correcto = false;
-            detalle_mov =$("#detalle_movimiento").val();
+            var detalle_mov =$("#detalle_movimiento").val();
             $(".dataTables_empty").remove();
             
             if(!isNaN(monto_mov) && abonar=="false"){//si es un numero NAN devuelve true --> !(devuelve false)=true
-                if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
-                    agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                if(cbCuenta.value !='' && cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
+                    agregarFila(codigoCuenta, cuenta, monto_mov, abonar, detalle_mov);
                     correcto = true;
                 }else{
                     if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0' && detalle_mov != ''){
-                        agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
+                        agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar, detalle_mov);
                         correcto = true;
                     }else{
                         if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------' && detalle_mov != ''){
-                            agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
+                            agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar, detalle_mov);
                             correcto = true;
                         }
                     }
                 }
             }else{
                 if(!isNaN(monto_mov) && abonar=="true"){
-                    if(cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
-                        agregarFila(codigoCuenta, cuenta, monto_mov, abonar);
+                    if(cbCuenta.value !='' && cbCuenta.value !='0' && cuenta !='-----------------' && cbSubCuenta.value == '0' && detalle_mov != ''){
+                        agregarFila(codigoCuenta, cuenta, monto_mov, abonar, detalle_mov);
                         correcto = true;
                     }else{
                         if(cbSubCuenta.value!='0' && subCuenta !='-----------------' && cbSubSubCuenta.value == '0' && detalle_mov != ''){
-                            agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar);
+                            agregarFila(codigoSubCuenta, subCuenta, monto_mov, abonar, detalle_mov);
                             correcto = true;
                         }else{
                             if(cbSubSubCuenta!='0' && subSubCuenta != '-----------------' && detalle_mov != ''){
-                                agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar);
+                                agregarFila(codigoSubSubCuenta, subSubCuenta, monto_mov, abonar, detalle_mov);
                                 correcto = true;
                             }
                         }
@@ -247,9 +249,10 @@
                 }
             }
             if(correcto==true){
+                //Limpiar los campos cada vez que registre un movimiento
                 $("#monto_movimiento").val("");
                 $("#detalle_movimiento").val("");
-                $("#cuenta").val('3');
+                $("#cuenta").val('');
                 $("#sub_cuenta").empty();
                 $("#sub_cuenta").append('<option value="0">---------------</option>');
                 $("#sub_sub_cuenta").empty();
@@ -267,8 +270,8 @@
         }
         
         //Funcion para agregar una nueva fila al registrar un nuevo movimiento
-        function agregarFila(codigoCuenta, cuenta, monto_mov, abonar){
-            detalle_mov =$("#detalle_movimiento").val();
+        function agregarFila(codigoCuenta, cuenta, monto_mov, abonar, detalle_mov){
+            //detalle_mov =$("#detalle_movimiento").val();
             fecha = $("#datepicker").val();
             if(abonar=="false"){
                 fechas+=fecha+",";
@@ -340,7 +343,7 @@
                             data: {
                                 'ID_CUENTA': codigo_cuentas,
                                 'FECHA_MOVIMIENTO': fecha,
-                                'DETALLE_MOVIMIENTO': detalle_mov,
+                                'DETALLE_MOVIMIENTO': detalles,
                                 'MONTO_CARGO': cargos,
                                 'MONTO_ABONO': abonos,
                                 'CODIGO_TIPO_TRANSACCION': codigoTipo,
@@ -391,7 +394,7 @@
                                 data: {
                                     'ID_CUENTA': codigo_cuentas,
                                     'FECHA_MOVIMIENTO': fecha,
-                                    'DETALLE_MOVIMIENTO': detalle_mov,
+                                    'DETALLE_MOVIMIENTO': detalles,
                                     'MONTO_CARGO': cargos,
                                     'MONTO_ABONO': abonos,
                                     'CODIGO_TIPO_TRANSACCION': codigoTipo,

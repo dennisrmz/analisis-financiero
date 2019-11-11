@@ -85,18 +85,18 @@
         }
 
         function validarRealizarAjuste(ajuste, transaccion, nombre_tipo){
-                if(nombre_tipo == "COMPRA AL CONTADO" || nombre_tipo == "COMPRA AL CREDITO" || nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO"){
+                if(nombre_tipo == "COMPRA AL CONTADO" || nombre_tipo == "COMPRA AL CREDITO" || nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO" || nombre_tipo == "PAGO DE PLANILLA"){
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
-                                text: 'A este tipo de transaccion no se le realiza ajuste'
+                                text: 'A este tipo de transacción no se le realiza ajuste.'
                         });
                 }else{
                         if(ajuste === "SI"){
                                 Swal.fire({
                                         type: 'warning',
                                         title: 'Permiso denegado',
-                                        text: 'Ya ha realizado ajuste a esta transacción'
+                                        text: 'Ya ha realizado ajuste a esta transacción.'
                                 });   
                         }
                         else{
