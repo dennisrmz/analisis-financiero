@@ -23,11 +23,19 @@ router.get('/periodo_contable', async (req, res, next) => {
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
-        const periodo1 = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY "+
+        const periodo1 = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAFINAL_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO_FINAL FROM periodocontable ORDER BY "+
         "ID_PERIODOCONTABLE DESC LIMIT 1");
         const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, "+
         "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
         res.render('contabilidad_general/listar_transacciones', {periodocontable , periodo: periodo1[0]});
+});
+router.post('/transaccion', async (req, res, next) => {
+        const { FECHAFINAL_PERIODO, ID_PERIODOCONTABLE} = req.body;
+        console.log(ID_PERIODOCONTABLE);
+        console.log(FECHAFINAL_PERIODO);
+        await pool.query('UPDATE periodocontable SET FECHAFINAL_PERIODO = ? WHERE ID_PERIODOCONTABLE = ?', [ FECHAFINAL_PERIODO, ID_PERIODOCONTABLE ]);
+        console.log('Fila actualizada correctamente de periodocontable');
+        res.redirect('/contabilidad_general');
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {

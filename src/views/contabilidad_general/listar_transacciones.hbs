@@ -15,6 +15,12 @@
                         <strong>¡Click Aquí para agregar una nueva transaccion!</strong>
                         </a>
                 </div>
+                <div class="alert alert-success">
+                        <i class="fas fw fa-plus-circle"></i>
+                        <a class="alert-link" href="#" onClick="cerrarPeriodo({{periodo.ID_PERIODOCONTABLE}},'{{periodo.FECHA_PERIODO_FINAL}}')">
+                        <strong>¡Click Aquí para cerrar periodo contable!</strong>
+                        </a>
+                </div>
                 <div class="card mb-3">
                         <div class="card-header">
                                 <i class="fas fa-table"></i>
@@ -104,6 +110,53 @@
                 }
         }
 
+        function cerrarPeriodo(id_periodo, FECHA_PERIODO_FINAL){
+                if(FECHA_PERIODO_FINAL == ''){
+                        swal.fire({
+                                title: '¿Esta seguro de cerrar periodo?',
+                                text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo',
+                                type: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Aceptar',
+                                cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                                var hoy = new Date();
+                                if (result.value) {
+                                        var dd = hoy.getDate();
+                                        var mm = hoy.getMonth()+1;
+                                        var yyyy = hoy.getFullYear();
+                                        var fecha = yyyy+"-"+mm+"-"+dd;
+                                        console.log(fecha);
+                                        console.log(id_periodo);
+                                        $.ajax({
+                                                url: "/contabilidad_general/transaccion",
+                                                type: "POST",
+                                                data: {
+                                                        'FECHAFINAL_PERIODO': fecha,
+                                                        'ID_PERIODOCONTABLE': id_periodo
+                                                },
+                                                success: function(data){
+                                                        console.log(data);
+                                                        console.log("SUCCESS");
+                                                },
+                                                dataType: "json"
+                                        }).done(function(data){
+                                                location.href = data.success_url;
+                                        }).fail(function() {
+                                                location.href = "/contabilidad_general";
+                                        }).always(function() {
+                                                console.log("complete");
+                                        });
+                                }
+                        });
+                }else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo'
+                        });
+                }
+        }
         /*$("#realizar_transaccion").click(function() {
                 swal.fire({
                         title: '¿Esta seguro de realizar ajuste a esta transacción?',
