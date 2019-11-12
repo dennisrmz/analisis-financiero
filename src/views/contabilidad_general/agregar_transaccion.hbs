@@ -51,6 +51,12 @@
                                 </div>
                                 <div id="iva_calculado" class="form-group">
                                 </div>
+                                <div id="plazo_a" class="form-group">
+                                </div>
+                                <div id="plazo_m" class="form-group">
+                                </div>
+                                <div id="interes" class="form-group">
+                                </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
                                     <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
                                         <i class="fas fa-plus-circle"></i>
@@ -161,38 +167,94 @@
         var abonar = "";
         var descripcion = $("#id_descripcion_transaccion").val();
 
+        //Funcion para desactivar componentes de transaccion en comun de las restricciones
+        function desactivar_Campos(){
+            document.getElementById("id_tipo_transaccion").disabled = true;
+            document.getElementById("datepicker").disabled = true;
+            document.getElementById("id_monto_transaccion").disabled = true;
+            document.getElementById("id_descripcion_transaccion").disabled = true;
+        }
+
+        //Funcion mensaje de validación de campos de transaccion
+        function message_validar_transacion(){
+            Swal.fire({
+                type: 'error',
+                title: 'Datos incompletos.',
+                text: 'Verifique que los campos de la transaccion que estén completos.'
+            });
+        }
+
+        //Funcion mensaje de error en partida doble
+        function message_partida_doble(){
+            Swal.fire({
+                type: 'error',
+                title: '!Error en partida doble!',
+                text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
+            });
+        }
+
+        //Funcion mensaje de error en incoherencia de datos
+        function message_datos_incoherentes(){
+            Swal.fire({
+                type: 'error',
+                title: '!Datos incoherentes!',
+                text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
+            });
+        }        
+
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
             var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
             var descripcion = $("#id_descripcion_transaccion").val();
             var cbTipo = document.getElementById("id_tipo_transaccion");
             var monto = parseFloat($("#id_monto_transaccion").val());
+            var plazo_a = $("#plazo_anio").val();
+            var plazo_m = $("#plazo_meses").val();
+            var interes_m = $("#interes_mes").val();
+            //valor = Aplicar IVA
             if(valor == "false"){
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    document.getElementById("id_tipo_transaccion").disabled = true;
-                    document.getElementById("datepicker").disabled = true;
-                    document.getElementById("id_monto_transaccion").disabled = true;
-                    document.getElementById("id_descripcion_transaccion").disabled = true;
-                    document.getElementById("cb_impuesto").disabled = true;
+                    if(cbTipo.value == '1' || cbTipo.value == '2' || cbTipo.value == '4' || cbTipo.value == '5'){
+                        desactivar_Campos();
+                        document.getElementById("cb_impuesto").disabled = true;
+                    }else{
+                        if(cbTipo.value == '3' && plazo_a != ''){
+                            desactivar_Campos();
+                            document.getElementById("plazo_anio").disabled = true;
+                            document.getElementById("cb_impuesto").disabled = true;
+                        }else{
+                            if(cbTipo.value == '6' && plazo_m != ''){
+                                desactivar_Campos();
+                                document.getElementById("plazo_meses").disabled = true;
+                                document.getElementById("cb_impuesto").disabled = true;
+                            }else{
+                                message_validar_transacion();
+                            }
+                        }
+                    }
                 }else{
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Verifique que los campos de la transaccion que estén completos.'
-                    });
+                    message_validar_transacion();
                 }
             }else{
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    document.getElementById("id_tipo_transaccion").disabled = true;
-                    document.getElementById("datepicker").disabled = true;
-                    document.getElementById("id_monto_transaccion").disabled = true;
-                    document.getElementById("id_descripcion_transaccion").disabled = true;
+                    if(cbTipo.value == '7' || cbTipo.value == '10'){
+                        desactivar_Campos();
+                    }else{
+                        if(cbTipo.value == '9' && interes_m != ''){
+                            desactivar_Campos();
+                            document.getElementById("interes_mes").disabled = true;
+                        }else{
+                            if(cbTipo.value == '8' && interes_m != '' && plazo_a != ''){
+                                desactivar_Campos();
+                                document.getElementById("interes_mes").disabled = true;
+                                document.getElementById("plazo_anio").disabled = true;
+                            }else{
+                                message_validar_transacion();
+                            }
+                        }
+                    }
                 }else{
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Verifique que los campos de la transaccion que estén completos.'
-                    });
+                    message_validar_transacion();
                 }
             }
         }
@@ -312,7 +374,45 @@
             var info = string.split('/');
             return info[2] + '-' + info[1] + '-' + info[0];
         }
-        
+
+        //Funcion metodo post para agregar transaccion
+        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio){
+            $.ajax({
+                url: "/contabilidad_general/transaccion/agregar_transaccion",
+                type: "POST",
+                data: {
+                    'ID_CUENTA': codigo_cuentas,
+                    'FECHA_MOVIMIENTO': fecha,
+                    'DETALLE_MOVIMIENTO': detalles,
+                    'MONTO_CARGO': cargos,
+                    'MONTO_ABONO': abonos,
+                    'CODIGO_TIPO_TRANSACCION': codigoTipo,
+                    'MONTO_TRANSACCION': monto,
+                    'DESCRIPCION_TRANSACCION': descripcion,
+                    'FECHA_TRANSACCION': fecha,
+                    'FECHAINICIO_PERIODO': periodo,
+                    'ES_AJUSTE': ajuste,
+                    'ID_TRANSACCION_AJUSTE': codigo_ajuste,
+                    'ES_IMPUESTO': is_impuesto, 
+                    'MONTO_IMPUESTO': monto_impuesto,
+                    'INTERES_MES': interes_mes,
+                    'PLAZO_MES': plazo_mes,
+                    'PLAZO_ANIO': plazo_anio
+                },
+                success: function(data){
+                console.log(data);
+                console.log("SUCCESS");
+            },
+            dataType: "json"
+            }).done(function(data){
+                location.href = data.success_url;
+            }).fail(function() {
+                location.href = "/contabilidad_general/transaccion";
+            }).always(function() {
+                console.log("complete");
+            });
+        }
+
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
             var codigoTipo = $("#id_tipo_transaccion").val();
@@ -330,115 +430,78 @@
             var totalCargos_imp = totalCargos + val_impuesto;
             var is_impuesto = "";
             var monto_impuesto = "";
+            var interes_mes = "";
+            var plazo_mes = "";
+            var plazo_anio = "";
             console.log("impuesto"+val_impuesto);
             console.log(valor);
             if(valor == "false"){
                 is_impuesto = "SI";
                 monto_impuesto = $('#monto_iva').val();
-                if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalCargos_imp==totalAbonos_imp){
-                        $.ajax({
-                            url: "/contabilidad_general/transaccion/agregar_transaccion",
-                            type: "POST",
-                            data: {
-                                'ID_CUENTA': codigo_cuentas,
-                                'FECHA_MOVIMIENTO': fecha,
-                                'DETALLE_MOVIMIENTO': detalles,
-                                'MONTO_CARGO': cargos,
-                                'MONTO_ABONO': abonos,
-                                'CODIGO_TIPO_TRANSACCION': codigoTipo,
-                                'MONTO_TRANSACCION': monto,
-                                'DESCRIPCION_TRANSACCION': descripcion,
-                                'FECHA_TRANSACCION': fecha,
-                                'FECHAINICIO_PERIODO': periodo,
-                                'ES_AJUSTE': ajuste,
-                                'ID_TRANSACCION_AJUSTE': codigo_ajuste,
-                                'ES_IMPUESTO': is_impuesto, 
-                                'MONTO_IMPUESTO': monto_impuesto
-                            },
-                            success: function(data){
-                                console.log(data);
-                                console.log("SUCCESS");
-                            },
-                            dataType: "json"
-                        }).done(function(data){
-                            location.href = data.success_url;
-                        }).fail(function() {
-                            location.href = "/contabilidad_general/transaccion";
-                        }).always(function() {
-                            console.log("complete");
-                        });
+                        if(cbTipo.value == '1' || cbTipo.value == '2' || cbTipo.value == '4' || cbTipo.value == '5'){
+                            interes_mes = 0;
+                            plazo_anio = 0;
+                            plazo_mes = 0;
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);
+                        }else{
+                            if(cbTipo.value == '3'){
+                                interes_mes = 0;
+                                plazo_anio = $('#plazo_anio').val();
+                                plazo_mes = 0;
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);
+                            }else{
+                                if(cbTipo.value == '6'){
+                                    interes_mes = 0;
+                                    plazo_anio = 0;
+                                    plazo_mes = $('#plazo_meses').val();
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);
+                                }
+                            }
+                        }
                     }else{
-                        Swal.fire({
-                            type: 'error',
-                            title: '!Error en partida doble!',
-                            text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
-                        });
+                        message_partida_doble();
                     }
                 }else{
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Verifique que los campos de la Transacción estén completos.'
-                    });
+                    message_validar_transacion();
                 }
             }else{
                 is_impuesto = "NO";
                 monto_impuesto = 0;
-                if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
-                            $.ajax({
-                                url: "/contabilidad_general/transaccion/agregar_transaccion",
-                                type: "POST",
-                                data: {
-                                    'ID_CUENTA': codigo_cuentas,
-                                    'FECHA_MOVIMIENTO': fecha,
-                                    'DETALLE_MOVIMIENTO': detalles,
-                                    'MONTO_CARGO': cargos,
-                                    'MONTO_ABONO': abonos,
-                                    'CODIGO_TIPO_TRANSACCION': codigoTipo,
-                                    'MONTO_TRANSACCION': monto,
-                                    'DESCRIPCION_TRANSACCION': descripcion,
-                                    'FECHA_TRANSACCION': fecha,
-                                    'FECHAINICIO_PERIODO': periodo,
-                                    'ES_AJUSTE': ajuste,
-                                    'ID_TRANSACCION_AJUSTE': codigo_ajuste,
-                                    'ES_IMPUESTO': is_impuesto, 
-                                    'MONTO_IMPUESTO': monto_impuesto
-                                },
-                                success: function(data){
-                                    console.log(data);
-                                    console.log("SUCCESS");
-                                },
-                                dataType: "json"
-                            }).done(function(data){
-                                location.href = data.success_url;
-                            }).fail(function() {
-                                location.href = "/contabilidad_general/transaccion";
-                            }).always(function() {
-                                console.log("complete");
-                            });
+                            if(cbTipo.value == '7' || cbTipo.value == '10'){
+                                interes_mes = 0;
+                                plazo_anio = 0;
+                                plazo_mes = 0;
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);            
+                            }
+                            else{
+                                if(cbTipo.value == '9'){
+                                    interes_mes = $('#interes_mes').val();
+                                    plazo_anio = 0;
+                                    plazo_mes = 0;
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);            
+                                }
+                                else{
+                                    if(cbTipo.value == '8'){
+                                    interes_mes = $('#interes_mes').val();
+                                    plazo_anio = $('#plazo_anio').val();;
+                                    plazo_mes = 0;
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio);
+                                    }
+                                }
+                            }
                         }else{
-                            Swal.fire({
-                                type: 'error',
-                                title: '!Datos incoherentes!',
-                                text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
-                            });
+                            message_datos_incoherentes();
                         }
                     }else{
-                        Swal.fire({
-                            type: 'error',
-                            title: '!Error en partida doble!',
-                            text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
-                        });
+                        message_partida_doble();
                     }
                 }else{
-                    Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Verifique que los campos de la Transacción estén completos.'
-                    });
+                    message_validar_transacion();
                 }
             }
         }
@@ -482,13 +545,12 @@
             }
             else{
                 Swal.fire({
-                        type: 'error',
-                        title: 'Datos incompletos.',
-                        text: 'Debe llenar el campo del monto de transacción para poder aplicar iva'
-                    });
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Debe llenar el campo del monto de transacción para poder aplicar iva'
+                });
             }
         }
-
         //Funcion para agregar el campo del monto de iva calculado
         function agregar_campo() {
             var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
@@ -518,11 +580,15 @@
         }
 
         $(document).ready(function(){
-            //Funcion para llenar select de subsubcuenta dependiendo de la seleccion del select de subcuenta
+            //Funcion para agregar componenetes dependiendo de la seleccion del select del tipo de transaccion
             $('#id_tipo_transaccion').change(function(){            
                 var seleccionada = $('#id_tipo_transaccion').val();
                 console.log(seleccionada);
                 var url_nueva = "/contabilidad_general/check_impuesto";
+                var url_nueva_plazo_a = "/contabilidad_general/input_plazo_a";
+                var url_nueva_plazo_m = "/contabilidad_general/input_plazo_mes";
+                var url_nueva_interes = "/contabilidad_general/input_interes_mes";
+                //Se le aplica iva a COMPRA AL CONTADO, COMPRA AL CREDITO, COMPRA DE SEGURO, VENTA AL CONTADO, VENTA AL CREDITO, PAGO DE ALQUILER
                 if(seleccionada == 1 || seleccionada == 2 || seleccionada == 3 || seleccionada == 4 || seleccionada == 5 || seleccionada == 6){
                     $.ajax({
                         type: 'get',
@@ -532,9 +598,73 @@
                             console.log("SUCCESS");
                         },
                     });
+                    //Para COMPRA DE SEGURO
+                    if(seleccionada == 3){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_a,
+                            success: function(data){
+                                $('#plazo_a').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#plazo_1a').remove();
+                    }
+                    //Para PAGO DE ALQUILER
+                    if(seleccionada == 6){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_m,
+                            success: function(data){
+                                $('#plazo_m').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#plazo_1m').remove();
+                    }
+                    $('#interes_1').remove();
                 }
                 else{
+                    //Para PRESTAMO BANCARIO
+                    if(seleccionada == 8){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_interes,
+                            success: function(data){
+                                $('#interes').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_a,
+                            success: function(data){
+                                $('#plazo_a').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#interes_1').remove();
+                        $('#plazo_1a').remove();
+                    }
+                    //Para PRESTAMO A UN EMPLEADO
+                    if(seleccionada == 9){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_interes,
+                            success: function(data){
+                                $('#interes').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#interes_1').remove();
+                    }
                     $('#impuesto_1').remove();
+                    $('#plazo_1m').remove();
+                    $('#plazo_1a').remove();
                 }
             });
 
