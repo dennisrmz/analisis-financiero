@@ -105,8 +105,8 @@
                                         <textarea rows="6" id="id_descripcion_ajuste" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                     </div>
                                     <div class="form-group">
-                                        <a>Ingrese el monto:</a>
-                                        <input id="id_monto_ajuste" type="number" name="monto" class="form-control" placeholder="Monto de ajuste">
+                                        <a>Ingrese el monto de ajuste:</a>
+                                        <textarea rows="1" id="id_monto_ajuste" type="number" name="monto" class="form-control" placeholder="Monto de ajuste">{{Calculo}}</textarea>
                                     </div>
                                     <div class="col-12 text-center" style="padding-bottom: 5%">    
                                         <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
@@ -115,6 +115,7 @@
                                         </button>
                                     </div>
                                 </form>
+                                <div id='status' class='invisible'>MEnsaje</div>
                             </div>
                             <div  class="col-lg-6 col-xs-12 border rounded">
                                 <form name="movimiento_form" novalidate>
@@ -209,6 +210,16 @@
 </div>
 {{> footer }}
 <script type="text/javascript">
+    if($('textarea#id_monto_ajuste').text()=='0'){
+            Swal.fire({
+                type: 'warning',
+                title: 'Permiso denegado',
+                text: 'No se puede realizar ajuste puesto que la transaccion fue realizada a mas de 27 días',
+                confirmButtonText: 'Aceptar',
+            }).then((result) => {
+                location.href = "/contabilidad_general/asiento_ajuste";
+            });
+        }
         //Declaracion de variables
         var count = 0;
         var totalCargos = 0;

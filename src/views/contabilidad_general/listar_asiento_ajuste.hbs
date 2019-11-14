@@ -84,7 +84,7 @@
                 }
         }
 
-        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo, monto_transaccion){
+        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo, monto_transaccion, fecha){
                 var nombre_tipo_sin_espacio = nombre_tipo.replace(/ /g,"_");
                 if(nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO"){
                         Swal.fire({
@@ -101,7 +101,7 @@
                                 });   
                         }
                         else{
-                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion+"/"+nombre_tipo_sin_espacio+"/"+monto_transaccion;
+                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion+"/"+nombre_tipo_sin_espacio+"/"+monto_transaccion+"/"+fecha;
                         }
                 }
         }
