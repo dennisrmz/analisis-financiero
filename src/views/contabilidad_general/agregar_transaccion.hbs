@@ -107,7 +107,7 @@
                                     <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
                                 </div>
                                 <div id="myForm" class="form-group">
-                                    <input type="radio" name="Tipo" id="cb_cargar" value="false">Cargar
+                                    <input type="radio" name="Tipo" id="cb_cargar" value="false">Cargar&nbsp;&nbsp;&nbsp;&nbsp;
                                     <input type="radio" name="Tipo" id="cb_abonar" value="true">Abonar
                                 </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
@@ -117,40 +117,45 @@
                                     </button>
                                 </div>
                             </form>
+                            <br>
+                            <br>
+                            <a href="#" class="scroll-down" address="true"></a>
                         </div>
                     </div>
                 </div>
             </div> 
-            <div class="card mb-3">
-                <div class="card-header">
-                    <i class="fas fa-table"></i>
-                    Movimientos
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Fecha</th>
-                                    <th class="text-center">Cuenta</th>
-                                    <th class="text-center">Detalle</th>               
-                                    <th class="text-center">Debe</th>
-                                    <th class="text-center">Haber</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbBody">                                                
-                            </tbody>
-                            <tfoot>
-                                <tr id="comprobacion">
-                                    <th colspan="3" class="text-right">Comprobación</th>
-                                    <th class="text-center" id="debe">$ 0.00</th>
-                                    <th class="text-center" id="haber">$ 0.00</th>
-                                </tr>
-                            </tfoot>
-                        </table>
+            <section class="ok"> 
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <i class="fas fa-table"></i>
+                        Movimientos
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Cuenta</th>
+                                        <th class="text-center">Detalle</th>               
+                                        <th class="text-center">Debe</th>
+                                        <th class="text-center">Haber</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbBody">                                                
+                                </tbody>
+                                <tfoot>
+                                    <tr id="comprobacion">
+                                        <th colspan="3" class="text-right">Comprobación</th>
+                                        <th class="text-center" id="debe">$ 0.00</th>
+                                        <th class="text-center" id="haber">$ 0.00</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>     
+            </section>     
         </div>
         <div class="form-group text-center">
             <button id='aprobar' type="submit" onclick="guardarDato()" class='btn btn-primary' style="width: 30%" href='#'>Guardar</button>
@@ -173,6 +178,14 @@
         var detalles = "";
         var abonar = "";
         var descripcion = $("#id_descripcion_transaccion").val();
+
+        //Funcion para el scroll down
+        $(function() {
+            $('.scroll-down').click (function() {
+                $('html, body').animate({scrollTop: $('section.ok').offset().top }, 'slow');
+                return false;
+            });
+        });
 
         //Funcion para desactivar componentes de transaccion en comun de las restricciones
         function desactivar_Campos(){

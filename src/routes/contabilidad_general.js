@@ -9,15 +9,6 @@ router.get('/', async (req, res) => {
         console.log(periodo_finals[0].FECHA_PERIODO_FINAL );
         res.render('contabilidad_general/index_contabilidad', {periodo_final: periodo_finals[0]});
 });
-//-------------------------------------------------------PERIODO CONTABLE---------------------------------------------------------------------
-//Listar periodo contable
-router.get('/periodo_contable', async (req, res, next) => {
-        const periodo_finals = await pool.query("SELECT DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable "+
-        "ORDER BY ID_PERIODOCONTABLE DESC LIMIT 1");
-        const periodocontable = await pool.query("SELECT ID_PERIODOCONTABLE, DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, "+
-        "DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO_FINAL FROM periodocontable");
-        res.render('contabilidad_general/listar_periodo_contable', { periodocontable , periodo_final: periodo_finals[0]});
-});
 //-----------------------------------------------------------TRANSACCION-----------------------------------------------------------------------
 //Listar transacciones
 router.get('/transaccion', async (req, res) => {
@@ -455,13 +446,6 @@ router.get('/monto_impuesto/:monto_tran', async (req, res) => {
         const { monto_tran } = req.params;
         var monto = 0.13*[monto_tran];
         res.render('contabilidad_general/monto_impuesto', {monto});
-});
-//-------------------------------------------------------Ejemplo-------------------------------------------------------------------------------
-router.get('/ajax', function(req, res){
-        res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: "AJAX is great!"});
-});
-router.post('/ajax', function(req, res){
-        res.render('contabilidad_general/ajax', {title: 'An Ajax Example', quote: req.body.quote});
 });
 
 module.exports = router;
