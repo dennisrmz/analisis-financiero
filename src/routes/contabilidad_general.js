@@ -184,12 +184,29 @@ router.get('/transaccion', async (req, res) => {
         res.render('contabilidad_general/listar_transacciones', {periodocontable , periodo: periodo1[0]});
 });
 router.post('/transaccion', async (req, res, next) => {
-        const { FECHAFINAL_PERIODO, ID_PERIODOCONTABLE} = req.body;
+        const { FECHAFINAL_PERIODO, ID_PERIODOCONTABLE, ID_CUENTA, CANTIDAD_CUENTAS} = req.body;
         console.log(ID_PERIODOCONTABLE);
         console.log(FECHAFINAL_PERIODO);
         await pool.query('UPDATE periodocontable SET FECHAFINAL_PERIODO = ? WHERE ID_PERIODOCONTABLE = ?', [ FECHAFINAL_PERIODO, ID_PERIODOCONTABLE ]);
         console.log('Fila actualizada correctamente de periodocontable');
+        //Insertar balance de comprobación inicial
+        var nombre='BALANCE_DE_COMPROBACION_INICIAL';
+        const newEstadoCInicial = {
+                ID_PERIODOCONTABLE,
+                NOMBRE_ESTADOFINANCIERO:nombre
+        }
+        await pool.query('INSERT INTO estadofinanciero SET ?', [newEstadoCInicial]);
+        console.log('Fila actualizada correctamente de estadofinanciero');
+        
+        //Insertar mayorizaciones por cada cuenta utilizada en el periodo
+        const mayorizacion_cuentas = await pool.query('SELECT DISTINCT(cuenta.ID_CUENTA), cuenta.SALDO_CUENTA FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
+        const cantidad_cuentas = await pool.query('SELECT COUNT(DISTINCT(cuenta.ID_CUENTA)) AS CANTIDAD_CUENTAS FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
+        console.log('cuenta a mayorizar '+mayorizacion_cuentas[0].ID_CUENTA);
+        var cantidad=0;
+        cantidad = cantidad_cuentas[0].CANTIDAD_CUENTAS
+        console.log('cuentas a recorrer '+ cantidad);
         res.redirect('/contabilidad_general');
+        
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
@@ -270,6 +287,22 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                 };
                 await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
                 console.log('Fila insertada correctamente de movimiento:'+k);
+                //Actualizar el saldo de cada cuenta cuando se hace un movimiento
+                const naturaleza_cuenta = await pool.query('SELECT ID_NATURALEZA_CUENTA FROM cuenta WHERE ID_CUENTA=?', [new_movimiento.ID_CUENTA]);
+                const saldo_cuenta = await pool.query('SELECT SALDO_CUENTA FROM cuenta WHERE ID_CUENTA=? AND ID_NATURALEZA_CUENTA=1', [new_movimiento.ID_CUENTA]);
+                var montoCargo = new_movimiento.MONTO_CARGO;
+                var montoAbono = new_movimiento.MONTO_ABONO;
+                var saldo_new = 0;
+                if(naturaleza_cuenta[0].ID_NATURALEZA_CUENTA == 1){
+                        saldo_new = saldo_cuenta[0].SALDO_CUENTA + montoCargo - montoAbono;
+                        console.log("Nuevo saldo de una cuenta deudora: "+saldo_new);
+                        await pool.query('UPDATE cuenta SET SALDO_CUENTA=? WHERE ID_CUENTA=?', [saldo_new, new_movimiento.ID_CUENTA] );
+                
+                }else{
+                        saldo_new = saldo_cuenta[0].SALDO_CUENTA - montoCargo + montoAbono;
+                        console.log("Nuevo saldo de una cuenta acreedora: "+saldo_new);
+                        await pool.query('UPDATE cuenta SET SALDO_CUENTA=? WHERE ID_CUENTA=?', [saldo_new, new_movimiento.ID_CUENTA] );
+                }
         }
         //req.flash('success', 'Registro guardado correctamente');
         res.redirect('/contabilidad_general/transaccion');

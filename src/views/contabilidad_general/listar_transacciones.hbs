@@ -111,7 +111,7 @@
         }
 
         function cerrarPeriodo(id_periodo, FECHA_PERIODO_FINAL){
-                if(FECHA_PERIODO_FINAL == ''){
+                if(FECHA_PERIODO_FINAL != ''){
                         swal.fire({
                                 title: '¿Esta seguro de cerrar periodo?',
                                 text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo.',
@@ -149,12 +149,12 @@
                                         });
                                 }
                         });
-                }else{
+                /*}else{
                         Swal.fire({
                                 type: 'warning',
                                 title: 'Permiso denegado',
                                 text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo.'
-                        });
+                        });*/
                 }
         }
 </script>
