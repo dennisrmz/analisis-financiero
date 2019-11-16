@@ -196,15 +196,33 @@ router.post('/transaccion', async (req, res, next) => {
                 NOMBRE_ESTADOFINANCIERO:nombre
         }
         await pool.query('INSERT INTO estadofinanciero SET ?', [newEstadoCInicial]);
-        console.log('Fila actualizada correctamente de estadofinanciero');
-        
+        console.log('Fila insertada correctamente de estadofinanciero');
         //Insertar mayorizaciones por cada cuenta utilizada en el periodo
-        const mayorizacion_cuentas = await pool.query('SELECT DISTINCT(cuenta.ID_CUENTA), cuenta.SALDO_CUENTA FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
+        const mayorizacion_cuentas = await pool.query('SELECT DISTINCT(cuenta.ID_CUENTA), cuenta.SALDO_CUENTA, cuenta.ID_NATURALEZA_CUENTA FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
         const cantidad_cuentas = await pool.query('SELECT COUNT(DISTINCT(cuenta.ID_CUENTA)) AS CANTIDAD_CUENTAS FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
         console.log('cuenta a mayorizar '+mayorizacion_cuentas[0].ID_CUENTA);
         var cantidad=0;
         cantidad = cantidad_cuentas[0].CANTIDAD_CUENTAS
         console.log('cuentas a recorrer '+ cantidad);
+        for(i=0; i<cantidad; i++){ 
+                var saldo_acreedor='';
+                if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas[i].SALDO_CUENTA<0){
+                        saldo_acreedor= 'SI';
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas[i].SALDO_CUENTA>=0){
+                        saldo_acreedor = 'NO';
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas[i].SALDO_CUENTA<0){
+                        saldo_acreedor = 'NO';
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas[i].SALDO_CUENTA>=0){
+                        saldo_acreedor = 'SI';
+                }
+                const newMayorizacion = {
+                        ID_CUENTA: mayorizacion_cuentas[i].ID_CUENTA,
+                        MONTO_SALDO: mayorizacion_cuentas[i].SALDO_CUENTA,
+                        ES_SALDO_ACREEDOR: saldo_acreedor
+                };
+                await pool.query('INSERT INTO mayorizacion SET ?', [newMayorizacion]);
+                console.log('Fila insertada correctamente de mayorizacion');
+        } 
         res.redirect('/contabilidad_general');
         
 });
