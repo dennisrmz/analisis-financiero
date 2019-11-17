@@ -12,7 +12,7 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         const idioma = await pool.query('SET lc_time_names = "es_VE"');
         const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO ' +
         'FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ])
-        const cuentas = await(pool.query('SELECT cuenta.ID_CUENTA, cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.ID_MAYORIZACION, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=?', [ID_ESTADOFINANCIERO]));
+        //const cuentas = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.ID_MAYORIZACION, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=?', [ID_ESTADOFINANCIERO]));
         const sumas_debe = await(pool.query('SELECT SUM(mayorizacion.MONTO_SALDO) AS DEBE FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="NO"', [ID_ESTADOFINANCIERO]));
         const sumas_haber = await(pool.query('SELECT SUM(mayorizacion.MONTO_SALDO) AS HABER FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="SI"', [ID_ESTADOFINANCIERO]));
         console.log({cuentas});
@@ -222,9 +222,17 @@ router.post('/transaccion', async (req, res, next) => {
                 };
                 await pool.query('INSERT INTO mayorizacion SET ?', [newMayorizacion]);
                 console.log('Fila insertada correctamente de mayorizacion');
+                
+                const ultima_m = await pool.query('SELECT mayorizacion.ID_MAYORIZACION FROM mayorizacion ORDER BY mayorizacion.ID_MAYORIZACION DESC LIMIT 1');
+                const ultimo_eci =await pool.query('SELECT estadofinanciero.ID_ESTADOFINANCIERO FROM estadofinanciero ORDER BY estadofinanciero.ID_ESTADOFINANCIERO DESC LIMIT 1');
+                const newEF_M = {
+                        ID_MAYORIZACION:ultima_m[0].ID_MAYORIZACION,
+                        ID_ESTADOFINANCIERO:ultimo_eci[0].ID_ESTADOFINANCIERO
+                }
+                await pool.query('INSERT INTO estadofinanciero_mayorizacion SET ?', [newEF_M]);
+                console.log('Fila insertada correctamente en estadofinanciero_mayorizacion');
         } 
         res.redirect('/contabilidad_general');
-        
 });
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
