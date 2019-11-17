@@ -1,6 +1,8 @@
 <div class="container">
     <div class="texto-primario p-3">
-        <h1 class="titulo text-center">PROCESOS PRODUCTO:<span><strong>SILLA</strong></span></h1>
+        {{#each producto}}
+        <h1 class="titulo text-center">PROCESOS PRODUCTO:<span><strong>{{nombre}}</strong></span></h1>
+        {{/each}}
     </div>
 
      <table id="datatable" class="table table-striped">
@@ -14,18 +16,16 @@
         </thead>
         </tfoot>
         <tbody>
+            {{#each procesos}}
+
             <tr>
-                <td>1</td>
-                <td>50</td>
-                <td>50<span>%</span></td>
-                <td><a href="#"><i class="fas fa-clipboard-check"></i></a></td>
+                <td>{{proceso}}</td>
+                <td>{{cantidadproductos}}</td>
+                <td>{{porcentaje}}<span>%</span></td>
+                <td><a href="/transferir_proceso/{{id}}"><i class="fas fa-clipboard-check"></i></a></td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>25</td>
-                <td>25<span>%</span></td>
-                <td><a href="#"><i class="fas fa-clipboard-check"></i></a></td>
-            </tr>
+            {{/each}}
+            {{!-- este nose como llenarlo xq sera un proceso extra --}}
              <tr>
                 <td>Terminado</td>
                 <td>25</td>

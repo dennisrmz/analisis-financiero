@@ -13,14 +13,12 @@
         </thead>
         </tfoot>
         <tbody>
+            {{#each productoproceso}}
             <tr>
-                <td>Silla</td>
-                <td><a href="#"><i class="fas fa-clipboard-list"></i></a></td>
+                <td>{{nombre}}</td>
+                <td><a href="/detalle_producto_proceso/{{id}}"><i class="fas fa-clipboard-list"></i></a></td>
             </tr>
-            <tr>
-                <td>Mesa</td>
-                <td><a href="#"><i class="fas fa-clipboard-list"></i></a></td>
-            </tr>
+           {{/each}}
            
         </tbody>
 

@@ -82,6 +82,7 @@ router.get('/agregar_productos_proceso',async (req, res) => {
     
     res.render('costeo/agregar_productos_a_proceso', {materiasPrimas});
     })
+
 router.post('/agregar_productos_proceso',async (req, res) => {
       const {tipoproducto,cantidadrestante,detalle,materiaprimaid,cantidadmatariaprima,
         numeroprocesos}= req.body;      
@@ -120,14 +121,14 @@ await pool.query('INSERT INTO procesos set ?',[nuevoProceso]);
   const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
   
     req.flash('success', 'Link Saved Succesfully');
-        res.render('costeo/detalle_producto_proceso');
-        })
+        res.render('costeo/producto_proceso');
+        });
 
-router.get('/detalle_producto_proceso', async (req, res) => {
+router.get('/detalle_producto_proceso/:id', async (req, res) => {
     res.render('costeo/detalle_producto_proceso');
     });
 
-router.get('/transferir_proceso',async(req, res) => {
+router.get('/transferir_proceso/:id',async(req, res) => {
     const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
     console.log(materiasPrimas);
     res.render('costeo/form_cambiar_proceso_producto',{materiasPrimas});
