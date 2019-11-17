@@ -7,7 +7,7 @@
         </ol>
         <div class="alert bold alert-info">
             <i class="fas fw fa-plus-circle"></i>
-            <a href="#" onClick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')">
+            <a href="#" onClick="enviar('{{periodo.FECHA_PERIODO_FINAL}}', {{periodo_count.COUNT}})">
                 <strong>¡Click Aquí para iniciar periodo contable!</strong>
             </a>
         </div>
@@ -77,8 +77,8 @@
 {{> footer }}
 <script type="text/javascript">
         //funcion para validar que antes que cree un nuevo periodo deba cerrar el periodo actual
-        function enviar(string){
-                if(string != ''){
+        function enviar(string, count){
+                if(string != '' || count == 0){
                         window.location.href='/agregar_periodo';
                 }
                 else{
