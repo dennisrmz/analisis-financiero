@@ -3,7 +3,11 @@
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">Estados Financieros</li>
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general/estados_financieros/listado">
+                        Estados Financieros
+                        </a> 
+                </li>
                 <li class="breadcrumb-item active">Estado de Resultados</li>
                 </ol>
                 <!-- DataTables -->
@@ -37,6 +41,12 @@
                                                         </tr>
                                                     </tbody>
                                                 {{/each}}
+                                                <tr>
+                                                        <th class="text-center"></th>
+                                                        <th class="text-right">Total Ingresos</th>
+                                                        <th class="text-center">{{suma_ingreso.INGRESO}}</th>
+                                                        <th class="text-center"></th>
+                                                </tr>
                                                 <thead>
                                                     <tr>
                                                         <th colspan="4">GASTOS</th>
@@ -52,7 +62,18 @@
                                                         </tr>
                                                     </tbody>
                                                 {{/each}}
-                                            
+                                                <tr>
+                                                        <th class="text-center"></th>
+                                                        <th class="text-right">Total Gastos</th>
+                                                        <th class="text-center">{{suma_gasto.GASTO}}</th>
+                                                        <th class="text-center"></th>
+                                                </tr>
+                                                <tr>
+                                                        <th class="text-center"></th>
+                                                        <th class="text-right">{{utilidad.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center">{{saldo_utilidad}}</th>
+                                                        <th class="text-center"></th>
+                                                </tr>
                                         </table>
                                 </div>
                         </div>
