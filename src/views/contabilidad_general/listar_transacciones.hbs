@@ -21,6 +21,12 @@
                         <strong>¡Click Aquí para cerrar periodo contable!</strong>
                         </a>
                 </div>
+                <div class="alert alert-danger">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <a class="alert-link" href="#" onClick="crearEstadosFinancieros({{periodo.ID_PERIODOCONTABLE}},'{{periodo.FECHA_PERIODO_FINAL}}')">
+                        <strong>¡Click Aquí para generar todos los estados financieros!</strong>
+                        </a>
+                </div>
                 <div class="card mb-3">
                         <div class="card-header">
                                 <i class="fas fa-table"></i>
@@ -144,6 +150,55 @@
                                                 location.href = data.success_url;
                                         }).fail(function() {
                                                 location.href = "/contabilidad_general";
+                                        }).always(function() {
+                                                console.log("complete");
+                                        });
+                                }
+                        });
+                /*}else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo.'
+                        });*/
+                }
+        }
+
+        //Función para generar los demás estados financieros
+        function crearEstadosFinancieros(id_periodo, FECHA_PERIODO_FINAL){
+                if(FECHA_PERIODO_FINAL != ''){
+                        swal.fire({
+                                title: '¿Esta seguro de generar todos los estados financieros?',
+                                text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo.',
+                                type: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Aceptar',
+                                cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                                var hoy = new Date();
+                                if (result.value) {
+                                        var dd = hoy.getDate();
+                                        var mm = hoy.getMonth()+1;
+                                        var yyyy = hoy.getFullYear();
+                                        var fecha = yyyy+"-"+mm+"-"+dd;
+                                        console.log(fecha);
+                                        console.log(id_periodo);
+                                        $.ajax({
+                                                url: "/contabilidad_general/transaccion/estadosfinancieros",
+                                                type: "POST",
+                                                data: {
+                                                        'FECHAFINAL_PERIODO': fecha,
+                                                        'ID_PERIODOCONTABLE': id_periodo
+                                                },
+                                                success: function(data){
+                                                        console.log(data);
+                                                        console.log("SUCCESS");
+                                                },
+                                                dataType: "json"
+                                        }).done(function(data){
+                                                location.href = data.success_url;
+                                        }).fail(function() {
+                                                location.href = "/contabilidad_general/estados_financieros/listado";
                                         }).always(function() {
                                                 console.log("complete");
                                         });
