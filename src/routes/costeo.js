@@ -138,22 +138,42 @@ router.get('/transferir_proceso/:id',async(req, res) => {
     res.render('costeo/form_cambiar_proceso_producto',{materiasPrimas,procesos});
 });
 router.post('/transferir_proceso',async(req, res) => {
-    var {ordenproceso_id,numero,materiaprima_id,cantidadmatariaprima,mod,
+    var {ordenproceso_id,numero,materiaprima_id,cantidadproducto,cantidadmatariaprima,mod,
         cif}= req.body;    
-     const   procActual =numero;
-      numero=parseInt(numero)+1;
-        const nuevoProceso={
-            ordenproceso_id,
-            materiaprima_id, 
-            numero,
-            cantidadmatariaprima,   
-        }
-        console.log(nuevoProceso);
-       await pool.query('INSERT INTO procesos set ?',[nuevoProceso]);  
-        await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)',[mod,cif,ordenproceso_id,procActual]);
-    var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
-    console.log(productoproc);
-    res.render('costeo/productos_procesos', {productoproc});
+var cantidadProceso= await pool.query('SELECT invproductosproceso.numeroprocesos,invproductosproceso.tipoproducto FROM `orden`  INNER JOIN invproductosproceso on orden.productoproceso_id = invproductosproceso.id where orden.id = ?',ordenproceso_id);
+if (numero<parseInt(cantidadProceso[0].numeroprocesos)) {
+    const   procActual =numero;
+    numero=parseInt(numero)+1;
+      const nuevoProceso={
+          ordenproceso_id,
+          materiaprima_id, 
+          numero,
+          cantidadmatariaprima,   
+      }
+      console.log(nuevoProceso);
+     await pool.query('INSERT INTO procesos set ?',[nuevoProceso]);  
+      await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)',[mod,cif,ordenproceso_id,procActual]);
+  var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+  
+  res.render('costeo/productos_procesos', {productoproc});
+} else {
+    const   procActual =numero;
+    const nombreproducto = cantidadProceso[0].tipoproducto;
+    const orden_id=ordenproceso_id
+      const productoTerminado={
+        orden_id,
+          cantidadproducto, 
+          nombreproducto,
+     }
+      console.log(productoTerminado);
+      await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)',[mod,cif,ordenproceso_id,procActual]);
+     await pool.query('INSERT INTO productosterminados set ?',[productoTerminado]);       
+  var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+ 
+  res.render('costeo/productos_procesos', {productoproc}); 
+}
+
+   
 });
 
 module.exports = router;
