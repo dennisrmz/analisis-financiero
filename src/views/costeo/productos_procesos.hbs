@@ -2,7 +2,7 @@
     <div class="texto-primario">
         <h1 class="titulo text-center">PRODUCTOS EN PROCESO</h1>
     </div>
-    <a href="#" class="btn m-3 btn-success"> Agregar Productos a Proceso</a>
+    <a href="/costeo/agregar_productos_proceso" class="btn m-3 btn-success"> Agregar Productos a Proceso</a>
     
      <table id="datatable" class="table table-striped">
         <thead>
@@ -13,10 +13,10 @@
         </thead>
         </tfoot>
         <tbody>
-            {{#each productoproceso}}
+            {{#each productoproc}}
             <tr>
-                <td>{{nombre}}</td>
-                <td><a href="/detalle_producto_proceso/{{id}}"><i class="fas fa-clipboard-list"></i></a></td>
+                <td>{{tipoproducto}}</td>
+                <td><a href="/costeo/detalle_producto_proceso/{{id}}"><i class="fas fa-clipboard-list"></i></a></td>
             </tr>
            {{/each}}
            

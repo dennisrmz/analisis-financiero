@@ -73,13 +73,13 @@ router.get('/producto_terminado_salida', async (req, res) => {
 //*******************Rutas Producto en Proceso***************** */  
 
 router.get('/producto_proceso', async (req, res) => {
-    res.render('costeo/productos_procesos');
+    var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+    console.log(productoproc);
+    res.render('costeo/productos_procesos', {productoproc});
     });
     
 router.get('/agregar_productos_proceso',async (req, res) => {
-    const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-   
-    
+    const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');    
     res.render('costeo/agregar_productos_a_proceso', {materiasPrimas});
     })
 
@@ -118,25 +118,42 @@ const nuevoProceso={
 }
 console.log(nuevoProceso);
 await pool.query('INSERT INTO procesos set ?',[nuevoProceso]);
-  const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-  
+
+  var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
     req.flash('success', 'Link Saved Succesfully');
-        res.render('costeo/producto_proceso');
+    res.render('costeo/productos_procesos', {productoproc});
         });
 
 router.get('/detalle_producto_proceso/:id', async (req, res) => {
-    res.render('costeo/detalle_producto_proceso');
+    console.log( req.params.id);
+    var producto = await pool.query('SELECT * FROM `invproductosproceso`  WHERE id=?',req.params.id);
+    var procesos = await pool.query ('SELECT procesos.id, invproductosproceso.cantidadrestante, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE invproductosproceso.id = ?',req.params.id)
+    res.render('costeo/detalle_producto_proceso',{producto,procesos});
     });
 
 router.get('/transferir_proceso/:id',async(req, res) => {
     const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-    console.log(materiasPrimas);
-    res.render('costeo/form_cambiar_proceso_producto',{materiasPrimas});
+    var procesos = await pool.query ('SELECT procesos.id, invproductosproceso.cantidadrestante ,procesos.ordenproceso_id, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE procesos.id = ?',req.params.id)
+    console.log(procesos);
+    res.render('costeo/form_cambiar_proceso_producto',{materiasPrimas,procesos});
 });
 router.post('/transferir_proceso',async(req, res) => {
-    const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-    console.log(materiasPrimas);
-    res.render('costeo/detalle_producto_proceso');
+    var {ordenproceso_id,numero,materiaprima_id,cantidadmatariaprima,mod,
+        cif}= req.body;    
+     const   procActual =numero;
+      numero=parseInt(numero)+1;
+        const nuevoProceso={
+            ordenproceso_id,
+            materiaprima_id, 
+            numero,
+            cantidadmatariaprima,   
+        }
+        console.log(nuevoProceso);
+       await pool.query('INSERT INTO procesos set ?',[nuevoProceso]);  
+        await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)',[mod,cif,ordenproceso_id,procActual]);
+    var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+    console.log(productoproc);
+    res.render('costeo/productos_procesos', {productoproc});
 });
 
 module.exports = router;

@@ -1,19 +1,29 @@
 <div class="container p-4">
     <div class="row">
         <div class="col-md-4 mx-auto">
+               {{#each procesos}}
             <div class="card">
-                <h2 class="text-center">Proceso 1</h2>
-                           <div>
-  <input type="radio" id="orden" name="orden" value="{{ordenproceso_id}}"
+             
+         <h2 class="text-center">Proceso {{numero}}</h2>
+       
+
+                
+                <div class="card-body">
+                    <form action="/costeo/transferir_proceso" method="POST">
+                    <div  style="display: none">
+  <input type="radio" id="ordenproceso_id" name="ordenproceso_id" value="{{ordenproceso_id}}"
          checked>
   <label for="huey">Orden #{{ordenproceso_id}}</label>
 </div>
-                
-                <div class="card-body">
-                    <form action="/transferir_proceso" method="POST">
+ <div  style="display: none">
+  <input type="radio" id="numero" name="numero" value="{{numero}}"
+         checked>
+  <label for="huey">Proceso actual #{{numero}}</label>
+</div>
                         <div class="form-group">
-                            <input type="number" class="form-control" min="0" name="cantidad" placeholder="cantidad" autofocus>
+                            <input type="number" class="form-control" min="0" max={{cantidadrestante}} name="cantidad" placeholder="cantidad" autofocus>
                         </div>
+                        {{/each}}
                           <div class="form-group">
                             <label>Seleccione Materia Prima</label>
                             <table class="table table-bordered">
@@ -36,10 +46,9 @@
                                         
            
                                         </td>
-                                        <td><input type="number" name="cantidad[]" required=""
+                                        <td><input type="number" name="cantidadmatariaprima" required=""
                                                 class="form-control quantity" min="1"></td>
-                                        <td class="remover"><a href="#" class="remove"><i
-                                                    class="fas fa-minus-circle"></i></a></td>
+                                       
                                     </tr>
                                     </tr>
                                 </tbody>
@@ -61,5 +70,6 @@
                 </div>
             </div>
         </div>
+         
     </div>
 </div>
