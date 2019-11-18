@@ -272,31 +272,32 @@ router.post('/transaccion/estadosfinancieros', async (req, res, next) => {
         await pool.query('INSERT INTO estadofinanciero SET ?', [newBalanceGeneral]);
         console.log('Fila insertada correctamente de estadofinanciero - BG');
 
-        //Insertar mayorizaciones por cada cuenta utilizada en el periodo que NO SON AJUSTE
-        const mayorizacion_cuentas_ajuste = await pool.query('SELECT DISTINCT(cuenta.ID_CUENTA), cuenta.SALDO_CUENTA, cuenta.ID_NATURALEZA_CUENTA FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN transaccionajuste ON transaccion.ID_TRANSACCION_AJUSTE=transaccionajuste.ID_TRANSACCION_AJUSTE INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
-        const cantidad_cuentas_ajuste = await pool.query('SELECT COUNT(DISTINCT(cuenta.ID_CUENTA)) AS CANTIDAD_CUENTAS_AJUSTE FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN transaccionajuste ON transaccion.ID_TRANSACCION_AJUSTE=transaccionajuste.ID_TRANSACCION_AJUSTE INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
-        console.log('cuenta a mayorizar ajuste '+mayorizacion_cuentas_ajuste[0].ID_CUENTA);
+        //Insertar mayorizaciones por cada cuenta utilizada en el periodo que ANTES Y DESPUES DE AJUSTE
+        const mayorizacion_cuentas = await pool.query('SELECT DISTINCT(cuenta.ID_CUENTA), cuenta.SALDO_CUENTA, cuenta.ID_NATURALEZA_CUENTA FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
+        const cantidad_cuentas = await pool.query('SELECT COUNT(DISTINCT(cuenta.ID_CUENTA)) AS CANTIDAD_CUENTAS FROM cuenta INNER JOIN movimiento ON cuenta.ID_CUENTA=movimiento.ID_CUENTA INNER JOIN transaccion ON movimiento.ID_TRANSACCION=transaccion.ID_TRANSACCION INNER JOIN periodocontable ON transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE=?', [ID_PERIODOCONTABLE]);
+        console.log('cuenta a mayorizar '+mayorizacion_cuentas[0].ID_CUENTA);
         var cantidad=0;
-        cantidad = cantidad_cuentas_ajuste[0].CANTIDAD_CUENTAS_AJUSTE;
-        console.log('cantidad de cuentas a recorrer por ajuste '+ cantidad);
+        cantidad = cantidad_cuentas[0].CANTIDAD_CUENTAS
+        console.log('cuentas a recorrer '+ cantidad);
         for(i=0; i<cantidad; i++){ 
                 var saldo_acreedor='';
-                if(mayorizacion_cuentas_ajuste[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas_ajuste[i].SALDO_CUENTA<0){
+                if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas[i].SALDO_CUENTA<0){
                         saldo_acreedor= 'SI';
-                }else if(mayorizacion_cuentas_ajuste[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas_ajuste[i].SALDO_CUENTA>=0){
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==1 && mayorizacion_cuentas[i].SALDO_CUENTA>=0){
                         saldo_acreedor = 'NO';
-                }else if(mayorizacion_cuentas_ajuste[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas_ajuste[i].SALDO_CUENTA<0){
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas[i].SALDO_CUENTA<0){
                         saldo_acreedor = 'NO';
-                }else if(mayorizacion_cuentas_ajuste[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas_ajuste[i].SALDO_CUENTA>=0){
+                }else if(mayorizacion_cuentas[i].ID_NATURALEZA_CUENTA==2 && mayorizacion_cuentas[i].SALDO_CUENTA>=0){
                         saldo_acreedor = 'SI';
                 }
                 const newMayorizacion = {
-                        ID_CUENTA: mayorizacion_cuentas_ajuste[i].ID_CUENTA,
-                        MONTO_SALDO: mayorizacion_cuentas_ajuste[i].SALDO_CUENTA,
+                        ID_CUENTA: mayorizacion_cuentas[i].ID_CUENTA,
+                        MONTO_SALDO: mayorizacion_cuentas[i].SALDO_CUENTA,
                         ES_SALDO_ACREEDOR: saldo_acreedor
                 };
                 await pool.query('INSERT INTO mayorizacion SET ?', [newMayorizacion]);
-                console.log('Fila insertada correctamente de mayorizacion por ajuste');
+                console.log('Fila insertada correctamente de mayorizacion');
+
                 //Insertar datos en tabla estadofinanciero_mayorizacion
                 const ultima_m = await pool.query('SELECT mayorizacion.ID_MAYORIZACION FROM mayorizacion ORDER BY mayorizacion.ID_MAYORIZACION DESC LIMIT 1');
                 const ultimoBC =await pool.query('SELECT MAX(estadofinanciero.ID_ESTADOFINANCIERO) AS ID_EF FROM estadofinanciero WHERE estadofinanciero.ID_ESTADOFINANCIERO=((SELECT MAX(estadofinanciero.ID_ESTADOFINANCIERO) FROM estadofinanciero)-3)');
