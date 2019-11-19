@@ -246,5 +246,34 @@ router.get('/estados_financieros/notas_explicativas/listado', async (req, res) =
     res.render('contabilidad_general/listado_notas_explicativas');
 });
 
+router.get('/planilla', async (req, res) => {
+        const planilla_salarios=  await pool.query("SELECT * FROM planilla")
+          res.render('contabilidad_general/planilla', {planilla_salarios});
+  });
+  
+// Mostrar detalles de empleado
+router.get('/planilla/mostrar_empleado/:CODIGO_EMPLEADO', async (req, res) => {
+        const {CODIGO_EMPLEADO} = req.params;
+        const empleado = await pool.query("SELECT * FROM planilla WHERE CODIGO_EMPLEADO = ? ", [CODIGO_EMPLEADO]);
+        console.log(empleado[0]);
+        res.render('contabilidad_general/mostrar_empleado', {emp : empleado[0]});
+});
+
+//Actualizar datos de planilla si han sido modifocados
+
+router.post('/planilla/guardar/:CODIGO_EMPLEADO', async(req, res) => {
+        const {CODIGO_EMPLEADO} = req.params;
+        const { SALARIO_BASE, VACACIONES, AGUINALDO, TOTAL_DEVENGADO, ISSS, AFP, INSAFORP, TOTAL_DEDUCCIONES, TOTAL_LIQUIDO } = req.body;
+        const n_empleado = {
+                SALARIO_BASE, VACACIONES, AGUINALDO, TOTAL_DEVENGADO, ISSS, AFP, INSAFORP, TOTAL_DEDUCCIONES, TOTAL_LIQUIDO     
+        };
+        console.log(n_empleado)
+        await pool.query('UPDATE planilla set ? WHERE CODIGO_EMPLEADO= ?', [n_empleado, CODIGO_EMPLEADO]);
+        console.log(n_empleado);
+        res.redirect('/contabilidad_general/planilla');
+});
+
 module.exports = router;
+
+
 
