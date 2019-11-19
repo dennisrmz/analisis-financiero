@@ -1,0 +1,67 @@
+<div class="container p-4">
+    <div class="row">
+        <div class="col-md-9 mx-auto">
+            <div class="card">
+                <h2 class="text-center">Ingresar Productos a Procesos</h2>
+                <div class="card-body">
+                    <form action="/costeo/agregar_productos_proceso" method="POST">
+                        <div class="form-group">
+                            <select class="m-2 form-control" name="tipoproducto" id="tipoproducto">
+                                <option value="silla">Silla</option>
+                                <option value="mesa" selected>Mesa</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Cantidad a Realizar</label>
+                             <input type="number" name="cantidadrestante" min="1" class="form-control" placeholder="Cantidad a Realizar">
+                        </div>
+                      
+                        <div class="form-group">
+                            <label >Detalle de orden</label>
+                            <input type="text" name ="detalle" class="form-control" placeholder="detalle">
+                        </div>
+                        <div class="form-group">
+                            <Label>Digite el numero de Procesos</Label>
+                            <input type="number" name="numeroprocesos" min="1" class="form-control" placeholder="Numero de Procesos">
+                        </div>
+                          <div class="form-group">
+                            <label>Seleccione Materia Prima</label>
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Materia Prima</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="materiaprimaid" class="form-control" required="">
+                                              
+                                                 {{#each materiasPrimas}}                                                                                          
+                                             <option value="{{id}}">{{nombre}}</option> 
+                                           
+                                                {{/each}}   
+                                            </select>
+                                        
+           
+                                        </td>
+                                        <td><input type="number" name="cantidadmatariaprima" required=""
+                                                class="form-control quantity" min="1"></td>
+                                        </tr>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="from-group">
+                            <button class="btn btn-success btn-block">
+                                Registrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
