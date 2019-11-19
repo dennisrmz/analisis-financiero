@@ -109,13 +109,13 @@ router.post('/agregar_productos_proceso', async (req, res) => {
     const ordenproceso_id = Arrayorden[0].id;
     const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprimaid);
     
-    costomp = procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid);
+    costomp = await procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid);
         
        
   
     const materiaprima_id = materiaPrima[0].id;
     const numero = 1;
-    var costomp = parseFloat(materiaPrima[0].preciounitario) * parseFloat(cantidadmatariaprima);
+    
     const nuevoProceso = {
         ordenproceso_id,
         materiaprima_id,
@@ -148,6 +148,9 @@ router.get('/transferir_proceso/:id', async (req, res) => {
 router.post('/transferir_proceso', async (req, res) => {
     var { ordenproceso_id, numero, materiaprima_id, cantidadproducto, cantidadmatariaprima, mod,
         cif } = req.body;
+        const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprima_id);
+        costomp = await procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprima_id);
+    
     var cantidadProceso = await pool.query('SELECT invproductosproceso.numeroprocesos,invproductosproceso.tipoproducto FROM `orden`  INNER JOIN invproductosproceso on orden.productoproceso_id = invproductosproceso.id where orden.id = ?', ordenproceso_id);
     if (numero < parseInt(cantidadProceso[0].numeroprocesos)) {
         const procActual = numero;
@@ -157,6 +160,8 @@ router.post('/transferir_proceso', async (req, res) => {
             materiaprima_id,
             numero,
             cantidadmatariaprima,
+            cantidaddeproducto:cantidadproducto,
+            costomp
         }
         console.log(nuevoProceso);
         await pool.query('INSERT INTO procesos set ?', [nuevoProceso]);
@@ -185,10 +190,12 @@ router.post('/transferir_proceso', async (req, res) => {
 });
 
 async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid,costomp){
+   var totalcosto =0;
     for (let index = 0; index < materiaPrima.length; index++) {
         const element = materiaPrima[index];
         console.log( index);
         console.log(cantidadmatariaprima);
+        console.log(element.cantidad);
         if (element.cantidad > cantidadmatariaprima) {
             const newEntradaMateriaPrima = {
                 materiaprima_id:materiaprimaid,
@@ -200,7 +207,9 @@ async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid
             element.cantidad = parseInt(element.cantidad) - parseInt(cantidadmatariaprima);
             await pool.query('UPDATE `entradamp` SET `cantidad`=? WHERE entradamp.id = ?', [element.cantidad,element.id]);
             await pool.query('INSERT INTO entradamp set ?', [newEntradaMateriaPrima]);
-            costomp = costomp + parseFloat(element.preciounitario) * parseFloat(element.cantidadmatariaprima);
+            console.log(cantidadmatariaprima);
+            totalcosto = parseFloat(totalcosto) + parseFloat(element.preciounitario) * parseFloat(cantidadmatariaprima);
+            
             break;
         } if(element.cantidad < cantidadmatariaprima) {
             const newEntradaMateriaPrima = {
@@ -212,10 +221,11 @@ async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid
           cantidadmatariaprima=parseInt(cantidadmatariaprima)-parseInt(element.cantidad);           
             await pool.query('UPDATE `entradamp` SET `cantidad`=? WHERE entradamp.id = ?', [0,element.id]);
             await pool.query('INSERT INTO entradamp set ?', [newEntradaMateriaPrima]);
-            costomp = costomp + parseFloat(element.preciounitario) * parseFloat(element.cantidadmatariaprima);
+            totalcosto = totalcosto + parseFloat(element.preciounitario) * parseFloat(element.cantidadmatariaprima);
         }
         
     }
-    return costomp;
+    console.log(totalcosto);
+    return totalcosto;
 }
 module.exports = router;
