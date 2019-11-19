@@ -1,3 +1,5 @@
+{{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -8,6 +10,7 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
+
                         <a href="/contabilidad_general/estados_financieros/agregar_nota_explicativa">
                         <strong>¡Click aquí para agregar una nota explicativa!</strong>
                         </a>
@@ -22,29 +25,53 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
-                                                                <th>Nombre</th>
-                                                                <th>Descripción</th>
+                                                                <th class="text-center">Identificador</th>
+                                                                <th class="text-center" style="width: 40%">Nombre Nota Explicativa</th>
+                                                                <th class="text-center" style="width: 40%">Descripción</th>
+                                                                <th class="text-center">Operación</th>
                                                         </tr>
                                                 </thead>
-                                                <!--{{#each estadofinanciero}}
+                                                {{#each notasexplicativas}}
                                                 <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                                <td class="text-center">{{ ID_ESTADOFINANCIERO }}</td>
-                                                                <td>{{ ID_PERIODOCONTABLE  }}</td>
-                                                                <td>{{ NOMBRE_ESTADOFINANCIERO }}</td>
-                                                                <td class="text">
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="#" onclick="" style="color:gray !important"></a>
+                                                        <tr id="ID_NOTA">
+                                                                <td class="text-center">{{ ID_NOTA }}</td>
+                                                                <td>{{ TITULO_NOTA  }}</td>
+                                                                <td>{{ DESCRIPCION_NOTA }}</td>
+                                                                <td class="text-center">
+                                                                        <a class="fas fa-w fa-eye"  name="ver" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" onclick="" style="color:gray !important"></a>
+                                                                        <a class="fas fa-w fa-edit" name="editar" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" onclick="" style="color:gray !important"></a>
+
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
                                                 <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no tienes ningún estado financiero hasta el momento.</p>
+                                                        <p>¡Opps! Parece que no tienes ninguna nota explicativa hasta el momento.</p>
                                                 </div>
-                                                {{/each}}-->
+                                                {{/each}}
+
                                         </table>
                                 </div>
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+{{> footer }}
+<script type="text/javascrip">
+$(document).ready(function(){
+        enviar();
+});
+        function enviar(){
+                var seleccionada = $('#parametro').val();
+                var url_nueva = "/contabilidad_general/estados_financieros/"+seleccionada+"/notas_explicativas/listado/agregar";
+                $.ajax({
+                        type: 'get',
+                        url: url_nueva,
+                        success: function(data){
+                                console.log("SUCESS");
+                        }
+                });
+        }
+});
+</script>
+

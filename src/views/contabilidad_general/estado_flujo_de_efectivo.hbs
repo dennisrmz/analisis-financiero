@@ -1,3 +1,5 @@
+{{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -24,7 +26,9 @@
                                                             <br>
                                                             Estado de Flujo de Efectivo
                                                             <br>
-                                                            Del al </td>
+
+                                                            Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}} </td>
+
                                                         </th>
                                                     </tr>
                                                 </thead>
@@ -46,4 +50,7 @@
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
+
 </div><!-- /.content-wrapper -->
+{{> footer }}
+

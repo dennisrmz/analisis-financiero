@@ -1,8 +1,16 @@
+
+{{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">Estados Financieros</li>
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general/estados_financieros/listado">
+                        Estados Financieros
+                        </a> 
+                </li>
+
                 <li class="breadcrumb-item active">Estado de Capital</li>
                 </ol>
                 <!-- DataTables -->
@@ -19,38 +27,46 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>
-                                                        <th colspan="3" class="text-center">
+
+                                                        <th colspan="6" class="text-center">
+
                                                             PROPLASTIC S.A. DE C.V.
                                                             <br>
                                                             Estado de Cambios en el Patrimonio
                                                             <br>
-                                                            Del al </td>
+
+                                                            Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}} </td>
+
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                     <tr>
-                                                        <th>INVERSIONES</th>
+
+                                                        <th class="text-center">CODIGO</th>
+                                                        <th class="text-center">CUENTAS</th>
+                                                        <th class="text-center">SALDO INICIAL</th>
+                                                        <th class="text-center">AUMENTOS</th>
+                                                        <th class="text-center">DISMINUCIONES</th>
+                                                        <th class="text-center">SALDO FINAL</th>
                                                     </tr>
+                                                    {{#each cuentas_patrimonio}}
                                                     <tbody>
-                                                        <tr>
-                                                        <th>Cuentas</th>
-                                                        </tr>
+                                                            <tr id="ID_ESTADOFINANCIERO">
+                                                                    <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                                    <td>{{ NOMBRE_CUENTA }}</td>
+                                                                    <td class="text-center">{{ SALDO_CUENTA }}</td>
+                                                                    <td class="text-center"></td>   
+                                                                    <td class="text-center"></td>  
+                                                                    <td class="text-center">{{ SALDO_CUENTA }}</td>                    
+                                                            </tr>
                                                     </tbody>
-                                                    <tr>
-                                                        <th>DESINVERSIONES</th>
-                                                    </tr>
-                                                    <tbody>
-                                                        <tr>
-                                                        <th>Cuentas</th>
-                                                        </tr>
-                                                    </tbody>
-                                                <tbody>
-                                                        
-                                                </tbody>
-                                            
+                                                    {{/each}}
+
                                         </table>
                                 </div>
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
+{{> footer }}
+
