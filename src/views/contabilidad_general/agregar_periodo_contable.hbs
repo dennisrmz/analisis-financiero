@@ -1,9 +1,10 @@
+{{> navigation }}
 <div class="container-fluid">
         <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                        <a href="/contabilidad_general/periodo_contable">
-                        Periodo Contable
+                        <a href="/">
+                        Sistema Administrativo
                         </a>
                 </li>
                 <li class="breadcrumb-item active">Agregar periodo contable</li>
@@ -16,19 +17,40 @@
                                         Periodo contable
                                 </div>
                                 <div class="card-body">
-                                        <form action="/contabilidad_general/periodo_contable/agregar_periodo" method="POST">
+                                        <form action="/agregar_periodo" method="POST">
                                                 <div class="form-group">
                                                         <a>Fecha inicio:</a>
                                                         <input name="fecha" class="form-control" data-date-format="yyyy-mm-dd" id="datepicker">
                                                         {{> fecha }}
                                                 </div>
                                                 <div class="form-group">
-                                                        <button style="width: 58%" class="btn btn-primary">Iniciar periodo contable</button>
-                                                        <button style="width: 40%" class="btn btn-secondary">Cancelar</button>
+                                                        <button class="btn btn-primary btn-block">Iniciar periodo contable</button>
                                                 </div>
                                         </form>
+                                        <div class="form-group">
+                                                <button id="cancel" class="btn btn-secondary btn-block">Cancelar</button>
+                                        </div>
                                 </div>
                         </div>
                 </div>
         </div>
 </div>
+{{> footer }}
+<script type="text/javascript">
+        $(document).ready(function(){
+                //Funcion para el boton "cancelar"
+                $("#cancel").click(function() {
+                        swal.fire({
+                                title: '¿Esta seguro de cancelar el registro?',
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Aceptar',
+                                cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                                if (result.value) {
+                                        location.href="/contabilidad_general/periodo_contable";
+                                }
+                        });
+                });
+        });
+</script>

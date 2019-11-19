@@ -1,19 +1,24 @@
+{{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
-                <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                            <a href="/contabilidad_general">
-                            Contabilidad General
-                            </a>
+                                <a href="/contabilidad_general">
+                                Contabilidad General
+                                </a>
                         </li>
-                        <li class="breadcrumb-item active">Transaccion</li>
+                        <li class="breadcrumb-item active">Transacción</li>
                 </ol>
-                <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/transaccion/agregar_transaccion">
-                        <strong>¡Click Aquí para agregar una nueva transaccion!</strong>
+                        <a href="#" onClick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')">
+                        <strong>¡Click Aquí para agregar una nueva transacción al periodo actual!</strong>
+                        </a>
+                </div>
+                <div class="alert alert-success">
+                        <i class="fa fa-check-circle"></i>
+                        <a class="alert-link" href="#" onClick="cerrarPeriodo({{periodo.ID_PERIODOCONTABLE}},'{{periodo.FECHA_PERIODO_FINAL}}')">
+                        <strong>¡Click Aquí para cerrar periodo contable!</strong>
                         </a>
                 </div>
                 <div class="card mb-3">
@@ -22,43 +27,134 @@
                                 Transacciones
                         </div>
                         <div class="card-body">
-                                <div class="table-responsive">
+                                <a>Seleccione el periodo para ver las transacciones de dicho periodo:</a>
+                                <select style="width: 35%" id="periodo" class="form-control" name="select">
+                                        <option value="0" selected>Seleccione</option>
+                                        {{#each periodocontable}}
+                                        <option value="{{ID_PERIODOCONTABLE}}">DE  {{FECHA_PERIODO}}  A  {{FECHA_PERIODO_FINAL}}</option> 
+                                        {{else}}
+                                        <option value="0" selected>---------------</option>
+                                        {{/each}}
+                                </select>
+                        </div>
+                        <div class="card-body">
+                                <div id="prueba" class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
+                                                        <tr class="text-center">
+                                                                <th colspan="7">Periodo contable</th>
+                                                        </tr>
                                                         <tr>
                                                                 <th># Id </th>
+                                                                <th>Con impuesto </th>
+                                                                <th>Tipo de transacción</th>
+                                                                <th>Descripción</th>
                                                                 <th>Fecha</th>
                                                                 <th>Monto</th>
-                                                                <th>Tipo</th>
-                                                                <th>Descripción</th>
-                                                                <th>Operaciones</th>
+                                                                <th>Operacion</th>
                                                         </tr>
                                                 </thead>
-                                                {{#each transaccion}}
-                                                <tbody>
-                                                        <tr id="ID_CUENTA">
-                                                                <td class="text-center">{{ID_TRANSACCION}}</td>
-                                                                <td>{{FECHA_TRANSACCION}}</td>
-                                                                <td>{{MONTO_TRANSACCION}}</td>
-                                                                <td>{{NOMBRE_TIPO_TRANSACCION}}</td>
-                                                                <td>{{DESCRIPCION_TRANSACCION}}</td>
-                                                                <td class="text">
-                                                                        <a class="fas fa-w fa-edit" name="editar" href="#" onclick="" style="color:gray !important">Realizar ajuste</a>
-                                                                        <a class="fas fa-w fa-eye" name="ver" href="" onclick="" style="color:gray !important">Ver</a>
-                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#" onclick="" style="color:gray !important">Eliminar</a>
-                                                                </td>                          
-                                                        </tr>
-                                                </tbody>
-                                                {{else}}
-                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
-                                                        <div class="alert bold alert-danger text-center" >
-                                                                <strong>¡Opps! Parece que no tienes ninguna transacción registrada.</strong>
-                                                        </div>
-                                                </table>
-                                                {{/each}} 
                                         </table>
                                 </div>
                         </div>
                 </div>
-        </div><!-- /.container-fluid -->
-</div><!-- /.content-wrapper -->
+        </div>
+</div>
+{{> footer }}
+<script type="text/javascript">
+        $('#periodo').change(function(){            
+                var seleccionada = $('#periodo').val();
+                var url_nueva = "/contabilidad_general/listar_transaccion_select/"+seleccionada;
+                console.log("AJAX: "+seleccionada);
+                if(seleccionada != ''){
+                        $.ajax({
+                                type: 'get',
+                                url: url_nueva,
+                                success: function(data){
+                                        console.log("SUCCESS");
+                                        $("#dataTable").remove();
+                                        $('#prueba').html(data);
+                                },
+                        }).done(function(data){
+                                
+                        });
+                    }
+                else{
+                        $(".dataTables_empty").remove();
+                }
+        });
+
+        //funcion para validar que antes que cuando desee agregar una nueva transaccion deba iniciar periodo
+        function enviar(string){
+                if(string == ''){
+                        window.location.href='/contabilidad_general/transaccion/agregar_transaccion';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción.'
+                        });
+                }
+        }
+
+        function mostrar(impuesto, transaccion){
+                console.log("IMPUESTO: "+impuesto);
+                console.log("Transaccion: "+transaccion);
+                var nueva_transaccion = impuesto;
+                if(impuesto != "SI"){
+                        window.location.href="/contabilidad_general/transaccion/ver_transaccion/"+transaccion;
+                }
+                else{
+                        window.location.href='/contabilidad_general/transaccion/ver_transaccion_impuesto/'+transaccion+"/"+impuesto;
+                }
+        }
+
+        function cerrarPeriodo(id_periodo, FECHA_PERIODO_FINAL){
+                if(FECHA_PERIODO_FINAL == ''){
+                        swal.fire({
+                                title: '¿Esta seguro de cerrar periodo?',
+                                text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo.',
+                                type: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Aceptar',
+                                cancelButtonText: 'Cancelar',
+                        }).then((result) => {
+                                var hoy = new Date();
+                                if (result.value) {
+                                        var dd = hoy.getDate();
+                                        var mm = hoy.getMonth()+1;
+                                        var yyyy = hoy.getFullYear();
+                                        var fecha = yyyy+"-"+mm+"-"+dd;
+                                        console.log(fecha);
+                                        console.log(id_periodo);
+                                        $.ajax({
+                                                url: "/contabilidad_general/transaccion",
+                                                type: "POST",
+                                                data: {
+                                                        'FECHAFINAL_PERIODO': fecha,
+                                                        'ID_PERIODOCONTABLE': id_periodo
+                                                },
+                                                success: function(data){
+                                                        console.log(data);
+                                                        console.log("SUCCESS");
+                                                },
+                                                dataType: "json"
+                                        }).done(function(data){
+                                                location.href = data.success_url;
+                                        }).fail(function() {
+                                                location.href = "/contabilidad_general";
+                                        }).always(function() {
+                                                console.log("complete");
+                                        });
+                                }
+                        });
+                }else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Ya ha sido cerrado periodo. Debe iniciar un nuevo periodo.'
+                        });
+                }
+        }
+</script>

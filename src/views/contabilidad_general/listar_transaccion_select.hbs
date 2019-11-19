@@ -1,0 +1,37 @@
+<table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+                <tr class="text-center">
+                        <th colspan="7">Periodo contable desde: {{periodos.FECHA_PERIODO}} hasta {{periodos.FECHA_PERIODO_FINAL}}</th>
+                </tr>
+                <tr>
+                        <th># Id </th>
+                        <th>Con impuesto</th>
+                        <th>Tipo de transacción</th>
+                        <th>Descripción</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Operacion</th>
+                </tr>
+        </thead>
+        {{#each transaccion}}
+        <tbody id="tbBody">
+                <tr id="ID_CUENTA">
+                        <td class="text-center">{{ID_TRANSACCION}}</td>
+                        <td>{{ES_IMPUESTO}}</td>
+                        <td>{{NOMBRE_TIPO_TRANSACCION}}</td>
+                        <td>{{DESCRIPCION_TRANSACCION}}</td>
+                        <td>{{FECHA_TRANSACCION_FORMATO}}</td>
+                        <td>${{MONTO_TRANSACCION}}</td>
+                        <td id="operaciones" class="text">
+                                <a class="fas fa-w fa-eye" name="ver" href="#" onclick="mostrar('{{ES_IMPUESTO}}', {{ID_TRANSACCION}})" style="color:gray !important">Ver</a>
+                        </td>                          
+                </tr>
+        </tbody>
+        {{else}}
+        <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+        <div class="alert bold alert-danger text-center" >
+                <strong>¡Opps! Parece que no tienes ninguna transacción registrada.</strong>
+        </div>
+        </table>
+        {{/each}}
+</table>

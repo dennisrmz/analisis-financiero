@@ -1,0 +1,109 @@
+{{> navigation }}
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                                <a href="/contabilidad_general">
+                                Contabilidad General
+                                </a>
+                        </li>
+                        <li class="breadcrumb-item active">Asiento de ajuste</li>
+                </ol>
+                <div class="card mb-3">
+                        <div class="card-header">
+                                <i class="fas fa-table"></i>
+                                Asientos de ajuste
+                        </div>
+                        <div class="card-body center">
+                                <a>Seleccione el periodo para ver las transacciones con o sin ajuste de dicho periodo:</a>
+                                <select style="width: 35%" id="periodo" class="form-control" name="select">
+                                        <option value="0" selected>Seleccione</option>
+                                        {{#each periodo}}
+                                        <option value="{{ID_PERIODOCONTABLE}}">DE  {{FECHA_PERIODO}}  A  {{FECHA_PERIODO_FINAL}}</option> 
+                                        {{else}}
+                                        <option value="0" selected>---------------</option>
+                                        {{/each}}
+                                </select>
+                        </div>
+                        <div class="card-body">
+                                <div id="prueba" class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                        <tr class="text-center">
+                                                                <th colspan="7">Periodo contable</th>
+                                                        </tr>
+                                                        <tr>
+                                                                <th>#</th>
+                                                                <th>Con ajuste</th>
+                                                                <th>Tipo de transacción</th>
+                                                                <th>Fecha</th>
+                                                                <th>Descripción</th>
+                                                                <th>Monto</th>
+                                                                <th>Operaciones</th>
+                                                        </tr>
+                                                </thead>
+                                        </table>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+{{> footer }}
+<script type="text/javascript">
+        $('#periodo').change(function(){            
+                var seleccionada = $('#periodo').val();
+                var url_nueva = "/contabilidad_general/listar_asiento_ajuste_select/"+seleccionada;
+                console.log("AJAX: "+seleccionada);
+                if(seleccionada != ''){
+                        $.ajax({
+                                type: 'get',
+                                url: url_nueva,
+                                success: function(data){
+                                        console.log("SUCCESS");
+                                        $("#dataTable").remove();
+                                        $('#prueba').html(data);
+                                },
+                        }).done(function(data){
+                                
+                        });
+                    }
+                else{
+                        $(".dataTables_empty").remove();
+                }
+        });
+
+        function mostrar(ajuste, transaccion){
+                console.log("Ajuste: "+ajuste);
+                console.log("Transaccion: "+transaccion);
+                var nueva_transaccion = transaccion;
+                if(ajuste === "SI"){
+                        window.location.href="/contabilidad_general/asiento_ajuste/ver_ajuste/"+nueva_transaccion;
+                }
+                else{
+                        window.location.href='/contabilidad_general/asiento_ajuste/ver_sin_ajuste/'+transaccion;
+                }
+        }
+
+        function validarRealizarAjuste(ajuste, transaccion, nombre_tipo){
+                var nombre_tipo_sin_espacio = nombre_tipo.replace(/ /g,"_");
+                if(nombre_tipo == "VENTA AL CONTADO" || nombre_tipo == "VENTA AL CREDITO"){
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'A este tipo de transacción no se le realiza ajuste.'
+                        });
+                }else{
+                        if(ajuste === "SI"){
+                                Swal.fire({
+                                        type: 'warning',
+                                        title: 'Permiso denegado',
+                                        text: 'Ya ha realizado ajuste a esta transacción.'
+                                });   
+                        }
+                        else{
+                                window.location.href="/contabilidad_general/asiento_ajuste/agregar_ajuste/"+transaccion+"/"+nombre_tipo_sin_espacio;
+                        }
+                }
+        }
+
+</script>

@@ -1,6 +1,6 @@
+{{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
-                <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
                         <li class="breadcrumb-item">
                             <a href="/contabilidad_general">
@@ -9,7 +9,6 @@
                         </li>
                         <li class="breadcrumb-item active">Catalogo de Cuentas</li>
                 </ol>
-                <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
                         <a href="/contabilidad_general/catalogo/agregar_cuenta">
@@ -23,8 +22,7 @@
                         </div>
                         <div class="card-body">
                                 <div id="example_wrapper" class="dataTables_wrapper dt-bootstrap4">
-                                        <span class="counter pull-right"></span>
-                                        <table class="table table-bordered dataTable" id="example" width="100%" cellspacing="0" role="grid" aria-describedby="example_info">
+                                        <table id="example" class="table table-bordered" style="width:100%">
                                                 <thead>
                                                         <tr>
                                                                 <th aria-controls="example"># Id</th>
@@ -36,19 +34,18 @@
                                                 </thead>
                                                 {{#each cuenta}}
                                                 <tbody>
-                                                        <tr class="odd" id="ID_CUENTA">
+                                                        <tr>
                                                                 <td class="text-center">{{ ID_CUENTA }}</td>
                                                                 <td>{{ CODIGO_CUENTA }}</td>
                                                                 <td>{{ NOMBRE_CUENTA }}</td>
                                                                 <td>{{ TIPO_NATURALEZA_CUETA }}</td>
                                                                 <td class="text">
                                                                         <a class="fas fa-w fa-eye" name="ver" href="/contabilidad_general/catalogo/ver_cuenta/{{ID_CUENTA}}" style="color:gray !important">Ver</a>
-                                                                        <a class="fas fa-w fa fa-trash" name="eliminar" href="#"  style="color:gray !important">Eliminar</a>
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
-                                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0"></table>
+                                                <table id="example1" class="table table-bordered" style="width:100%">
                                                         <div class="alert bold alert-danger text-center" >
                                                                 <strong>¡Opps! Parece que no tienes ninguna cuenta registrada.</strong>
                                                         </div>
@@ -58,11 +55,13 @@
                                 </div>
                         </div>
                 </div>
-        </div><!-- /.container-fluid -->
-</div><!-- /.content-wrapper -->
-<script>
+        </div>
+</div>
+{{> footer }}
+<script type="text/javascript">
         $(document).ready(function() {
                 $('#example').DataTable();
-        } );
+        });
+
 </script>
 

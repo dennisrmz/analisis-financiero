@@ -1,0 +1,15 @@
+<div id="fecha_prestamo_1" class="form-group">
+        <a>Fecha en que se realizo:</a>
+        <input name="fecha_prestamo" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker_1" placeholder="Seleccione fecha del calendario">
+        {{> fecha}}
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#datepicker_1').datepicker({
+            weekStart: 1,
+            daysOfWeekHighlighted: "6,0",
+            autoclose: true,
+            todayHighlight: true,
+        });
+    });  
+</script>
