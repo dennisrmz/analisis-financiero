@@ -47,6 +47,8 @@
                                     <a>Ingrese el monto:</a>
                                     <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
                                 </div>
+                                <div id="canti_materia" class="form-group">
+                                </div>
                                 <div id="impuesto" class="form-group">
                                 </div>
                                 <div id="iva_calculado" class="form-group">
@@ -349,7 +351,7 @@
         }
 
         //Funcion metodo post para agregar transaccion
-        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto){
+        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia){
             $.ajax({
                 url: "/contabilidad_general/transaccion/agregar_transaccion",
                 type: "POST",
@@ -367,7 +369,8 @@
                     'ES_AJUSTE': ajuste,
                     'ID_TRANSACCION_AJUSTE': codigo_ajuste,
                     'ES_IMPUESTO': is_impuesto, 
-                    'MONTO_IMPUESTO': monto_impuesto
+                    'MONTO_IMPUESTO': monto_impuesto,
+                    'CANTIDAD_MATERIA': cantidad_materia
                 },
                 success: function(data){
                 console.log(data);
@@ -400,12 +403,7 @@
             var totalCargos_imp = totalCargos + val_impuesto;
             var is_impuesto = "";
             var monto_impuesto = "";
-            var interes_mes = "";
-            var plazo_mes = "";
-            var plazo_anio = "";
-            var fecha_prestamo = "";
-            var vida_util = "";
-            var valor_recuperacion = "";
+            var cantidad_materia = "";
             console.log("impuesto"+val_impuesto);
             console.log(valor);
             if(valor == "false"){
@@ -413,7 +411,14 @@
                 monto_impuesto = $('#monto_iva').val();
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalCargos_imp==totalAbonos_imp){
-                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto);
+                        if(cbTipo.value == '1' || cbTipo.value == '2'){
+                                cantidad_materia = $("#id_cantidad").val();
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
+                        }else{
+                            cantidad_materia = 0;
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
+                        }
+                        
                     }else{
                         message_partida_doble();
                     }
@@ -423,12 +428,11 @@
             }else{
                 is_impuesto = "NO";
                 monto_impuesto = 0;
-                vida_util = 0;
-                valor_recuperacion = 0;
+                cantidad_materia = 0;
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
-                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto);
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
                         }else{
                             message_datos_incoherentes();
                         }
@@ -485,6 +489,7 @@
                 var seleccionada = $('#id_tipo_transaccion').val();
                 console.log(seleccionada);
                 var url_nueva = "/contabilidad_general/check_impuesto";
+                var url_nueva_cantidad = "/contabilidad_general/input_cantidad"
                 if(seleccionada == 1 || seleccionada == 2 || seleccionada == 3 || seleccionada == 4 || seleccionada == 5 || seleccionada == 6 || seleccionada == 10 || seleccionada == 11){
                     $.ajax({
                         type: 'get',
@@ -494,6 +499,18 @@
                             console.log("SUCCESS");
                         },
                     });
+                    if(seleccionada == 1 || seleccionada == 2){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_cantidad,
+                            success: function(data){
+                                $('#canti_materia').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#canti_materia_1').remove();
+                    }
                 }
                 else{
                     $('#impuesto_1').remove();

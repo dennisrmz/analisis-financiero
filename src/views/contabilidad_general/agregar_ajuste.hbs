@@ -120,7 +120,8 @@
                                     </div>
                                     <div id="vida_util_p" class="form-group">
                                     </div>
-                                    <div id="monto_ajuste" class="form-group"></div>
+                                    <div id="monto_ajuste" class="form-group">
+                                    </div>
                                     <div id="monto_cambiar" class="form-group">
                                         <a>Ingrese el monto de ajuste:</a>
                                         <textarea rows="1" id="id_monto_ajuste" type="number" name="monto" class="form-control" placeholder="Monto de ajuste">{{mes}}</textarea>
@@ -310,7 +311,6 @@
     //Funcion para agregar campo calor de recuperacion
     function valor_recu(){
         var url_nueva_valor = "/contabilidad_general/input_valor_recuperacion";
-        check_calcular_monto
         $.ajax({
             type: 'get',
             url: url_nueva_valor,
@@ -346,7 +346,7 @@
             document.getElementById("id_monto_ajuste").disabled = true;
             check_monto_ajuste();
         }else{
-            if($(obj).text() == gastos_ade && tipo == 'COMPRA DE EQUIPO AL CREDITO') {
+            if($(obj).text() == depreciacion && tipo == 'COMPRA DE EQUIPO AL CREDITO') {
                 valor_recu();
                 vida();
                 document.getElementById("id_monto_ajuste").disabled = true;

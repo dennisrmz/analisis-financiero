@@ -391,7 +391,7 @@ router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
-        const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE, ES_IMPUESTO, MONTO_IMPUESTO} = req.body;
+        const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE, ES_IMPUESTO, MONTO_IMPUESTO, CANTIDAD_MATERIA} = req.body;
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
@@ -409,7 +409,8 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                 ES_AJUSTE,
                 ID_TRANSACCION_AJUSTE,
                 ES_IMPUESTO, 
-                MONTO_IMPUESTO
+                MONTO_IMPUESTO,
+                CANTIDAD_MATERIA
         };
         console.log({new_transaccion});
         await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
@@ -767,6 +768,9 @@ router.get('/input_valor_recuperacion', (req, res) => {
 });
 router.get('/check_calcular_monto', (req, res) => {
         res.render('contabilidad_general/check_calcular_monto');
+});
+router.get('/input_cantidad', (req, res) => {
+        res.render('contabilidad_general/input_cantidad');
 });
 router.get('/monto_impuesto/:monto_tran', async (req, res) => {
         const { monto_tran } = req.params;
