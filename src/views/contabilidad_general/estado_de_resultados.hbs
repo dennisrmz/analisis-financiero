@@ -17,7 +17,7 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>
-                                                        <th colspan="4" class="text-center">
+                                                        <th colspan="3" class="text-center">
                                                             PROPLASTIC S.A. DE C.V.
                                                             <br>
                                                             Estado de Pérdidas y Ganancias
@@ -28,7 +28,7 @@
                                                 </thead>
                                                 <thead>
                                                     <tr>
-                                                        <th colspan="4">INGRESOS</th>
+                                                        <th colspan="3">INGRESOS</th>
                                                     </tr>
                                                 </thead>
                                                 {{#each cuentas_ingresos}}
@@ -36,8 +36,7 @@
                                                         <tr id="ID_ESTADOFINANCIERO">
                                                             <td width="15%">{{ CODIGO_CUENTA}}</td>
                                                             <td>{{ NOMBRE_CUENTA }}</td>
-                                                            <td>{{ MONTO_SALDO }}</td>
-                                                            <td></td>
+                                                            <td class="text-center">{{ MONTO_SALDO }}</td>
                                                         </tr>
                                                     </tbody>
                                                 {{/each}}
@@ -45,11 +44,10 @@
                                                         <th class="text-center"></th>
                                                         <th class="text-right">Total Ingresos</th>
                                                         <th class="text-center">{{suma_ingreso.INGRESO}}</th>
-                                                        <th class="text-center"></th>
                                                 </tr>
                                                 <thead>
                                                     <tr>
-                                                        <th colspan="4">GASTOS</th>
+                                                        <th colspan="3">GASTOS</th>
                                                     </tr>
                                                 </thead>
                                                     {{#each cuentas_gastos}}
@@ -57,8 +55,7 @@
                                                         <tr id="ID_ESTADOFINANCIERO">
                                                             <td width="15%">{{ CODIGO_CUENTA}}</td>
                                                             <td>{{ NOMBRE_CUENTA }}</td>
-                                                            <td>{{ MONTO_SALDO }}</td>
-                                                            <td></td>
+                                                            <td class="text-center">{{ MONTO_SALDO }}</td>
                                                         </tr>
                                                     </tbody>
                                                 {{/each}}
@@ -66,13 +63,11 @@
                                                         <th class="text-center"></th>
                                                         <th class="text-right">Total Gastos</th>
                                                         <th class="text-center">{{suma_gasto.GASTO}}</th>
-                                                        <th class="text-center"></th>
                                                 </tr>
                                                 <tr>
                                                         <th class="text-center"></th>
                                                         <th class="text-right">{{utilidad.NOMBRE_CUENTA}}</th>
                                                         <th class="text-center">{{saldo_utilidad}}</th>
-                                                        <th class="text-center"></th>
                                                 </tr>
                                         </table>
                                 </div>
