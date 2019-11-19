@@ -1,8 +1,10 @@
 {{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
+
                 <li class="breadcrumb-item">
                         <a href="/contabilidad_general/estados_financieros/listado">
                         Estados Financieros
@@ -21,20 +23,26 @@
                 <div class="card mb-3">
                         <div class="card-body">
                                 <!--<form action="/contabilidad_general/estados_financieros/listado/" method="GET">-->
+
                                 <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>
+
                                                         <th colspan="4" class="text-center">
+
                                                             PROPLASTIC S.A. DE C.V.
                                                             <br>
                                                             Balance de Comprobacion
                                                             <br>
+
                                                             Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
+
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                     <tr>
+
                                                         <th class="text-center">CODIGO</th>
                                                         <th class="text-center">CUENTAS</th>
                                                         <th class="text-center">DEBE</th>
@@ -64,9 +72,12 @@
                                         </table>
                                 </div>
                                 <!--</form>-->
+
                         </div>
                 </div>
                 </div>
         </div><!-- /.container-fluid -->
+
 </div><!-- /.content-wrapper -->
 {{> footer }}
+

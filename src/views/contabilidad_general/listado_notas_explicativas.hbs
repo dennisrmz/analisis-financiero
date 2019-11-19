@@ -1,4 +1,5 @@
 {{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -9,7 +10,8 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" onClick="return enviar();" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar">
+
+                        <a href="/contabilidad_general/estados_financieros/agregar_nota_explicativa">
                         <strong>¡Click aquí para agregar una nota explicativa!</strong>
                         </a>
                 </div>
@@ -38,6 +40,7 @@
                                                                 <td class="text-center">
                                                                         <a class="fas fa-w fa-eye"  name="ver" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" onclick="" style="color:gray !important"></a>
                                                                         <a class="fas fa-w fa-edit" name="editar" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" onclick="" style="color:gray !important"></a>
+
                                                                 </td>                          
                                                         </tr>
                                                 </tbody>
@@ -46,6 +49,7 @@
                                                         <p>¡Opps! Parece que no tienes ninguna nota explicativa hasta el momento.</p>
                                                 </div>
                                                 {{/each}}
+
                                         </table>
                                 </div>
                         </div>
@@ -70,3 +74,4 @@ $(document).ready(function(){
         }
 });
 </script>
+

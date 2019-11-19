@@ -1,7 +1,7 @@
 CREATE DATABASE analisisfinanciero;
 
 use analisisfinanciero;
-
+-- min 40:00
 drop table if exists CUENTA;
 
 drop table if exists ESTADOFINANCIERO;
@@ -16,9 +16,11 @@ drop table if exists NATURALEZA;
 
 drop table if exists NOTAEXPLICATIVA;
 
+
 drop table if exists PERIODOCONTABLE;
 
 drop table if exists TIPOAJUSTE;
+
 
 drop table if exists TIPOTRANSACCION;
 
@@ -31,10 +33,12 @@ drop table if exists TRANSACCIONAJUSTE;
 /*==============================================================*/
 create table CUENTA
 (
+
    ID_CUENTA            int not null AUTO_INCREMENT,
    ID_NATURALEZA_CUENTA int,
    CODIGO_CUENTA_PADRE  int,
    SALDO_CUENTA         float not null,
+
    CODIGO_CUENTA        int not null,
    NOMBRE_CUENTA        varchar(50) not null,
    NIVELH               int not null,
@@ -67,10 +71,12 @@ create table ESTADOFINANCIERO_MAYORIZACION
 /*==============================================================*/
 create table MAYORIZACION
 (
+
    ID_MAYORIZACION      int not null AUTO_INCREMENT,
    ID_CUENTA            int,
    MONTO_SALDO          float not null,
    ES_SALDO_ACREEDOR    varchar(2) not null,
+
    primary key (ID_MAYORIZACION)
 );
 
@@ -79,9 +85,11 @@ create table MAYORIZACION
 /*==============================================================*/
 create table MOVIMIENTO
 (
+
    ID_MOVIMIENTO        int not null AUTO_INCREMENT,
    ID_TRANSACCION       int not null,
    ID_TRANSACCION_AJUSTE int not null,
+
    ID_CUENTA            int,
    FECHA_MOVIMIENTO     date not null,
    DETALLE_MOVIMIENTO   varchar(250) not null,
@@ -95,13 +103,14 @@ create table MOVIMIENTO
 /*==============================================================*/
 create table NATURALEZA
 (
-   ID_NATURALEZA_CUENTA int not null AUTO_INCREMENT,
+   ID_NATURALEZA_CUENTA int not null,
    TIPO_NATURALEZA_CUETA varchar(10) not null,
    primary key (ID_NATURALEZA_CUENTA)
 );
 
 /*==============================================================*/
 /* Table: NOTAEXPLICATIVA                                       */
+
 /*==============================================================*/
 create table NOTAEXPLICATIVA
 (
@@ -114,16 +123,19 @@ create table NOTAEXPLICATIVA
 
 /*==============================================================*/
 /* Table: PERIODOCONTABLE                                       */
+
 /*==============================================================*/
-create table PERIODOCONTABLE
+create table NOTAEXPLICATIVA
 (
-   ID_PERIODOCONTABLE   int not null AUTO_INCREMENT,
-   FECHAINICIO_PERIODO  date not null,
-   FECHAFINAL_PERIODO   date,
-   primary key (ID_PERIODOCONTABLE)
+   ID_NOTA              int not null,
+   ID_ESTADOFINANCIERO  int,
+   TITULO_NOTA          varchar(50) not null,
+   DESCRIPCION_NOTA     varchar(300) not null,
+   primary key (ID_NOTA)
 );
 
 /*==============================================================*/
+
 /* Table: TIPOAJUSTE                                            */
 /*==============================================================*/
 create table TIPOAJUSTE
@@ -132,6 +144,7 @@ create table TIPOAJUSTE
    NOMBRE_TIPO_AJUSTE   varchar(50) not null,
    DESCRIPCION_TIPO_AJUSTE varchar(250) not null,
    primary key (CODIGO_TIPO_AJUSTE)
+
 );
 
 /*==============================================================*/
@@ -139,7 +152,7 @@ create table TIPOAJUSTE
 /*==============================================================*/
 create table TIPOTRANSACCION
 (
-   CODIGO_TIPO_TRANSACCION int not null AUTO_INCREMENT,
+   CODIGO_TIPO_TRANSACCION int not null,
    NOMBRE_TIPO_TRANSACCION char(50) not null,
    DESCRIPCION_TIPO_TRANSACCION char(250) not null,
    primary key (CODIGO_TIPO_TRANSACCION)
@@ -150,7 +163,7 @@ create table TIPOTRANSACCION
 /*==============================================================*/
 create table TRANSACCION
 (
-   ID_TRANSACCION       int not null AUTO_INCREMENT,
+   ID_TRANSACCION       int not null,
    CODIGO_TIPO_TRANSACCION int,
    ID_TRANSACCION_AJUSTE int not null,
    ID_PERIODOCONTABLE   int,
@@ -182,6 +195,7 @@ create table TRANSACCIONAJUSTE
    primary key (ID_TRANSACCION_AJUSTE)
 );
 
+
 alter table CUENTA add constraint FK_POSEE1 foreign key (ID_NATURALEZA_CUENTA)
       references NATURALEZA (ID_NATURALEZA_CUENTA) on delete restrict on update restrict;
 
@@ -202,6 +216,7 @@ alter table MOVIMIENTO add constraint FK_OCURREN foreign key (ID_TRANSACCION, ID
 
 alter table MOVIMIENTO add constraint FK_REALIZA foreign key (ID_CUENTA)
       references CUENTA (ID_CUENTA) on delete restrict on update restrict;
+
 
 alter table NOTAEXPLICATIVA add constraint FK_LE_CORRESPONDEN foreign key (ID_ESTADOFINANCIERO)
       references ESTADOFINANCIERO (ID_ESTADOFINANCIERO) on delete restrict on update restrict;

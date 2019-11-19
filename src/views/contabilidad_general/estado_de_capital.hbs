@@ -1,4 +1,6 @@
+
 {{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -8,6 +10,7 @@
                         Estados Financieros
                         </a> 
                 </li>
+
                 <li class="breadcrumb-item active">Estado de Capital</li>
                 </ol>
                 <!-- DataTables -->
@@ -24,16 +27,21 @@
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                     <tr>
+
                                                         <th colspan="6" class="text-center">
+
                                                             PROPLASTIC S.A. DE C.V.
                                                             <br>
                                                             Estado de Cambios en el Patrimonio
                                                             <br>
+
                                                             Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}} </td>
+
                                                         </th>
                                                     </tr>
                                                 </thead>
                                                     <tr>
+
                                                         <th class="text-center">CODIGO</th>
                                                         <th class="text-center">CUENTAS</th>
                                                         <th class="text-center">SALDO INICIAL</th>
@@ -53,6 +61,7 @@
                                                             </tr>
                                                     </tbody>
                                                     {{/each}}
+
                                         </table>
                                 </div>
                         </div>
@@ -60,3 +69,4 @@
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
 {{> footer }}
+
