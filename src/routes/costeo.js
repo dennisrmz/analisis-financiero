@@ -77,7 +77,7 @@ router.get('/producto_terminado_salida', isLoggedIn, async (req, res) => {
 //*******************Rutas Producto en Proceso***************** */  
 
 router.get('/producto_proceso', isLoggedIn, async (req, res) => {
-    var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+    var productoproc = await pool.query('SELECT * FROM `invproductosproceso` WHERE invproductosproceso.estado != 1  ORDER BY id DESC');
     console.log(productoproc);
     res.render('costeo/productos_procesos', { productoproc });
 });
@@ -139,13 +139,13 @@ router.post('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
 router.get('/detalle_producto_proceso/:id', isLoggedIn, async (req, res) => {
     console.log(req.params.id);
     var producto = await pool.query('SELECT * FROM `invproductosproceso`  WHERE id=?', req.params.id);
-    var procesos = await pool.query('SELECT procesos.id, invproductosproceso.cantidadrestante, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE invproductosproceso.id = ?', req.params.id)
+    var procesos = await pool.query('SELECT procesos.id, procesos.cantidaddeproducto, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE (invproductosproceso.id = ? AND procesos.cantidaddeproducto != 0)', req.params.id)
     res.render('costeo/detalle_producto_proceso', { producto, procesos });
 });
 
 router.get('/transferir_proceso/:id', isLoggedIn, async (req, res) => {
     const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-    var procesos = await pool.query('SELECT procesos.id, procesos.cantidaddeproducto,procesos.ordenproceso_id, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE procesos.id = ?', req.params.id)
+    var procesos = await pool.query('SELECT procesos.id, procesos.cantidaddeproducto,procesos.ordenproceso_id, procesos.numero FROM `procesos` INNER JOIN `orden`  ON (procesos.ordenproceso_id = orden.id) INNER JOIN `invproductosproceso` ON orden.productoproceso_id = invproductosproceso.id WHERE procesos.id = ? ', req.params.id)
     console.log(procesos);
     res.render('costeo/form_cambiar_proceso_producto', { materiasPrimas, procesos });
 });
@@ -155,7 +155,7 @@ router.post('/transferir_proceso', isLoggedIn, async (req, res) => {
         const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprima_id);
         costomp = await procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprima_id);
     
-    var cantidadProceso = await pool.query('SELECT invproductosproceso.numeroprocesos,invproductosproceso.tipoproducto FROM `orden`  INNER JOIN invproductosproceso on orden.productoproceso_id = invproductosproceso.id where orden.id = ?', ordenproceso_id);
+    var cantidadProceso = await pool.query('SELECT  invproductosproceso.id,invproductosproceso.numeroprocesos,invproductosproceso.tipoproducto FROM `orden`  INNER JOIN invproductosproceso on orden.productoproceso_id = invproductosproceso.id where orden.id = ?', ordenproceso_id);
     if (numero < parseInt(cantidadProceso[0].numeroprocesos)) {
         const procActual = numero;
         numero = parseInt(numero) + 1;
@@ -169,21 +169,26 @@ router.post('/transferir_proceso', isLoggedIn, async (req, res) => {
         }
         console.log(nuevoProceso);
         await pool.query('INSERT INTO procesos set ?', [nuevoProceso]);
-        await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [mod, cif, ordenproceso_id, procActual]);
+        await pool.query('UPDATE `procesos` SET `cantidaddeproducto`=?, `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [0,mod, cif, ordenproceso_id, procActual]);
         var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
 
         res.render('costeo/productos_procesos', { productoproc });
     } else {
+        orden = await pool.query('SELECT  procesos.ordenproceso_id, SUM(procesos.costomp + procesos.costomod + procesos.costocif) AS costototal FROM   procesos WHERE procesos.ordenproceso_id = ? GROUP   BY procesos.ordenproceso_id',ordenproceso_id);
         const procActual = numero;
         const nombreproducto = cantidadProceso[0].tipoproducto;
         const orden_id = ordenproceso_id
+        const costototal = orden[0].costototal
         const productoTerminado = {
             orden_id,
             cantidadproducto,
             nombreproducto,
+            costototal,
         }
         console.log(productoTerminado);
-        await pool.query('UPDATE `procesos` SET `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [mod, cif, ordenproceso_id, procActual]);
+        
+        await pool.query('UPDATE `invproductosproceso` SET estado=1 WHERE id = ?',cantidadProceso[0].id)
+        await pool.query('UPDATE `procesos` SET `cantidaddeproducto`=?, `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [0,mod, cif, ordenproceso_id, procActual]);
         await pool.query('INSERT INTO productosterminados set ?', [productoTerminado]);
         var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
 
