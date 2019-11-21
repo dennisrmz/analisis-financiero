@@ -15,7 +15,7 @@ router.get('/agregar_periodo', (req, res) => {
 router.post('/agregar_periodo', async (req, res) => {
     const { fecha } = req.body;
     await pool.query('INSERT INTO periodocontable (FECHAINICIO_PERIODO) VALUES (?)', [fecha]);
-    res.redirect('/contabilidad_general/periodo_contable');
+    res.redirect('/');
 });
 
 module.exports = router;
