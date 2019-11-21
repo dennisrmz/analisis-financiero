@@ -45,6 +45,9 @@
                                 </div>
                                 <div id="canti_materia" class="form-group">
                                 </div>
+                                
+                                <div id="precio_unitario_p" class="form-group">
+                                </div>
                                 <div class="form-group">
                                     <a>Ingrese el monto:</a>
                                     <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción" required="">
@@ -184,6 +187,10 @@
                 return false;
             });
         });
+
+        function calcular_monto(){
+            
+        }
         //Funcion para desactivar componentes de transaccion en comun de las restricciones
         function desactivar_Campos(){
             document.getElementById("id_tipo_transaccion").disabled = true;
@@ -410,7 +417,7 @@
             return info[2] + '-' + info[1] + '-' + info[0];
         }
         //Funcion metodo post para agregar transaccion
-        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia){
+        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario){
             $.ajax({
                 url: "/contabilidad_general/transaccion/agregar_transaccion",
                 type: "POST",
@@ -434,7 +441,8 @@
                     'PLAZO_ANIO': plazo_anio,
                     'VIDA_UTIL': vida_util,
                     'VALOR_RECUPERACION': valor_recuperacion,
-                    'CANTIDAD_MATERIA': cantidad_materia
+                    'CANTIDAD_MATERIA': cantidad_materia,
+                    'preciounitario': precio_unitario
                 },
                 success: function(data){
                 console.log(data);
@@ -472,6 +480,7 @@
             var vida_util = "";
             var valor_recuperacion = "";
             var cantidad_materia = "";
+            var precio_unitario = 0;
             console.log("impuesto"+val_impuesto);
             console.log(valor);
             if(valor == "false"){
@@ -486,7 +495,7 @@
                             vida_util = 0;
                             cantidad_materia = 0;
                             valor_recuperacion = 0;
-                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                         }else{
                             if(cbTipo.value == '3'){
                                 interes_mes = 0;
@@ -494,8 +503,9 @@
                                 plazo_anio = $('#plazo_anio').val();
                                 plazo_mes = 0;
                                 vida_util = 0;
+                                precio_unitario = 0;
                                 valor_recuperacion = 0;
-                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                             }else{
                                 if(cbTipo.value == '6'){
                                     interes_mes = 0;
@@ -504,25 +514,29 @@
                                     vida_util = 0;
                                     cantidad_materia = 0;
                                     valor_recuperacion = 0;
-                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                    precio_unitario = 0;
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                                 }else{
                                     if(cbTipo.value == '10' || cbTipo.value == '11'){
                                         interes_mes = 0;
                                         plazo_anio = 0;
                                         cantidad_materia = 0;
+                                        precio_unitario = 0;
                                         plazo_mes = $('#plazo_meses').val();
                                         vida_util = $("#vida_util").val();
                                         valor_recuperacion = $("#valor_recuperacion").val();
-                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                                     }else{
                                         if(cbTipo.value == '1' || cbTipo.value == '2'){
                                             interes_mes = 0;
                                             plazo_anio = 0;
                                             plazo_mes = 0;
                                             vida_util = 0;
+                                            precio_unitario = 0;
+                                            precio_unitario = $("#id_precio_unitario").val();
                                             cantidad_materia = $("#id_cantidad").val();
                                             valor_recuperacion = 0;
-                                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                                         }
                                     }
                                 }
@@ -540,6 +554,7 @@
                 vida_util = 0;
                 valor_recuperacion = 0;
                 cantidad_materia = 0;
+                precio_unitario = 0;
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
@@ -547,21 +562,21 @@
                                 interes_mes = 0;
                                 plazo_anio = 0;
                                 plazo_mes = 0;
-                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                             }
                             else{
                                 if(cbTipo.value == '9'){
                                     interes_mes = $('#interes_mes').val();
                                     plazo_anio = 0;
                                     plazo_mes = 0;
-                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                                 }
                                 else{
                                     if(cbTipo.value == '8'){
                                         interes_mes = $('#interes_mes').val();
                                         plazo_anio = $('#plazo_anio').val();;
                                         plazo_mes = 0;
-                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia, precio_unitario);
                                     }
                                 }
                             }
@@ -624,6 +639,7 @@
                 var url_nueva_vida = "/contabilidad_general/input_vida_util";
                 var url_nueva_valor = "/contabilidad_general/input_valor_recuperacion";
                 var url_nueva_cantidad = "/contabilidad_general/input_cantidad";
+                var url_nueva_precio = "/contabilidad_general/input_precio_unitario"
                 $('#id_monto_transaccion').val("");
                 $('#id_descripcion_transaccion').val("");
                 $('#iva_calculado_1').remove();
@@ -647,8 +663,17 @@
                                 console.log("SUCCESS");
                             },
                         });
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_precio,
+                            success: function(data){
+                                $('#precio_unitario_p').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
                     }else{
                         $('#canti_materia_1').remove();
+                        $('#id_precio_unitario').remove();
                     }
                     //Para COMPRA DE SEGURO
                     if(seleccionada == 3){
@@ -742,6 +767,7 @@
                     $('#vida_util1').remove();
                     $('#valor_recuperacion1').remove();
                     $('#canti_materia_1').remove();
+                    $('#id_precio_unitario').remove();
                 }
             });
             //Funcion para el boton "cancelar"

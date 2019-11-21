@@ -423,6 +423,22 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
         await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
         console.log('Fila insertada correctamente de transaccion');
 
+        var preciounitario = MONTO_TRANSACCION / CANTIDAD_MATERIA;
+        for(var k = 0; k<cantidad-1; k++){
+                if( ID_CUENTA_NUM[k] == 22 || ID_CUENTA_NUM[k] == 23 || ID_CUENTA_NUM[k]== 24){
+                        var new_entrada_materia = {
+                                cantidad:CANTIDAD_MATERIA,
+                                materiaprima_id:ID_CUENTA_NUM[k],
+                                preciounitario,
+                                fecha:FECHA_TRANSACCION
+                        }
+                        await pool.query('INSERT INTO entradamp set ?', [new_entrada_materia]);
+                        console.log("se guardo exitosamente: "+[new_entrada_materia]);
+                }
+        }
+        // ****************************************************************
+        //AQUI AGREGAS CODIGO
+        // ****************************************************************
         //Insertar los movimientos realizados en una transaccion
         const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
         for(var k = 0; k<cantidad-1; k++){
@@ -814,6 +830,10 @@ router.get('/check_calcular_monto', (req, res) => {
 router.get('/input_cantidad', (req, res) => {
         res.render('contabilidad_general/input_cantidad');
 });
+router.get('/input_precio_unitario', (req, res) => {
+        res.render('contabilidad_general/input_precio_unitario');
+});
+
 router.get('/monto_impuesto/:monto_tran', async (req, res) => {
         const { monto_tran } = req.params;
         var monto = 0.13*[monto_tran];
