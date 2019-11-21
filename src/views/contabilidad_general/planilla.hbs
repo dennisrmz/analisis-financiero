@@ -1,3 +1,4 @@
+{{> navigation }}
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -9,6 +10,21 @@
                         </li>
                         <li class="breadcrumb-item active">Planilla de salarios</li>
                 </ol>
+                <div class="card" style="margin-left:auto">
+                                        <div class="container"> 
+                                            <form action="" id="form">
+                                                <div class="form-group">
+                                                    <label style="margin-left: 80%;" for="TotalS" class="total"><strong>Total: $</strong></label>
+                                                </div>
+                                                 <div class="form-group">
+                                                    <input style="width:200px;height:40px;margin-left: 80%;" class="form-control total" type="text" id="total" readonly="readonly"></input>
+                                                </div>
+                                                <div class="form-group">
+                                                    <a href="#" onclick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')" class="btn btn-success btn-bolck" style="margin-left: 80%;">Realizar pago de salarios</a>
+                                                    </div>
+                                        </form>
+                                </div>
+                                    </div>
                 <!-- DataTables -->
                 <div class="card mb-3">
                         <div class="card-header">
@@ -66,28 +82,13 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <div class="card" style="margin-left:auto">
-                                        <div class="container"> 
-                                            <form action="" id="form">
-                                                <div class="form-group">
-                                                    <label for="TotalS" class="total"><strong>Total: $</strong></label>
-                                                </div>
-                                                 <div class="form-group">
-                                                    <input class="form-control total" type="text" id="total" readonly="readonly"></input>
-                                                </div>
-                                                <div class="form-group">
-                                                    <a href="#" onclick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')" class="btn btn-success btn-bolck" style="margin-left: 80%;">Realizar pago de salarios</a>
-                                                    </div>
-                                        </form>
-                                </div>
-                                    </div>
                                      
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 
 </div><!-- /.content-wrapper -->
-
+{{> footer }}
 <script type="text/javascript">
 
 //Funcion para calcular el total de salarios
@@ -105,7 +106,7 @@
     
     function enviar(string){
                 if(string == ''){
-                        window.location.href='/contabilidad_general/transaccion/pago_salarios';
+                        window.location.href='/contabilidad_general/transaccion/agregar_transaccion';
                 }
                 else{
                         Swal.fire({
