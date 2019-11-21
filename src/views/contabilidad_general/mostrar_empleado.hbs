@@ -74,7 +74,7 @@
                                 <label for=""><strong>Aguinaldo:</strong></label>
                             </div>
                             <div class="form-group">
-                                <input id="aguinaldo" type="text" onchange="validarSiNumero(this.value);" value="{{emp.AGUINALDO}}" name="AGUINALDO" class="form-control calcular">
+                                <input id="aguinaldo" type="text" onchange="validarSiNumero(this.value);"  value="{{emp.AGUINALDO}}" name="AGUINALDO" class="form-control calcular">
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-3 mb-3">
@@ -82,7 +82,7 @@
                                 <label for=""><strong>ISSS:</strong></label>
                             </div>
                             <div class="form-group">
-                                <input id="isss" type="text" onchange="validarSiNumero(this.value);" value="{{emp.ISSS}}" readonly="readonly" name="ISSS" class="form-control calcular">
+                                <input id="isss" type="text"  value="{{emp.ISSS}}" readonly="readonly" name="ISSS" class="form-control calcular">
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-3 mb-3">
@@ -90,7 +90,7 @@
                                 <label for=""><strong>AFP:</strong></label>
                             </div>
                             <div class="form-group">
-                                <input id="afp" type="text" onchange="validarSiNumero(this.value);" value="{{emp.AFP}}" readonly="readonly" name="AFP" class="form-control calcular">
+                                <input id="afp" type="text"  value="{{emp.AFP}}" readonly="readonly" name="AFP" class="form-control calcular">
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-3 mb-3">
@@ -98,7 +98,7 @@
                                 <label for=""><strong>Insaforp:</strong></label>
                             </div>
                             <div class="form-group">
-                                <input id="insaforp" type="text" onchange="validarSiNumero(this.value);" value="{{emp.INSAFORP}}" readonly="readonly" name="INSAFORP" class="form-control calcular">
+                                <input id="insaforp" type="text"  value="{{emp.INSAFORP}}" readonly="readonly" name="INSAFORP" class="form-control calcular">
                             </div>
                         </div>
                         
@@ -158,14 +158,31 @@
 //Funcion para calcular salario de cada empleado
     $(calcularSalario);
 
+    function message_validar_empleado(){
+            Swal.fire({
+                type: 'error',
+                title: 'Datos incompletos.',
+                text: 'Verifique que el campo de salario del empleado este completo.'
+            });
+        }
+
+    function message_validar_si_numero(){
+            Swal.fire({
+                type: 'error',
+                title: 'Datos incorrectos.',
+                text: 'Verifique los datos ingresados sean coherentes.'
+            });
+        }
     function calcularSalario(){
         $('#calcular').click(function(){
 
             if($('#s_base').val()==''){
-                alert('El campo salario es requerido');
+                message_validar_empleado();
             }
             else{
-                var salario_base= $('#s_base').val();
+                
+                
+                    var salario_base= $('#s_base').val();
                 var isss=parseFloat(salario_base)* parseFloat(0.075);
                 var afp=parseFloat(salario_base)*parseFloat(0.0675);
                 var insaforp=parseFloat(salario_base)*parseFloat(0.01);
@@ -182,14 +199,14 @@
                 $('#t_devengado').val(t_devengado.toFixed(2));
                 $('#t_deducciones').val(t_deducciones.toFixed(2));
                 $('#t_liquido').val(t_liquido.toFixed(2));
+                
+                
             }    
         });
     }
-
-    function validarSiNumero(numero){
-        if (!/^([0-9])*\.([0-9])*$/.test(numero) && !/^([0-9])*$/.test(numero)){
-            alert("El valor no es un numero");
-        }
+function validarSiNumero(numero){
+        if(!/^([0-9])*\.([0-9])*$/.test(numero) && !/^([0-9])*$/.test(numero)){
+                    message_validar_si_numero();
+                }
     }
-
 </script>

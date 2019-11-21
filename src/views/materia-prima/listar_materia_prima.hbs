@@ -16,9 +16,10 @@
                 <th>Accion</th>
             </tr>
         </thead>
-         
-        <tbody>
+         {{#if user.permiso}}
+            <tbody>
             {{#each materiasprimas}}
+            {{!-- {{#if user.permiso}} --}}
             <tr>
                 <td>{{nombre}}</td>
                 <td>{{existencias}}</td>
@@ -27,8 +28,10 @@
                     <a href="#" class="delete borrar"><i class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>  
+            {{!-- {{/if}} --}}
              {{/each}}     
         </tbody>
+        {{/if}}
         
     </table>
 </div>
