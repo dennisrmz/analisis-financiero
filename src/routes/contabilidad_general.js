@@ -12,10 +12,11 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         const idioma = await pool.query('SET lc_time_names = "es_VE"');
         const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO ' +
         'FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-        const cuentas = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
+        const cuentas_deudoras = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? AND cuenta.ID_NATURALEZA_CUENTA="1" ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
+        const cuentas_acreedoras = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? AND cuenta.ID_NATURALEZA_CUENTA="2" ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
         const sumas_debe = await(pool.query('SELECT ROUND(SUM(mayorizacion.MONTO_SALDO), 2) AS DEBE FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="NO"', [ID_ESTADOFINANCIERO]));
         const sumas_haber = await(pool.query('SELECT ROUND(SUM(mayorizacion.MONTO_SALDO), 2) AS HABER FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="SI"', [ID_ESTADOFINANCIERO]));
-        res.render('contabilidad_general/balance_de_comprobacion_inicial', {estadofinanciero, periodocontable:periodoscontables[0], idioma, cuentas, suma_debe:sumas_debe[0], suma_haber:sumas_haber[0]});
+        res.render('contabilidad_general/balance_de_comprobacion_inicial', {estadofinanciero, periodocontable:periodoscontables[0], idioma, cuentas_deudoras, cuentas_acreedoras, suma_debe:sumas_debe[0], suma_haber:sumas_haber[0]});
     });
     
     //-----------------------------------BALANCE DE COMPROBACION---------------------------------------------------------
@@ -25,10 +26,11 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         const idioma = await pool.query('SET lc_time_names = "es_VE"');
         const periodoscontables = await pool.query('SELECT DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%d") AS FECHAINICIO, DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, "%d") AS FECHAFINAL, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%M") AS MES, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, "%Y") AS ANIO ' +
         'FROM periodocontable INNER JOIN estadofinanciero ON estadofinanciero.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-        const cuentas = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
+        const cuentas_deudoras = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? AND cuenta.ID_NATURALEZA_CUENTA="1" ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
+        const cuentas_acreedoras = await(pool.query('SELECT cuenta.CODIGO_CUENTA, cuenta.NOMBRE_CUENTA, mayorizacion.MONTO_SALDO, mayorizacion.ES_SALDO_ACREEDOR FROM cuenta INNER JOIN mayorizacion ON cuenta.ID_CUENTA= mayorizacion. ID_CUENTA INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero.ID_ESTADOFINANCIERO=? AND cuenta.ID_NATURALEZA_CUENTA="2" ORDER BY cuenta.ID_CUENTA', [ID_ESTADOFINANCIERO]));
         const sumas_debe = await(pool.query('SELECT ROUND(SUM(mayorizacion.MONTO_SALDO), 2) AS DEBE FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="NO"', [ID_ESTADOFINANCIERO]));
         const sumas_haber = await(pool.query('SELECT ROUND(SUM(mayorizacion.MONTO_SALDO), 2) AS HABER FROM mayorizacion INNER JOIN estadofinanciero_mayorizacion ON mayorizacion.ID_MAYORIZACION= estadofinanciero_mayorizacion. ID_MAYORIZACION INNER JOIN estadofinanciero ON estadofinanciero.ID_ESTADOFINANCIERO= estadofinanciero_mayorizacion. ID_ESTADOFINANCIERO INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE= estadofinanciero.ID_PERIODOCONTABLE WHERE estadofinanciero .ID_ESTADOFINANCIERO=? AND mayorizacion.ES_SALDO_ACREEDOR="SI"', [ID_ESTADOFINANCIERO]));
-        res.render('contabilidad_general/balance_de_comprobacion', {estadofinanciero, periodocontable:periodoscontables[0], idioma, cuentas, suma_debe:sumas_debe[0], suma_haber:sumas_haber[0]});
+        res.render('contabilidad_general/balance_de_comprobacion', {estadofinanciero, periodocontable:periodoscontables[0], idioma, cuentas_deudoras, cuentas_acreedoras, suma_debe:sumas_debe[0], suma_haber:sumas_haber[0]});
     });
 
     //--------------------------------------ESTADO DE RESULTADOS---------------------------------------------------------
@@ -47,7 +49,7 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         saldo_utilidad = Number((sumas_ingresos[0].INGRESO - sumas_gastos[0].GASTO).toFixed(2));
         var nuevo_saldo_utilidad = utilidades[0].SALDO_CUENTA + (saldo_utilidad);
         console.log('nuevo_saldo_utilidad '+nuevo_saldo_utilidad);
-        await pool.query('UPDATE cuenta SET SALDO_CUENTA =? WHERE CODIGO_CUENTA = 331', [nuevo_saldo_utilidad]);
+        await pool.query('UPDATE cuenta SET SALDO_CUENTA =? WHERE CODIGO_CUENTA = "331"', [nuevo_saldo_utilidad]);
         console.log('Fila actualizada correctamente de cuenta 331');
         res.render('contabilidad_general/estado_de_resultados', {estadofinanciero, periodocontable:periodoscontables[0], idioma, cuentas_ingresos, cuentas_gastos, suma_ingreso:sumas_ingresos[0], suma_gasto:sumas_gastos[0], utilidad:utilidades[0], saldo_utilidad});
     });
@@ -114,16 +116,7 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         console.log({ID_ESTADOFINANCIERO});
         res.render('contabilidad_general/listado_notas_explicativas', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
     });
-    /*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',async (req, res) => {
-        //const { NOMBRE_ESTADOFINANCIERO } = req.params;
-        const { ID_ESTADOFINANCIERO } = req.params;
-        /*const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
-        'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);*/
-        //console.log("ID_ESTADOFINANCIERO");
-        //console.log({ID_ESTADOFINANCIERO});
-        //res.render('contabilidad_general/listado_notas_explicativas', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
-        //res.send('recibido');
-    //});
+    
     
     //Agregar Notas Explicativas
     router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
@@ -131,40 +124,24 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         //console.log({ID_ESTADOFINANCIERO});
         res.render('contabilidad_general/agregar');
     });
-    
-    //prueba post notas explicativas
+
     router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', async (req, res) => {
-        const { ID_ESTADOFINANCIERO } = req.params;
-        const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
-        'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-        console.log("ID_ESTADOFINANCIERO");
-        console.log({ID_ESTADOFINANCIERO});
-        //res.render('contabilidad_general/listado_estados_financieros', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
-        console.log(req.body);
-        res.send('recibido');
+        //const {NOMBRE_ESTADOFINANCIERO} = req.params;
+        const { ID_ESTADOFINANCIERO, TITULO_NOTA, DESCRIPCION_NOTA } = req.params;
+        var newNota = {
+                ID_ESTADOFINANCIERO,
+                TITULO_NOTA: titulo,
+                DESCRIPCION_NOTA: descripcion 
+        }
+        await pool.query('INSERT INTO notaexplicativa SET ?', [newNota])
+        //console.log({ID_ESTADOFINANCIERO});
+        
+       //res.render('contabilidad_general/agregar');
+       res.redirect('/contabilidad_general/estados_financieros/listado')
     });
     
-    /*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
-        const { ID_ESTADOFINANCIERO } = req.params;
-        console.log({ID_ESTADOFINANCIERO});
-        //console.log(req.body);
-        res.send('recibido');
-    });*/
+   
     
-    /*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', async (req, res, next) => {
-        const { NOMBRE_ESTADOFINANCIERO } = req.params;
-        const { ID_ESTADOFINANCIERO } = req.params;
-        const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
-        'notaexplicativa.ID_ESTADOFINANCIERO = estadofinanciero.ID_ESTADOFINANCIERO WHERE estadofinanciero.ID_ESTADOFINANCIERO = ?', [ ID_ESTADOFINANCIERO ]);
-        console.log("ID_ESTADOFINANCIERO");
-        console.log({ID_ESTADOFINANCIERO});
-        res.render('contabilidad_general/agregar', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
-    });*/
-    /*router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
-        const { ID_ESTADOFINANCIERO } = req.params;
-        console.log({ID_ESTADOFINANCIERO});
-        res.render('contabilidad_general/agregar');
-    });*/
     
     //---------------------------------------ESTADOS FINANCIEROS---------------------------------------------------------
     

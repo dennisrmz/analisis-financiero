@@ -117,7 +117,7 @@
         }
 
         function cerrarPeriodo(id_periodo, FECHA_PERIODO_FINAL){
-                if(FECHA_PERIODO_FINAL == ''){
+                if(FECHA_PERIODO_FINAL != ''){
                         swal.fire({
                                 title: '¿Esta seguro de cerrar periodo?',
                                 text: 'NOTA: Se mayorizaran las cuentas que fueron ocupadas en este periodo.',

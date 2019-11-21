@@ -23,7 +23,7 @@
                                                                         <br>
                                                                                 Balance de Comprobacion Inicial
                                                                         <br>
-                                                                                Al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
+                                                                                Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
                                                                         </th>
                                                                 </tr>
                                                         </thead>
@@ -33,13 +33,27 @@
                                                                         <th class="text-center">DEBE</th>
                                                                         <th class="text-center">HABER</th>
                                                                 </tr>
-                                                        {{#each cuentas}}
+                                                        {{#each cuentas_deudoras}}
                                                         <tbody>
                                                                 <tr id="ID_ESTADOFINANCIERO">
                                                                         <td >{{ CODIGO_CUENTA}}</td>
                                                                         <td>{{ NOMBRE_CUENTA }}</td>
                                                                         <td class="text-center">{{ MONTO_SALDO }}</td>
-                                                                        <td class="text-center">{{ ES_SALDO_ACREEDOR  }}</td>                     
+                                                                        <td class="text-center"></td>                     
+                                                                </tr>
+                                                        </tbody>
+                                                        {{else}}
+                                                        <div class="card card-body text-center">
+                                                                <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                                                        </div>
+                                                        {{/each}}
+                                                        {{#each cuentas_acreedoras}}
+                                                        <tbody>
+                                                                <tr id="ID_ESTADOFINANCIERO">
+                                                                        <td >{{ CODIGO_CUENTA}}</td>
+                                                                        <td>{{ NOMBRE_CUENTA }}</td>
+                                                                        <td class="text-center"></td>
+                                                                        <td class="text-center">{{ MONTO_SALDO }}</td>                     
                                                                 </tr>
                                                         </tbody>
                                                         {{else}}

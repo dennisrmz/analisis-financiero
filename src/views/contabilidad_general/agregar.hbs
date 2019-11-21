@@ -16,10 +16,10 @@
                                 </div>
                                 <div class="card-body">
                                         <!--<form action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST">-->
-                                        <form action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST">
+                                        <form  id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST" onClick="return enviar();" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar">
                                                 <div class="form-group">
                                                         <a>Nombre de Nota:</a>
-                                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" autofocus>
+                                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo de la nota" autofocus>
                                                 </div>
                                                 <div class="form-group">
                                                         <a>Descripción:</a>
@@ -36,3 +36,20 @@
         </div>
 </div>
 {{> footer }}
+<script type="text/javascrip">
+$(document).ready(function(){
+        enviar();
+});
+        function enviar(){
+                var seleccionada = $('#parametro').val();
+                var url_nueva = "/contabilidad_general/estados_financieros/"+seleccionada+"/notas_explicativas/listado/agregar";
+                $.ajax({
+                        type: 'post',
+                        url: url_nueva,
+                        success: function(data){
+                                console.log("SUCESS");
+                        }
+                });
+        }
+});
+</script>
