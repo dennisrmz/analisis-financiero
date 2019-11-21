@@ -10,62 +10,55 @@
                 </li>
                 <li class="breadcrumb-item active">Balance de Comprobación</li>
                 </ol>
-                <!-- DataTables -->
-                <!--<div class="alert bold alert-info">
-                        <i class="fas fw fa-plus-circle"></i>
-                        <a href="/contabilidad_general/estados_financieros/balance_comprobacion/{{estadosfinancieros.ID_ESTADOFINANCIERO}}/notas_explicativas/listado"> 
-                                <strong>¡Click aquí para visualizar las notas explicativas!</strong>
-                        </a>
-                </div>-->
                 
-                <div class="card mb-3">
-                        <div class="card-body">
-                                <!--<form action="/contabilidad_general/estados_financieros/listado/" method="GET">-->
-                                <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="4" class="text-center">
-                                                            PROPLASTIC S.A. DE C.V.
-                                                            <br>
-                                                            Balance de Comprobacion
-                                                            <br>
-                                                            Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                    <tr>
-                                                        <th class="text-center">CODIGO</th>
-                                                        <th class="text-center">CUENTAS</th>
-                                                        <th class="text-center">DEBE</th>
-                                                        <th class="text-center">HABER</th>
-                                                    </tr>
-                                                {{#each cuentas}}
-                                                <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                                <td width="15%">{{ CODIGO_CUENTA}}</td>
-                                                                <td>{{ NOMBRE_CUENTA }}</td>
-                                                                <td class="text-center">{{ MONTO_SALDO }}</td>
-                                                                <td class="text-center">{{ ES_SALDO_ACREEDOR  }}</td>                     
+                <div class="row">
+                        <div class="col-md-7 mx-auto">
+                                <div class="card">
+                                        <div class="card-body">
+                                                <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                        <thead>
+                                                                <tr>
+                                                                <th colspan="4" class="text-center">
+                                                                        PROPLASTIC S.A. DE C.V.
+                                                                        <br>
+                                                                        Balance de Comprobacion
+                                                                        <br>
+                                                                        Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
+                                                                </th>
                                                         </tr>
-                                                </tbody>
-                                                {{else}}
-                                                <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                                                        </thead>
+                                                                <tr>
+                                                                        <th class="text-center">CODIGO</th>
+                                                                        <th class="text-center">CUENTAS</th>
+                                                                        <th class="text-center">DEBE</th>
+                                                                        <th class="text-center">HABER</th>
+                                                                </tr>
+                                                                {{#each cuentas}}
+                                                                <tbody>
+                                                                        <tr id="ID_ESTADOFINANCIERO">
+                                                                                <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                                                <td>{{ NOMBRE_CUENTA }}</td>
+                                                                                <td class="text-center">{{ MONTO_SALDO }}</td>
+                                                                                <td class="text-center">{{ ES_SALDO_ACREEDOR  }}</td>                     
+                                                                        </tr>
+                                                                </tbody>
+                                                                {{else}}
+                                                                <div class="card card-body text-center">
+                                                                        <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                                                                </div>
+                                                                {{/each}}
+                                                                <tr>
+                                                                        <th class="text-center"></th>
+                                                                        <th class="text-right">TOTAL</th>
+                                                                        <th class="text-center">{{suma_debe.DEBE}}</th>
+                                                                        <th class="text-center">{{suma_haber.HABER}}</th>
+                                                                </tr>
+                                                        </table>
                                                 </div>
-                                                {{/each}}
-                                                <tr>
-                                                        <th class="text-center"></th>
-                                                        <th class="text-right">TOTAL</th>
-                                                        <th class="text-center">{{suma_debe.DEBE}}</th>
-                                                        <th class="text-center">{{suma_haber.HABER}}</th>
-                                                </tr>
-
-                                        </table>
+                                        </div>
                                 </div>
-                                <!--</form>-->
-                        </div>
-                </div>
+                        </div>                        
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
