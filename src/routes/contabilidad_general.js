@@ -845,7 +845,13 @@ router.post('/planilla/guardar/:CODIGO_EMPLEADO', async(req, res) => {
         console.log(n_empleado);
         res.redirect('/contabilidad_general/planilla');
 });
-
+//Agregar transaccion de pago de planilla
+router.get('/transaccion/pago_salarios/', async (req, res, next) => {
+        const periodo_contable = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%Y/%m/%d') AS FECHA_PERIODO FROM periodocontable ORDER BY "+
+        "ID_PERIODOCONTABLE DESC LIMIT 1");
+        res.render('contabilidad_general/agregar_transaccion', { periodo:periodo_contable[0]});
+        
+});
 module.exports = router;
 
 

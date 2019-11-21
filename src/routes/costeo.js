@@ -50,7 +50,7 @@ router.get('/materia_prima_saldo', isLoggedIn, async (req, res) => {
 });
 
 router.get('/materia_prima_entrada', isLoggedIn, async (req, res) => {
-    const entradaMateriasPrimas = await pool.query('SELECT materiasprimas.nombre, entradamp.cantidad, entradamp.preciounitario, entradamp.fecha FROM materiasprimas INNER JOIN entradamp ON materiasprimas.id = entradamp.materiaprima_id ');
+    const entradaMateriasPrimas = await pool.query("SELECT materiasprimas.nombre, entradamp.cantidad, entradamp.preciounitario, DATE_FORMAT(entradamp.fecha, '%Y/%m/%d') as fecha FROM materiasprimas INNER JOIN entradamp ON materiasprimas.id = entradamp.materiaprima_id");
     
     console.log(entradaMateriasPrimas);
     res.render('materia-prima/listar_entradas_materia_prima', { entradaMateriasPrimas});
