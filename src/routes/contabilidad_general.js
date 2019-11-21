@@ -662,6 +662,23 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
                 console.log(new_movimiento);
                 await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
                 console.log('Fila insertada correctamente de movimiento:'+k);
+
+                //Actualizar el saldo de cada cuenta cuando se hace un movimiento
+                const naturaleza_cuenta = await pool.query('SELECT ID_NATURALEZA_CUENTA FROM cuenta WHERE ID_CUENTA=?', [new_movimiento.ID_CUENTA]);
+                const saldo_cuenta = await pool.query('SELECT SALDO_CUENTA FROM cuenta WHERE ID_CUENTA=? AND ID_NATURALEZA_CUENTA=1', [new_movimiento.ID_CUENTA]);
+                var montoCargo = new_movimiento.MONTO_CARGO;
+                var montoAbono = new_movimiento.MONTO_ABONO;
+                var saldo_new = 0;
+                if(naturaleza_cuenta[0].ID_NATURALEZA_CUENTA == 1){
+                        saldo_new = saldo_cuenta[0].SALDO_CUENTA + montoCargo - montoAbono;
+                        console.log("Nuevo saldo de una cuenta deudora: "+saldo_new);
+                        await pool.query('UPDATE cuenta SET SALDO_CUENTA=? WHERE ID_CUENTA=?', [saldo_new, new_movimiento.ID_CUENTA] );
+                
+                }else{
+                        saldo_new = saldo_cuenta[0].SALDO_CUENTA - montoCargo + montoAbono;
+                        console.log("Nuevo saldo de una cuenta acreedora: "+saldo_new);
+                        await pool.query('UPDATE cuenta SET SALDO_CUENTA=? WHERE ID_CUENTA=?', [saldo_new, new_movimiento.ID_CUENTA] );
+                }
         }
         //req.flash('success', 'Registro guardado correctamente');
         res.redirect('/contabilidad_general/asiento_ajuste');
