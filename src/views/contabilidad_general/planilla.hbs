@@ -11,6 +11,7 @@
                         <li class="breadcrumb-item active">Planilla de salarios</li>
                 </ol>
                 <div class="card" style="margin-left:auto">
+                    {{#if user.permiso}}
                                         <div class="container"> 
                                             <form action="" id="form">
                                                 <div class="form-group">
@@ -24,6 +25,7 @@
                                                     </div>
                                         </form>
                                 </div>
+                        {{/if}}
                                     </div>
                 <!-- DataTables -->
                 <div class="card mb-3">
