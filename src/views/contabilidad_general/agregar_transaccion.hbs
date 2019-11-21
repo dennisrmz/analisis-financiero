@@ -41,17 +41,27 @@
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese descripción de transacción:</a>
-                                    <textarea rows="2" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
+                                    <textarea rows="2" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción" required=""></textarea>
+                                </div>
+                                <div id="canti_materia" class="form-group">
                                 </div>
                                 <div class="form-group">
                                     <a>Ingrese el monto:</a>
-                                    <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción">
-                                </div>
-                                <div id="canti_materia" class="form-group">
+                                    <input id="id_monto_transaccion" type="number" name="monto" class="form-control" placeholder="Monto transacción" required="">
                                 </div>
                                 <div id="impuesto" class="form-group">
                                 </div>
                                 <div id="iva_calculado" class="form-group">
+                                </div>
+                                <div id="plazo_a" class="form-group">
+                                </div>
+                                <div id="plazo_m" class="form-group">
+                                </div>
+                                <div id="interes" class="form-group">
+                                </div>
+                                <div id="valor_recuperacion_p" class="form-group">
+                                </div>
+                                <div id="vida_util_p" class="form-group">
                                 </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
                                     <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
@@ -89,11 +99,11 @@
                                 </div>
                                 <div id="descripción" class="form-group">
                                     <a>Ingrese detalle del movimiento:</a>
-                                    <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle"></textarea>
+                                    <textarea rows="2" id="detalle_movimiento" type="text" name="detalle" class="form-control" placeholder="Detalle" required></textarea>
                                 </div>
                                 <div id="monto" class="form-group">
                                     <a>Ingrese el monto de la cuenta:</a>
-                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento">
+                                    <input id="monto_movimiento" type="number" name="monto" class="form-control" placeholder="Monto movimiento" required>
                                 </div>
                                 <div id="myForm" class="form-group">
                                     <input type="radio" name="Tipo" id="cb_cargar" value="false">Cargar&nbsp;&nbsp;&nbsp;&nbsp;
@@ -167,7 +177,6 @@
         var detalles = "";
         var abonar = "";
         var descripcion = $("#id_descripcion_transaccion").val();
-
         //Funcion para el scroll down
         $(function() {
             $('.scroll-down').click (function() {
@@ -175,7 +184,6 @@
                 return false;
             });
         });
-
         //Funcion para desactivar componentes de transaccion en comun de las restricciones
         function desactivar_Campos(){
             document.getElementById("id_tipo_transaccion").disabled = true;
@@ -183,7 +191,6 @@
             document.getElementById("id_monto_transaccion").disabled = true;
             document.getElementById("id_descripcion_transaccion").disabled = true;
         }
-
         //Funcion mensaje de validación de campos de transaccion
         function message_validar_transacion(){
             Swal.fire({
@@ -192,7 +199,6 @@
                 text: 'Verifique que los campos de la transaccion que estén completos.'
             });
         }
-
         //Funcion mensaje de error en partida doble
         function message_partida_doble(){
             Swal.fire({
@@ -201,7 +207,6 @@
                 text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
             });
         }
-
         //Funcion mensaje de error en incoherencia de datos
         function message_datos_incoherentes(){
             Swal.fire({
@@ -210,24 +215,80 @@
                 text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
             });
         }        
-
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
             var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
             var descripcion = $("#id_descripcion_transaccion").val();
             var cbTipo = document.getElementById("id_tipo_transaccion");
             var monto = parseFloat($("#id_monto_transaccion").val());
+            var plazo_a = $("#plazo_anio").val();
+            var plazo_m = $("#plazo_meses").val();
+            var interes_m = $("#interes_mes").val();
+            var vida_u = $("#vida_util").val();
+            var valor_r = $("#valor_recuperacion").val();
+            var cantidad_materia = $("#id_cantidad").val();
             //valor = Aplicar IVA
             if(valor == "false"){
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    desactivar_Campos();
-                    document.getElementById("cb_impuesto").disabled = true;
+                    if(cbTipo.value == '4' || cbTipo.value == '5'){
+                        desactivar_Campos();
+                        document.getElementById("cb_impuesto").disabled = true;
+                    }else{
+                        if(cbTipo.value == '3' && plazo_a != ''){
+                            desactivar_Campos();
+                            document.getElementById("plazo_anio").disabled = true;
+                            document.getElementById("cb_impuesto").disabled = true;
+                        }else{
+                            if(cbTipo.value == '6' && plazo_m != ''){
+                                desactivar_Campos();
+                                document.getElementById("plazo_meses").disabled = true;
+                                document.getElementById("cb_impuesto").disabled = true;
+                            }else{
+                                if(cbTipo.value == '10' && vida_u != '' && valor_r != ''){
+                                    desactivar_Campos();
+                                    document.getElementById("valor_recuperacion").disabled = true;
+                                    document.getElementById("vida_util").disabled = true;
+                                    document.getElementById("cb_impuesto").disabled = true;
+                                }else{
+                                    if(cbTipo.value == '11' && vida_u != '' && valor_r != ''){
+                                        desactivar_Campos();
+                                        document.getElementById("valor_recuperacion").disabled = true;
+                                        document.getElementById("vida_util").disabled = true;
+                                        document.getElementById("cb_impuesto").disabled = true;
+                                    }else{
+                                        if(cbTipo.value == '1' || cbTipo.value == '2' && cantidad_materia != '' ){
+                                            desactivar_Campos();
+                                            document.getElementById("id_cantidad").disabled = true;
+                                            document.getElementById("cb_impuesto").disabled = true;
+                                        }else{
+                                            message_validar_transacion();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }else{
                     message_validar_transacion();
                 }
             }else{
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    desactivar_Campos();
+                    if(cbTipo.value == '7' || cbTipo.value == '10'){
+                        desactivar_Campos();
+                    }else{
+                        if(cbTipo.value == '9' && interes_m != ''){
+                            desactivar_Campos();
+                            document.getElementById("interes_mes").disabled = true;
+                        }else{
+                            if(cbTipo.value == '8' && interes_m != '' && plazo_a != ''){
+                                desactivar_Campos();
+                                document.getElementById("interes_mes").disabled = true;
+                                document.getElementById("plazo_anio").disabled = true;
+                            }else{
+                                message_validar_transacion();
+                            }
+                        }
+                    }
                 }else{
                     message_validar_transacion();
                 }
@@ -343,15 +404,13 @@
                 $("#haber").append("$ "+totalAbonos);
             }
         };
-
         //Convertir fecha en forma para MYSQL
         function convertDateFormat(string) {
             var info = string.split('/');
             return info[2] + '-' + info[1] + '-' + info[0];
         }
-
         //Funcion metodo post para agregar transaccion
-        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia){
+        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia){
             $.ajax({
                 url: "/contabilidad_general/transaccion/agregar_transaccion",
                 type: "POST",
@@ -370,6 +429,11 @@
                     'ID_TRANSACCION_AJUSTE': codigo_ajuste,
                     'ES_IMPUESTO': is_impuesto, 
                     'MONTO_IMPUESTO': monto_impuesto,
+                    'INTERES_MES': interes_mes,
+                    'PLAZO_MES': plazo_mes,
+                    'PLAZO_ANIO': plazo_anio,
+                    'VIDA_UTIL': vida_util,
+                    'VALOR_RECUPERACION': valor_recuperacion,
                     'CANTIDAD_MATERIA': cantidad_materia
                 },
                 success: function(data){
@@ -385,7 +449,6 @@
                 console.log("complete");
             });
         }
-
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
             var codigoTipo = $("#id_tipo_transaccion").val();
@@ -395,7 +458,7 @@
             var descripcion = $("#id_descripcion_transaccion").val();
             var fecha = $("#datepicker").val();
             var ajuste = "NO";
-            var codigo_ajuste = 0;
+            var codigo_ajuste = 1;
             var periodo = $("#periodo_conta").val();
             var valor = $('input[name=Tipo_1]:checked', '#impuesto_1').val();
             var val_impuesto = $('#monto_iva').val();
@@ -403,6 +466,11 @@
             var totalCargos_imp = totalCargos + val_impuesto;
             var is_impuesto = "";
             var monto_impuesto = "";
+            var interes_mes = "";
+            var plazo_mes = "";
+            var plazo_anio = "";
+            var vida_util = "";
+            var valor_recuperacion = "";
             var cantidad_materia = "";
             console.log("impuesto"+val_impuesto);
             console.log(valor);
@@ -411,14 +479,55 @@
                 monto_impuesto = $('#monto_iva').val();
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalCargos_imp==totalAbonos_imp){
-                        if(cbTipo.value == '1' || cbTipo.value == '2'){
-                                cantidad_materia = $("#id_cantidad").val();
-                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
-                        }else{
+                        if(cbTipo.value == '4' || cbTipo.value == '5'){
+                            interes_mes = 0;
+                            plazo_anio = 0;
+                            plazo_mes = 0;
+                            vida_util = 0;
                             cantidad_materia = 0;
-                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
+                            valor_recuperacion = 0;
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                        }else{
+                            if(cbTipo.value == '3'){
+                                interes_mes = 0;
+                                cantidad_materia = 0;
+                                plazo_anio = $('#plazo_anio').val();
+                                plazo_mes = 0;
+                                vida_util = 0;
+                                valor_recuperacion = 0;
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                            }else{
+                                if(cbTipo.value == '6'){
+                                    interes_mes = 0;
+                                    plazo_anio = 0;
+                                    plazo_mes = $('#plazo_meses').val();
+                                    vida_util = 0;
+                                    cantidad_materia = 0;
+                                    valor_recuperacion = 0;
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                }else{
+                                    if(cbTipo.value == '10' || cbTipo.value == '11'){
+                                        interes_mes = 0;
+                                        plazo_anio = 0;
+                                        cantidad_materia = 0;
+                                        plazo_mes = $('#plazo_meses').val();
+                                        vida_util = $("#vida_util").val();
+                                        valor_recuperacion = $("#valor_recuperacion").val();
+                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                    }else{
+                                        if(cbTipo.value == '1' || cbTipo.value == '2'){
+                                            interes_mes = 0;
+                                            plazo_anio = 0;
+                                            plazo_mes = 0;
+                                            vida_util = 0;
+                                            cantidad_materia = $("#id_cantidad").val();
+                                            valor_recuperacion = 0;
+                                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                        }
+                                    }
+                                }
+                            }
                         }
-                        
                     }else{
                         message_partida_doble();
                     }
@@ -428,11 +537,34 @@
             }else{
                 is_impuesto = "NO";
                 monto_impuesto = 0;
+                vida_util = 0;
+                valor_recuperacion = 0;
                 cantidad_materia = 0;
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
-                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, cantidad_materia);
+                            if(cbTipo.value == '7' || cbTipo.value == '10'){
+                                interes_mes = 0;
+                                plazo_anio = 0;
+                                plazo_mes = 0;
+                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                            }
+                            else{
+                                if(cbTipo.value == '9'){
+                                    interes_mes = $('#interes_mes').val();
+                                    plazo_anio = 0;
+                                    plazo_mes = 0;
+                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                }
+                                else{
+                                    if(cbTipo.value == '8'){
+                                        interes_mes = $('#interes_mes').val();
+                                        plazo_anio = $('#plazo_anio').val();;
+                                        plazo_mes = 0;
+                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion, cantidad_materia);
+                                    }
+                                }
+                            }
                         }else{
                             message_datos_incoherentes();
                         }
@@ -444,12 +576,10 @@
                 }
             }
         }
-
         //Validad que solo un chechbox este seleccionado
         function unselect(){
             document.querySelectorAll('[name=Tipo]').forEach((x) => x.checked=false);
         }
-
         //Funcion para saber cual radiobutton esta seleccionado
         $('#myForm input').on('change', function() {
             abonar = $('input[name=Tipo]:checked', '#myForm').val();
@@ -482,15 +612,24 @@
                 });
             }
         }
-
         $(document).ready(function(){
             //Funcion para agregar componenetes dependiendo de la seleccion del select del tipo de transaccion
             $('#id_tipo_transaccion').change(function(){            
                 var seleccionada = $('#id_tipo_transaccion').val();
                 console.log(seleccionada);
                 var url_nueva = "/contabilidad_general/check_impuesto";
-                var url_nueva_cantidad = "/contabilidad_general/input_cantidad"
+                var url_nueva_plazo_a = "/contabilidad_general/input_plazo_a";
+                var url_nueva_plazo_m = "/contabilidad_general/input_plazo_mes";
+                var url_nueva_interes = "/contabilidad_general/input_interes_mes";
+                var url_nueva_vida = "/contabilidad_general/input_vida_util";
+                var url_nueva_valor = "/contabilidad_general/input_valor_recuperacion";
+                var url_nueva_cantidad = "/contabilidad_general/input_cantidad";
+                $('#id_monto_transaccion').val("");
+                $('#id_descripcion_transaccion').val("");
+                $('#iva_calculado_1').remove();
+                //Se le aplica iva a COMPRA AL CONTADO, COMPRA AL CREDITO, COMPRA DE SEGURO, VENTA AL CONTADO, VENTA AL CREDITO, PAGO DE ALQUILER
                 if(seleccionada == 1 || seleccionada == 2 || seleccionada == 3 || seleccionada == 4 || seleccionada == 5 || seleccionada == 6 || seleccionada == 10 || seleccionada == 11){
+                    //Impuesto
                     $.ajax({
                         type: 'get',
                         url: url_nueva,
@@ -511,12 +650,100 @@
                     }else{
                         $('#canti_materia_1').remove();
                     }
+                    //Para COMPRA DE SEGURO
+                    if(seleccionada == 3){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_a,
+                            success: function(data){
+                                $('#plazo_a').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#plazo_1a').remove();
+                    }
+                    //Para PAGO DE ALQUILER
+                    if(seleccionada == 6){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_m,
+                            success: function(data){
+                                $('#plazo_m').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#plazo_1m').remove();
+                    }
+                    //Para compra equipo contado y credito
+                    if(seleccionada == 10 || seleccionada == 11){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_vida,
+                            success: function(data){
+                                $('#vida_util_p').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_valor,
+                            success: function(data){
+                                $('#valor_recuperacion_p').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#vida_util1').remove();
+                        $('#valor_recuperacion1').remove();
+                    }
+                    $('#interes_1').remove();
                 }
                 else{
+                    //Para PRESTAMO BANCARIO
+                    if(seleccionada == 8){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_interes,
+                            success: function(data){
+                                $('#interes').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_plazo_a,
+                            success: function(data){
+                                $('#plazo_a').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#interes_1').remove();
+                        $('#plazo_1a').remove();
+                    }
+                    //Para PRESTAMO A UN EMPLEADO
+                    if(seleccionada == 9){
+                        $.ajax({
+                            type: 'get',
+                            url: url_nueva_interes,
+                            success: function(data){
+                                $('#interes').html(data);
+                                console.log("SUCCESS");
+                            },
+                        });
+                    }else{
+                        $('#interes_1').remove();
+                    }
                     $('#impuesto_1').remove();
+                    $('#plazo_1m').remove();
+                    $('#plazo_1a').remove();
+                    $('#vida_util1').remove();
+                    $('#valor_recuperacion1').remove();
+                    $('#canti_materia_1').remove();
                 }
             });
-
             //Funcion para el boton "cancelar"
             $("#cancel").click(function() {
                 swal.fire({
@@ -556,7 +783,6 @@
                     $('#sub_cuenta').prop('disabled', true);
                 }
             });
-
             //Funcion para llenar select de subsubcuenta dependiendo de la seleccion del select de subcuenta
             $('#sub_cuenta').change(function(){            
                 var seleccionada = $('#sub_cuenta').val();

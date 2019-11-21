@@ -359,25 +359,25 @@ router.post('/transaccion/estadosfinancieros', async (req, res, next) => {
 //Mostrar transaccion
 router.get('/transaccion/ver_transaccion/:ID_TRANSACCION', async (req, res) => {
         const {ID_TRANSACCION} = req.params;
-        const ID_TRANSACCION_AJUSTE = 0;
+        const ID_TRANSACCION_AJUSTE = 1;
         const transacciones = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
         "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion INNER JOIN tipotransaccion "+
         "ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
         "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
-        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
+        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.COD_ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
         res.render('contabilidad_general/mostrar_transaccion', {transaccion: transacciones[0], movimientos});
 });
 //Mostrar transaccion con impuesto
 router.get('/transaccion/ver_transaccion_impuesto/:ID_TRANSACCION/:ES_IMPUESTO', async (req, res) => {
         const {ID_TRANSACCION, ES_IMPUESTO} = req.params;
-        const ID_TRANSACCION_AJUSTE = 0;
+        const ID_TRANSACCION_AJUSTE = 1;
         const transacciones = await pool.query("SELECT transaccion.MONTO_IMPUESTO, transaccion.ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
         "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion "+
         "INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = "+[ID_TRANSACCION]+" AND transaccion.ES_IMPUESTO = 'SI'", [ES_IMPUESTO]);
         const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
         "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
-        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
+        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.COD_ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
         res.render('contabilidad_general/mostrar_transaccion_impuesto', {transaccion: transacciones[0], movimientos});
 });
 //---------------------------------------------------------------------------------------------------------------------------------------------
@@ -391,12 +391,13 @@ router.get('/transaccion/agregar_transaccion/', async (req, res, next) => {
         res.render('contabilidad_general/agregar_transaccion', {cuenta_padre, tipo_transaccion, idperiodo:idperiodo_contable[0], periodo:periodo_contable[0]});
 });
 router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
-        const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE, ES_IMPUESTO, MONTO_IMPUESTO, CANTIDAD_MATERIA} = req.body;
+        const { ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_TRANSACCION, MONTO_TRANSACCION, DESCRIPCION_TRANSACCION, FECHA_TRANSACCION, FECHAINICIO_PERIODO, ES_AJUSTE, ID_TRANSACCION_AJUSTE, ES_IMPUESTO, MONTO_IMPUESTO, INTERES_MES, PLAZO_MES, PLAZO_ANIO, VIDA_UTIL, VALOR_RECUPERACION, CANTIDAD_MATERIA} = req.body;
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
         var DETALLE_MOV = DETALLE_MOVIMIENTO.split(',');
         var cantidad = ID_CUENTA_NUM.length;
+        var COD_ID_TRANSACCION_AJUSTE = 1;
         const ID_PERIODOCONTABLE_k = await pool.query("SELECT ID_PERIODOCONTABLE FROM periodocontable WHERE FECHAINICIO_PERIODO = '"+FECHAINICIO_PERIODO+"'");
                 
         //Insertar transaccion realizada
@@ -410,7 +411,13 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                 ID_TRANSACCION_AJUSTE,
                 ES_IMPUESTO, 
                 MONTO_IMPUESTO,
-                CANTIDAD_MATERIA
+                INTERES_MES,
+                PLAZO_MES, 
+                PLAZO_ANIO,
+                VIDA_UTIL,
+                VALOR_RECUPERACION,
+                CANTIDAD_MATERIA,
+                COD_ID_TRANSACCION_AJUSTE
         };
         console.log({new_transaccion});
         await pool.query('INSERT INTO transaccion set ?', [ new_transaccion ]);
@@ -426,7 +433,7 @@ router.post('/transaccion/agregar_transaccion', async (req, res, next) => {
                         MONTO_CARGO:MONTO_CARGO_NUM[k], 
                         MONTO_ABONO:MONTO_ABONO_NUM[k],
                         ID_TRANSACCION:id_transaccion[0].ID_TRANSACCION,
-                        ID_TRANSACCION_AJUSTE
+                        COD_ID_TRANSACCION_AJUSTE: ID_TRANSACCION_AJUSTE
                 };
                 await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
                 console.log('Fila insertada correctamente de movimiento:'+k);
@@ -466,7 +473,7 @@ router.get('/asiento_ajuste/ver_sin_ajuste/:ID_TRANSACCION', async (req, res) =>
         "ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
         "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
-        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
+        "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ? AND movimiento.COD_ID_TRANSACCION_AJUSTE = ?", [ID_TRANSACCION, ID_TRANSACCION_AJUSTE]);
         res.render('contabilidad_general/mostrar_sin_ajuste', {transaccion: transacciones[0], movimientos});
 });
 //Mostrar con ajuste de transaccion
@@ -478,21 +485,19 @@ router.get('/asiento_ajuste/ver_ajuste/:ID_TRANSACCION', async (req, res) => {
         const transacciones_ajustes = await pool.query("SELECT tipoajuste.NOMBRE_TIPO_AJUSTE, transaccionajuste.DESCRIPCION_TRANSACCION_AJUSTE, "+
         "DATE_FORMAT(transaccionajuste.FECHA_TRANSACCION_AJUSTE, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO_AJUSTE, transaccionajuste.MONTO_TRANSACCION_AJUSTE "+
         "FROM transaccionajuste INNER JOIN tipoajuste ON transaccionajuste.CODIGO_TIPO_AJUSTE=tipoajuste.CODIGO_TIPO_AJUSTE INNER JOIN transaccion ON "+
-        "transaccion.ID_TRANSACCION_AJUSTE=transaccionajuste.ID_TRANSACCION_AJUSTE WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        "transaccion.COD_ID_TRANSACCION_AJUSTE=transaccionajuste.ID_TRANSACCION_AJUSTE WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
         "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
         "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         res.render('contabilidad_general/mostrar_ajuste', {transaccion: transacciones[0], movimientos, transacciones_ajuste: transacciones_ajustes[0]});
 });
 //agregar ajuste a transacciones GET y POST
-router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACCION', async (req, res, next) => {
-        const {ID_TRANSACCION, NOMBRE_TIPO_TRANSACCION} = req.params;
+router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACCION/:MONTO_TRANSACCION/:FECHA_TRANSACCION_FORMATO', async (req, res, next) => {
+        const {ID_TRANSACCION, NOMBRE_TIPO_TRANSACCION, MONTO_TRANSACCION, FECHA_TRANSACCION_FORMATO} = req.params;
         const cuenta_padre = await pool.query('SELECT * FROM cuenta WHERE NIVELH = 3');
-        const transaccion = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
-        "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, DATE_FORMAT(periodocontable.FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_INICIO, "+
-        "DATE_FORMAT(periodocontable.FECHAFINAL_PERIODO, '%d-%m-%Y') AS FECHA_FIN FROM transaccion INNER JOIN tipotransaccion ON "+
-        "transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE "+
-        "WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
+        const transaccion = await pool.query("SELECT ID_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION, "+
+        "DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%Y-%m-%d') AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION FROM transaccion "+
+        "INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION=tipotransaccion.CODIGO_TIPO_TRANSACCION WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         const movimientos = await pool.query("SELECT DATE_FORMAT(movimiento.FECHA_MOVIMIENTO, '%Y-%m-%d') AS FECHA_MOVIMIENTO_FORMATO, movimiento.DETALLE_MOVIMIENTO, "+
         "movimiento.MONTO_CARGO, movimiento.MONTO_ABONO, cuenta.NOMBRE_CUENTA FROM transaccion INNER JOIN movimiento On transaccion.ID_TRANSACCION=movimiento.ID_TRANSACCION "+
         "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
@@ -500,43 +505,77 @@ router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACC
         "INNER JOIN cuenta ON cuenta.ID_CUENTA=movimiento.ID_CUENTA WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         var NOMBRE_TIPO_TRANSACCION_SE = NOMBRE_TIPO_TRANSACCION.replace(/_/g," ");
         var tipoajuste = "";
+        var Calculo = "";
+        //SUMA DE FECHAS
+        //https://es.stackoverflow.com/questions/136409/c%C3%B3mo-sumar-d%C3%ADas-a-una-fecha
+        var interes_m = await pool.query('SELECT INTERES_MES FROM transaccion WHERE ID_TRANSACCION = ?',[ID_TRANSACCION]);
+        var plazo_m = await pool.query('SELECT PLAZO_MES FROM transaccion WHERE ID_TRANSACCION = ?',[ID_TRANSACCION]);
+        var plazo_a = await pool.query('SELECT PLAZO_ANIO FROM transaccion WHERE ID_TRANSACCION = ?',[ID_TRANSACCION]);
+        var vida_u = await pool.query('SELECT VIDA_UTIL FROM transaccion WHERE ID_TRANSACCION = ?',[ID_TRANSACCION]);
+        var valor_r = await pool.query('SELECT VALOR_RECUPERACION FROM transaccion WHERE ID_TRANSACCION = ?',[ID_TRANSACCION]);
         var periodo_contable = await pool.query("SELECT periodocontable.FECHAINICIO_PERIODO FROM periodocontable INNER JOIN transaccion ON "+
         "transaccion.ID_PERIODOCONTABLE=periodocontable.ID_PERIODOCONTABLE WHERE transaccion.ID_TRANSACCION = ?", [ID_TRANSACCION]);
         var periodo_inicio = new Date(periodo_contable[0].FECHAINICIO_PERIODO);//Fecha inicial del periodo
-        var d = periodo_inicio.getDate();//Toma los dias de la Fecha inicial del periodo
-        var dias = parseInt(transaccion[0].FECHA_TRANSACCION_FORMATO);//Fecha transaccion
-        console.log(periodo_inicio);
-        console.log(d);
-        console.log(transaccion[0].FECHA_TRANSACCION_FORMATO);
-        console.log(dias);
-        function sumarDias(d, dias){
-                fecha_new = d + dias;
-                return fecha_new;
-        }
-        console.log("Suma del mes: "+sumarDias(d, dias));
-        
-        //Evaluando la fecha en que se realizo la transaccion
-        if(sumarDias(d, dias) >= '1' && sumarDias(d, dias) <= '12'){
-                console.log("mes: 1");
-        }else{
-                if(sumarDias(d, dias) >= '13' && sumarDias(d, dias) <= '27'){
-                        console.log("mes: 0.5");
+        var fecha_n = periodo_inicio.getDate();//Toma los dias de la Fecha inicial del periodo
+        if(fecha_n == 01){
+                var dias = parseInt(FECHA_TRANSACCION_FORMATO);//Fecha transaccion
+                var mes = 0;
+                function sumarDias(fecha_n, dias){
+                        fecha_new = fecha_n + dias;
+                        return fecha_new;
+                }
+                console.log("Suma del mes: "+sumarDias(fecha_n, dias));
+
+                //Evaluando la fecha en que se realizo la transaccion
+                if(sumarDias(fecha_n, dias) >= '1' && sumarDias(fecha_n, dias) <= '12'){
+                        mes = 1;
                 }else{
-                        var mes = 0;
+                        if(sumarDias(fecha_n, dias) >= '13' && sumarDias(fecha_n, dias) <= '27'){
+                                mes = 0.5;
+                        }
+                }
+        }else{
+                var dias = parseInt(FECHA_TRANSACCION_FORMATO);//Fecha transaccion
+                var resta = dias - fecha_n;
+                var mes = 0;
+                var inicial = 01;
+                function sumarDias(inicial, resta){
+                        fecha_new = inicial + resta;
+                        return fecha_new;
+                }
+                console.log("Suma del mes: "+sumarDias(inicial, resta));
+
+                //Evaluando la fecha en que se realizo la transaccion
+                if(sumarDias(inicial, resta) >= '1' && sumarDias(inicial, resta) <= '12'){
+                        mes = 1;
+                }else{
+                        if(sumarDias(inicial, resta) >= '13' && sumarDias(inicial, resta) <= '27'){
+                                mes = 0.5;
+                        }
                 }
         }
 
         //Calculo del pago de alquiler
         if(NOMBRE_TIPO_TRANSACCION_SE == "PAGO DE ALQUILER"){
                 tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 1");
+                Calculo_sin = MONTO_TRANSACCION / plazo_m[0].PLAZO_MES;
+                Calculo = Number(Calculo_sin.toFixed(2));
+                console.log(mes);
         }else{
                 //Calculo de la compra de seguro
                 if(NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE SEGURO"){
                         tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 1");
+                        var cal_plazo_anio = MONTO_TRANSACCION / plazo_a[0].PLAZO_ANIO;
+                        Calculo_sin = (cal_plazo_anio / 12)*mes;
+                        Calculo = Number(Calculo_sin.toFixed(2));
+                        console.log(mes);
                 }else{
                         //Calculo del prestamo bancario
                         if(NOMBRE_TIPO_TRANSACCION_SE == "PRESTAMO BANCARIO"){
                                 tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 2");
+                                Calculo_sin = MONTO_TRANSACCION * (interes_m[0].INTERES_MES/100) * mes;
+                                Calculo = Number(Calculo_sin.toFixed(2));
+                                console.log(mes);
                         }else{
                                 //Calculo del pago de planilla
                                 if(NOMBRE_TIPO_TRANSACCION_SE == "PAGO DE PLANILLA"){
@@ -545,6 +584,9 @@ router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACC
                                         //Calculo del prestamo a un empleado
                                         if(NOMBRE_TIPO_TRANSACCION_SE == "PRESTAMO A UN EMPLEADO"){
                                                 tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 3");
+                                                Calculo_sin = MONTO_TRANSACCION * (interes_m[0].INTERES_MES/100) * mes;
+                                                Calculo = Number(Calculo_sin.toFixed(2));
+                                                console.log(mes);
                                         }else{
                                                 //Calculo de compra de insumo al contado y al credito
                                                 if(NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE INSUMO AL CONTADO" || NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE INSUMO AL CREDITO"){
@@ -553,6 +595,11 @@ router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACC
                                                         //Calculo de compra de equipo al contado y al credito
                                                         if(NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE EQUIPO AL CONTADO" || NOMBRE_TIPO_TRANSACCION_SE == "COMPRA DE EQUIPO AL CREDITO"){
                                                                 tipoajuste = await pool.query("SELECT * FROM tipoajuste WHERE CODIGO_TIPO_AJUSTE = 6"); 
+                                                                var Cargo_dep_anual = (MONTO_TRANSACCION - valor_r[0].VALOR_RECUPERACION)/vida_u[0].VIDA_UTIL;
+                                                                var Cargo_dep_mensual = Cargo_dep_anual/12;
+                                                                Calculo_sin = Cargo_dep_mensual * mes;
+                                                                Calculo = Number(Calculo_sin.toFixed(2));
+                                                                console.log(mes);
                                                         }
                                                 } 
                                         }
@@ -560,11 +607,11 @@ router.get('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION/:NOMBRE_TIPO_TRANSACC
                         }
                 } 
         }
-        res.render('contabilidad_general/agregar_ajuste', {tipoajuste, cuenta_padre, transaccions:transaccion[0], movimientos, count, mes});
+        res.render('contabilidad_general/agregar_ajuste', {tipoajuste, cuenta_padre, transaccions:transaccion[0], movimientos, count, Calculo});
 });
 router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, next) => {
         const { ID_TRANSACCION } = req.params;
-        const { ES_AJUSTE, ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_AJUSTE, MONTO_TRANSACCION_AJUSTE, DESCRIPCION_TRANSACCION_AJUSTE, FECHA_TRANSACCION_AJUSTE, INTERES_MES, PLAZO_MES, PLAZO_ANIO, VIDA_UTIL, VALOR_RECUPERACION} = req.body;
+        const { ES_AJUSTE, ID_CUENTA, FECHA_MOVIMIENTO, DETALLE_MOVIMIENTO, MONTO_CARGO, MONTO_ABONO, CODIGO_TIPO_AJUSTE, MONTO_TRANSACCION_AJUSTE, DESCRIPCION_TRANSACCION_AJUSTE, FECHA_TRANSACCION_AJUSTE} = req.body;
         var ID_CUENTA_NUM = ID_CUENTA.split(',').map(Number);
         var MONTO_CARGO_NUM = MONTO_CARGO.split(',').map(Number);
         var MONTO_ABONO_NUM = MONTO_ABONO.split(',').map(Number);
@@ -576,12 +623,7 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
                 CODIGO_TIPO_AJUSTE, 
                 MONTO_TRANSACCION_AJUSTE, 
                 DESCRIPCION_TRANSACCION_AJUSTE, 
-                FECHA_TRANSACCION_AJUSTE,
-                INTERES_MES,
-                PLAZO_MES, 
-                PLAZO_ANIO,
-                VIDA_UTIL,
-                VALOR_RECUPERACION
+                FECHA_TRANSACCION_AJUSTE
         };
         console.log({new_transaccion_ajuste});
         await pool.query('INSERT INTO transaccionajuste set ?', [ new_transaccion_ajuste ]);
@@ -589,8 +631,8 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
 
         //Insertar los movimientos realizados en una transaccion
         const id_transaccion_ajuste = await pool.query('SELECT ID_TRANSACCION_AJUSTE FROM transaccionajuste ORDER BY ID_TRANSACCION_AJUSTE DESC LIMIT 1');
-        await pool.query("UPDATE transaccion SET ID_TRANSACCION_AJUSTE = ?, ES_AJUSTE = ? WHERE ID_TRANSACCION = ? ", [id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE, ES_AJUSTE, ID_TRANSACCION]);
-        const ID_TRANSACCION_AJUSTE = id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE;
+        await pool.query("UPDATE transaccion SET COD_ID_TRANSACCION_AJUSTE = ?, ES_AJUSTE = ? WHERE ID_TRANSACCION = ? ", [id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE, ES_AJUSTE, ID_TRANSACCION]);
+        const COD_ID_TRANSACCION_AJUSTE = id_transaccion_ajuste[0].ID_TRANSACCION_AJUSTE;
         for(var k = 0; k<cantidad-1; k++){
                 var new_movimiento = {
                         ID_CUENTA:ID_CUENTA_NUM[k],
@@ -599,7 +641,7 @@ router.post('/asiento_ajuste/agregar_ajuste/:ID_TRANSACCION', async (req, res, n
                         MONTO_CARGO:MONTO_CARGO_NUM[k], 
                         MONTO_ABONO:MONTO_ABONO_NUM[k],
                         ID_TRANSACCION,
-                        ID_TRANSACCION_AJUSTE
+                        COD_ID_TRANSACCION_AJUSTE
                 };
                 console.log(new_movimiento);
                 await pool.query('INSERT INTO movimiento set ?', [ new_movimiento ]);
@@ -739,10 +781,10 @@ router.get('/listar_asiento_ajuste_select/:ID_PERIODOCONTABLE', async (req, res,
         const { ID_PERIODOCONTABLE }=req.params;
         const periodo = await pool.query("SELECT DATE_FORMAT(FECHAINICIO_PERIODO, '%d-%m-%Y') AS FECHA_PERIODO, DATE_FORMAT(FECHAFINAL_PERIODO, '%d-%m-%Y') "+
         "AS FECHA_PERIODO_FINAL FROM periodocontable WHERE ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
-        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') AS FECHA_TRANSACCION_FORMATO, "+
-        "transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION FROM transaccion INNER JOIN "+
-        "tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
-        "periodocontable.ID_PERIODOCONTABLE = ?", [ID_PERIODOCONTABLE]);
+        const transaccion = await pool.query("SELECT transaccion.ES_AJUSTE, transaccion.ID_TRANSACCION, DATE_FORMAT(transaccion.FECHA_TRANSACCION, '%d-%m-%Y') "+
+        "AS FECHA_TRANSACCION_FORMATO, transaccion.MONTO_TRANSACCION, tipotransaccion.NOMBRE_TIPO_TRANSACCION, transaccion.DESCRIPCION_TRANSACCION "+
+        "FROM transaccion INNER JOIN tipotransaccion ON transaccion.CODIGO_TIPO_TRANSACCION = tipotransaccion.CODIGO_TIPO_TRANSACCION INNER JOIN periodocontable ON "+
+        "periodocontable.ID_PERIODOCONTABLE=transaccion.ID_PERIODOCONTABLE WHERE periodocontable.ID_PERIODOCONTABLE = ?",[ID_PERIODOCONTABLE]);
         res.render('contabilidad_general/listar_asiento_ajuste_select', {transaccion, periodos:periodo[0]});
 });
 router.get('/check_impuesto', (req, res) => {
