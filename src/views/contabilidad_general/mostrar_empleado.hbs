@@ -1,0 +1,213 @@
+{{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumbs-->
+        <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/contabilidad_general/planilla">
+                            Planilla
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">Detalles de empleado</li>
+                </ol>
+    <!-- Icon Cards-->
+    <div class="container-fluid col-8 content-center">
+        <div class="card mb-3 table-responsive">
+            <div class="card-header">
+                <i class="fas fa-fw fa-archive"></i>
+                <strong>Datos de empleado</strong>
+            </div>
+            <div class="card-body container">
+                <form action="/contabilidad_general/planilla/guardar/{{emp.CODIGO_EMPLEADO}}" method="POST" id="validado" >
+                <div class="row bold">
+                    <div class="col-xl-2 col-sm-2 mb-2">
+                                <div class="form-group">
+                                    <label for=""><strong>Codigo:</strong></label>
+                                </div>
+                                <div class="form-group">
+                                    <input  type="text"value="{{emp.CODIGO_EMPLEADO}}" readonly="readonly" class="form-control" >
+                                </div>
+                            </div>
+                </div>
+                    <div class="row bold">
+                        <div class="col-xl-6 col-sm-6 mb-4" >
+                            <div class="form-group">
+                                <label for=""><strong>Nombre:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" value="{{emp.NOMBRE_EMPLEADO}}" class="form-control" readonly="readonly" >
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-sm-6 mb-4">
+                            <div class="form-group">
+                                <label for=""><strong>Apellidos:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" value="{{emp.APELLIDO_EMPLEADO}} " class="form-control" readonly="readonly">
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-sm-6 mb-4">
+                            <div class="form-group">
+                                <label for=""><strong>Cargo:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" value="{{emp.CARGO}} " class="form-control" id="apellidos">
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for="" ><strong>Salario base:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="s_base" type="text" onchange="validarSiNumero(this.value);" value="{{emp.SALARIO_BASE}}" name="SALARIO_BASE" class="form-control calcular" required>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for="" ><strong>Vacaciones:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="vacaciones" type="text" onchange="validarSiNumero(this.value);" value="{{emp.VACACIONES}}" name="VACACIONES" class="form-control calcular">
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for=""><strong>Aguinaldo:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="aguinaldo" type="text" onchange="validarSiNumero(this.value);"  value="{{emp.AGUINALDO}}" name="AGUINALDO" class="form-control calcular">
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for=""><strong>ISSS:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="isss" type="text"  value="{{emp.ISSS}}" readonly="readonly" name="ISSS" class="form-control calcular">
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for=""><strong>AFP:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="afp" type="text"  value="{{emp.AFP}}" readonly="readonly" name="AFP" class="form-control calcular">
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-sm-3 mb-3">
+                            <div class="form-group">
+                                <label for=""><strong>Insaforp:</strong></label>
+                            </div>
+                            <div class="form-group">
+                                <input id="insaforp" type="text"  value="{{emp.INSAFORP}}" readonly="readonly" name="INSAFORP" class="form-control calcular">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row bold">
+                            <div class="col-xl-3 col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <label for=""><strong>Tolal de devengado:</strong></label>
+                                </div>
+                                <div class="form-group">
+                                    <input id="t_devengado" type="text"value="{{emp.TOTAL_DEVENGADO}}" readonly="readonly" name="TOTAL_DEVENGADO" class="form-control calcular">
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <label for=""><strong>Total de deducciones:</strong></label>
+                                </div>
+                                <div class="form-group">
+                                    <input id="t_deducciones" type="text" value="{{emp.TOTAL_DEDUCCIONES}}" readonly="readonly" name="TOTAL_DEDUCCIONES" class="form-control calcular">
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <label for=""><strong>Sueldo liquido:</strong></label>
+                                </div>
+                                <div class="form-group">
+                                    <input id="t_liquido" type="text" value="{{emp.TOTAL_LIQUIDO}}" readonly="readonly" name="TOTAL_LIQUIDO" class="form-control calcular">
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-sm-3 mb-3">
+                                <div class="form-group">
+                                    <div class="btn btn-success btn-bolck form-control" id="calcular" onclick="calcularSalario()">Calcular</div>
+                                </div>
+                                <div class="form-group">
+                                    <button  class="btn btn-secondary btn-bolck form-control" id="guardar" >Guardar</bu>
+                                </div>
+                                <div class="form-group">
+                                    <a name="ver" href="/contabilidad_general/planilla" onclick="">
+                                                        <span style="margin-left: 40%;">Regresar</span>
+                                                        <i class="fas fa-backward" style="margin-left: 10%;"></i>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div><!-- /.container-fluid -->
+</div><!-- /.content-wrapper -->
+{{> footer }}
+<script type="text/javascript">
+
+//Funcion para calcular salario de cada empleado
+    $(calcularSalario);
+
+    function message_validar_empleado(){
+            Swal.fire({
+                type: 'error',
+                title: 'Datos incompletos.',
+                text: 'Verifique que el campo de salario del empleado este completo.'
+            });
+        }
+
+    function message_validar_si_numero(){
+            Swal.fire({
+                type: 'error',
+                title: 'Datos incorrectos.',
+                text: 'Verifique los datos ingresados sean coherentes.'
+            });
+        }
+    function calcularSalario(){
+        $('#calcular').click(function(){
+
+            if($('#s_base').val()==''){
+                message_validar_empleado();
+            }
+            else{
+                
+                
+                    var salario_base= $('#s_base').val();
+                var isss=parseFloat(salario_base)* parseFloat(0.075);
+                var afp=parseFloat(salario_base)*parseFloat(0.0675);
+                var insaforp=parseFloat(salario_base)*parseFloat(0.01);
+                var vacaciones=$('#vacaciones').val();
+                var aguinaldo=$('#aguinaldo').val();
+                var t_deducciones=parseFloat(isss) + parseFloat(afp) + parseFloat(insaforp);
+                var t_devengado=parseFloat(salario_base);
+                var t_liquido=parseFloat(t_devengado) - parseFloat(t_deducciones);
+
+
+                $('#isss').val(isss.toFixed(2));
+                $('#afp').val(afp.toFixed(2));
+                $('#insaforp').val(insaforp.toFixed(2));
+                $('#t_devengado').val(t_devengado.toFixed(2));
+                $('#t_deducciones').val(t_deducciones.toFixed(2));
+                $('#t_liquido').val(t_liquido.toFixed(2));
+                
+                
+            }    
+        });
+    }
+function validarSiNumero(numero){
+        if(!/^([0-9])*\.([0-9])*$/.test(numero) && !/^([0-9])*$/.test(numero)){
+                    message_validar_si_numero();
+                }
+    }
+</script>

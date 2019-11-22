@@ -1,13 +1,29 @@
+{{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/costeo/producto_proceso">
+                    Productos en Proceso
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Productos Terminados</li>
+        </ol>
+    </div>
+</div>
 <div class="container">
     <div class="texto-primario">
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i>
+            <a href="/costeo/producto_salida">
+                <strong>¡Registrar Salida de Producto!</strong>
+            </a>
+        </div>
         <h1 class="titulo text-center">INVENTARIO PRODUCTO TERMINADO</h1>
         <select class="m-2 form-control" name="productos" id="productos">
             <option value="silla">Silla</option> 
             <option value="mesa" selected>Mesa</option>
         </select>
-    </div>
-    <div class="texto-secundario">
-        <h2 class="subtitulo text-center">Entradas</h2>
     </div>
 
     <table id="datatable" class="table table-striped">

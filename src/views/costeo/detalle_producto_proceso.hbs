@@ -1,3 +1,16 @@
+{{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/costeo/agregar_productos_proceso">
+                    Productos en Proceso
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Producto en Proceso</li>
+        </ol>
+    </div>
+</div>
 <div class="container">
     <div class="texto-primario p-3">
         {{#each producto}}
@@ -20,7 +33,7 @@
 
             <tr>
                 <td>{{numero}}</td>
-                <td>{{cantidadrestante}}</td>
+                <td>{{cantidaddeproducto}}</td>
                 <td>{{porcentaje}}<span>%</span></td>
                 <td><a href="/costeo/transferir_proceso/{{id}}"><i class="fas fa-clipboard-check"></i></a></td>
             </tr>

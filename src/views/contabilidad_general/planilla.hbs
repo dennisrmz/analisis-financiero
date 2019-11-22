@@ -1,0 +1,122 @@
+{{> navigation }}
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/contabilidad_general">
+                            Contabilidad General
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">Planilla de salarios</li>
+                </ol>
+                <div class="card" style="margin-left:auto">
+                    {{#if user.permiso}}
+                                        <div class="container"> 
+                                            <form action="" id="form">
+                                                <div class="form-group">
+                                                    <label style="margin-left: 80%;" for="TotalS" class="total"><strong>Total: $</strong></label>
+                                                </div>
+                                                 <div class="form-group">
+                                                    <input style="width:200px;height:40px;margin-left: 80%;" class="form-control total" type="text" id="total" readonly="readonly"></input>
+                                                </div>
+                                                <div class="form-group">
+                                                    <a href="#" onclick="enviar('{{periodo.FECHA_PERIODO_FINAL}}')" class="btn btn-success btn-bolck" style="margin-left: 80%;">Realizar pago de salarios</a>
+                                                    </div>
+                                        </form>
+                                </div>
+                        {{/if}}
+                                    </div>
+                <!-- DataTables -->
+                <div class="card mb-3">
+                        <div class="card-header">
+                                <i class="fas fa-table"></i>
+                                Planilla de salarios
+                        </div>
+                        <div class="card-body" >
+                                <div id="example_wrapper" class="table-responsive" style="margin-top: 1%;">
+                                    <table id="datatable" class="table table-striped table-bordered" style="width:100%; font-size: small;">
+                                        <thead>
+                                            <tr style="min-height: min-content;">
+                                                <th>Codigo</th>
+                                                <th>Nombre</th>
+                                                <th>Apellidos</th>
+                                                <th>Cargo</th>
+                                                <th>Salario base</th>
+                                                <th>ISSS</th>
+                                                <th>AFP</th>
+                                                <th>Insaforp</th>
+                                                <th>Sueldo liquido</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </thead>
+                                        {{#each planilla_salarios}}
+                                        <tbody>
+                                            <tr style="min-height: min-content;">
+                                                <td>{{ CODIGO_EMPLEADO }} </td>
+                                                <td>{{ NOMBRE_EMPLEADO }} </td>
+                                                <td>{{ APELLIDO_EMPLEADO }} </td>
+                                                <td>{{ CARGO }} </td>
+                                                <td class="salario_base">{{ SALARIO_BASE }} </td>
+                                                <td id="isss">{{ ISSS }} </td>
+                                                <td id="afp">{{ AFP }} </td>
+                                                <td id="insaforp">{{ INSAFORP }} </td>
+                                                <td class="columna">{{ TOTAL_LIQUIDO }} </td> 
+                                                <td><a name="ver" href="/contabilidad_general/planilla/mostrar_empleado/{{CODIGO_EMPLEADO}}" onclick="">
+                                                        <span class="float-left" >Ver</span>
+                                                        <i class="fas fa-angle-right" style="margin-left: 10%;"></i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        {{/each}}
+                                        <tfoot>
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Nombre</th>
+                                                <th>Apellidos</th>
+                                                <th>Cargo</th>
+                                                <th>Salario base</th>
+                                                <th>ISSS</th>
+                                                <th>AFP</th>
+                                                <th>Insaforp</th>
+                                                <th>Sueldo liquido</th>
+                                                <th>Opciones</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                     
+                        </div>
+                </div>
+        </div><!-- /.container-fluid -->
+
+</div><!-- /.content-wrapper -->
+{{> footer }}
+<script type="text/javascript">
+
+//Funcion para calcular el total de salarios
+    $(calcularSum);
+    function calcularSum(){
+        var sum=0;
+        $(".columna").each(function(){
+            var value=$(this).text();
+            if(isNaN(this.value) && value.length !=0){
+                sum += parseFloat(value);
+            }
+        });
+    $('#total').val(sum.toFixed(2));
+    }
+    
+    function enviar(string){
+                if(string == ''){
+                        window.location.href='/contabilidad_general/transaccion/agregar_transaccion';
+                }
+                else{
+                        Swal.fire({
+                                type: 'warning',
+                                title: 'Permiso denegado',
+                                text: 'Debe iniciar un nuevo periodo para poder ingresar a esta opción.'
+                        });
+                }
+        }
+
+</script>

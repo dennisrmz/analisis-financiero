@@ -1,13 +1,25 @@
+{{> navigation }}
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                        <a href="/">
+                        Sistema Administrativo
+                        </a>
+                </li>
+                <li class="breadcrumb-item active">Materia Prima</li>
+                </ol>
+        </div>
 <div class="container">
     <div class="texto-primario">
+        <div class="alert bold alert-info">
+                        <i class="fas fw fa-plus-circle"></i>
+                        <a href="materia_prima_entrada">
+                        <strong>¡Agregar Materia Prima!</strong>
+                        </a>
+                </div>
+    </div>
         <h1 class="titulo text-center">LISTADO DE MATERIAS PRIMAS</h1>
-        <a href="crear_materia_prima" class="btn m-3 btn-success">Crear Materia Prima</a>
-        <a href="materia_prima_entrada" class="btn m-3 btn-success">Agregar Materia Prima</a>
-    </div>
-    <div class="texto-secundario">
-        <h2 class="subtitulo text-center">LISTADO</h2>
-    </div>
-
     <table id="datatable" class="table table-striped">
         <thead>
             <tr>
@@ -16,9 +28,10 @@
                 <th>Accion</th>
             </tr>
         </thead>
-         
-        <tbody>
+         {{#if user.permiso}}
+            <tbody>
             {{#each materiasprimas}}
+            {{!-- {{#if user.permiso}} --}}
             <tr>
                 <td>{{nombre}}</td>
                 <td>{{existencias}}</td>
@@ -27,8 +40,10 @@
                     <a href="#" class="delete borrar"><i class="fas fa-trash-alt"></i></a>
                 </td>
             </tr>  
+            {{!-- {{/if}} --}}
              {{/each}}     
         </tbody>
+        {{/if}}
         
     </table>
 </div>

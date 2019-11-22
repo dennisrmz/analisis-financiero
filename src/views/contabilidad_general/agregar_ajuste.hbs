@@ -21,7 +21,7 @@
                             <table class="table table-bordered" id="table11" width="100%" cellspacing="0">
                                 <thead>
                                     <tr class="text-center">
-                                        <th colspan="7" class="text-center">TRANSACCIÓN N° {{transaccions.ID_TRANSACCION}}</th>
+                                        <th colspan="5" class="text-center">TRANSACCIÓN N° {{transaccions.ID_TRANSACCION}}</th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -29,19 +29,15 @@
                                         <th>Descripción de transacción</th>
                                         <th>Fecha en que se realizo</th>
                                         <th>Monto de transacción</th>
-                                        <th>Periodo inicio</th>
-                                        <th>Periodo fin</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td id="id_tran">{{transaccions.ID_TRANSACCION}}</td>
-                                        <td id="nombre_tipo">{{transaccions.NOMBRE_TIPO_TRANSACCION}}</td>
+                                        <td>{{transaccions.ID_TRANSACCION}}</td>
+                                        <td>{{transaccions.NOMBRE_TIPO_TRANSACCION}}</td>
                                         <td>{{transaccions.DESCRIPCION_TRANSACCION}}</td>
-                                        <td id="fecha_mov">{{transaccions.FECHA_TRANSACCION_FORMATO}}</td>
-                                        <td id="monto_tran">${{transaccions.MONTO_TRANSACCION}}</td>
-                                        <td id="periodo_inicio_tran">{{transaccions.FECHA_INICIO}}</td>
-                                        <td>{{transaccions.FECHA_FIN}}</td>
+                                        <td>{{transaccions.FECHA_TRANSACCION_FORMATO}}</td>
+                                        <td>${{transaccions.MONTO_TRANSACCION}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -61,7 +57,7 @@
                                 {{#each movimientos}}
                                 <tbody>
                                     <tr>
-                                        <td id="fecha_mov_formato">{{FECHA_MOVIMIENTO_FORMATO}}</td>
+                                        <td>{{FECHA_MOVIMIENTO_FORMATO}}</td>
                                         <td>{{NOMBRE_CUENTA}}</td>
                                         <td>{{DETALLE_MOVIMIENTO}}</td>
                                         <td>${{MONTO_CARGO}}</td>  
@@ -96,9 +92,9 @@
                                     </div>
                                     <div class="form-group">
                                         <a>Seleccione el tipo de ajuste:</a>
-                                        <select id="id_tipo_ajuste" class="form-control" name="select_ajuste" disabled>
+                                        <select id="id_tipo_ajuste" class="form-control" name="select" disabled>
                                             {{#each tipoajuste}}
-                                            <option value="{{CODIGO_TIPO_AJUSTE}}" selected>{{NOMBRE_TIPO_AJUSTE}}</option> 
+                                            <option value="{{CODIGO_TIPO_AJUSTE}}">{{NOMBRE_TIPO_AJUSTE}}</option> 
                                             {{else}}
                                             <option value="0" selected>---------------</option>
                                             {{/each}}
@@ -106,24 +102,11 @@
                                     </div>
                                     <div class="form-group">
                                         <a>Ingrese descripcion de ajuste:</a>
-                                        <textarea rows="2" id="id_descripcion_ajuste" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
+                                        <textarea rows="6" id="id_descripcion_ajuste" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
                                     </div>
-                                    <div id="fecha_prestamo" class="form-group">
-                                    </div>
-                                    <div id="plazo_a" class="form-group">
-                                    </div>
-                                    <div id="plazo_m" class="form-group">
-                                    </div>
-                                    <div id="interes" class="form-group">
-                                    </div>
-                                    <div id="valor_recuperacion_p" class="form-group">
-                                    </div>
-                                    <div id="vida_util_p" class="form-group">
-                                    </div>
-                                    <div id="monto_ajuste" class="form-group"></div>
-                                    <div id="monto_cambiar" class="form-group">
+                                    <div class="form-group">
                                         <a>Ingrese el monto de ajuste:</a>
-                                        <textarea rows="1" id="id_monto_ajuste" type="number" name="monto" class="form-control" placeholder="Monto de ajuste">{{mes}}</textarea>
+                                        <textarea rows="1" id="id_monto_ajuste" type="number" name="monto" class="form-control" placeholder="Monto de ajuste">{{Calculo}}</textarea>
                                     </div>
                                     <div class="col-12 text-center" style="padding-bottom: 5%">    
                                         <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
@@ -233,246 +216,15 @@
 {{> footer }}
 <script type="text/javascript">
     if($('textarea#id_monto_ajuste').text()=='0'){
-        Swal.fire({
-            type: 'warning',
-            title: 'Permiso denegado',
-            text: 'No se puede realizar ajuste puesto que la transaccion fue realizada a mas de 27 días',
-            confirmButtonText: 'Aceptar',
-        }).then((result) => {
-            location.href = "/contabilidad_general/asiento_ajuste";
-        });
-    }
-
-    //Funcion para agregar campo plazo mes
-    function plazo_mes(){
-        var url_nueva_plazo_m = "/contabilidad_general/input_plazo_mes";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_plazo_m,
-            success: function(data){
-                $('#plazo_m').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-    //Funcion para agregar campo plazo año
-    function plazo_anio(){
-        var url_nueva_plazo_a = "/contabilidad_general/input_plazo_a";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_plazo_a,
-            success: function(data){
-                $('#plazo_a').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    //Funcion para agregar campo interes
-    function interes(){
-        var url_nueva_interes = "/contabilidad_general/input_interes_mes";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_interes,
-            success: function(data){
-                $('#interes').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    //Funcion para agregar campo fecha prestamo
-    function fecha_prestamo(){
-        var url_nueva_fecha = "/contabilidad_general/input_fecha_prestamo";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_fecha,
-            success: function(data){
-                $('#fecha_prestamo').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    //Funcion para agregar campo vida util
-    function vida(){
-        var url_nueva_vida = "/contabilidad_general/input_vida_util";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_vida,
-            success: function(data){
-                $('#vida_util_p').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    //Funcion para agregar campo calor de recuperacion
-    function valor_recu(){
-        var url_nueva_valor = "/contabilidad_general/input_valor_recuperacion";
-        check_calcular_monto
-        $.ajax({
-            type: 'get',
-            url: url_nueva_valor,
-            success: function(data){
-                $('#valor_recuperacion_p').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    //Funcion para agregar checkbox para calcular monto de ajuste
-    function check_monto_ajuste(){
-        var url_nueva_monto = "/contabilidad_general/check_calcular_monto";
-        $.ajax({
-            type: 'get',
-            url: url_nueva_monto,
-            success: function(data){
-                $('#monto_ajuste').html(data);
-                console.log("SUCCESS");
-            },
-        });
-    }
-
-    var gastos_acu = 'GASTOS ACUMULADOS';
-    var gastos_ade = 'GASTOS POR ADELANTADO';
-    var ingresos_acu = 'INGRESOS ACUMULADOS';
-    var ajuste = 'AJUSTE';
-    var depreciacion = 'DEPRECIACION';
-    var tipo = $('td#nombre_tipo').text();
-    $('select[name="select_ajuste"] option:selected').each(function(i, obj) {
-        if($(obj).text() == gastos_ade && tipo == 'PAGO DE ALQUILER') {
-            plazo_mes();
-            document.getElementById("id_monto_ajuste").disabled = true;
-            check_monto_ajuste();
-        }else{
-            if($(obj).text() == gastos_ade && tipo == 'COMPRA DE EQUIPO AL CREDITO') {
-                valor_recu();
-                vida();
-                document.getElementById("id_monto_ajuste").disabled = true;
-                check_monto_ajuste();
-            }else{
-                if($(obj).text() == depreciacion && tipo == 'COMPRA DE EQUIPO AL CONTADO') {
-                    valor_recu();
-                    vida();
-                    document.getElementById("id_monto_ajuste").disabled = true;
-                    check_monto_ajuste();
-                }else{
-                    if($(obj).text() == gastos_acu && tipo == 'PRESTAMO BANCARIO') {
-                        plazo_anio();
-                        interes();
-                        document.getElementById("id_monto_ajuste").disabled = true;
-                        check_monto_ajuste();
-                    }else{
-                        if($(obj).text() == ingresos_acu && tipo == 'PRESTAMO A UN EMPLEADO') {
-                            interes();
-                            document.getElementById("id_monto_ajuste").disabled = true;
-                            check_monto_ajuste();
-                        }else{
-                            if($(obj).text() == gastos_ade && tipo == 'COMPRA DE SEGURO') {
-                                interes();
-                                document.getElementById("id_monto_ajuste").disabled = true;
-                                check_monto_ajuste();
-                            }
-                        }
-                    }
-                }
-            }
+            Swal.fire({
+                type: 'warning',
+                title: 'Permiso denegado',
+                text: 'No se puede realizar ajuste puesto que la transaccion fue realizada a mas de 27 días',
+                confirmButtonText: 'Aceptar',
+            }).then((result) => {
+                location.href = "/contabilidad_general/asiento_ajuste";
+            });
         }
-    });
-
-    //Funcion para agregar al campo del monto de ajuste su respectivo calculo
-    function agregar_monto() {
-        var valor = $('input[name=Tipo_ajuste1]:checked', '#monto_ajuste_1').val();
-        var Calculo_sin = 0;
-        var Calculo = 0;
-        var plazo_a = $("#plazo_anio").val();
-        var plazo_m = $("#plazo_meses").val();
-        var interes_m = $("#interes_mes").val();
-        var fecha_p = $("#datepicker_1").val();
-        var vida_u = $("#vida_util").val();
-        var valor_r = $("#valor_recuperacion").val();
-        var tipo = $('td#nombre_tipo').text();
-        var monto_transa = $('td#monto_tran').text();
-        var periodo_inicio = new Date($('td#periodo_inicio_tran').text());//Fecha inicial del periodo
-        var d = periodo_inicio.getMonth()+1;//Toma los dias de la Fecha inicial del periodo
-        var dias = parseInt($('td#fecha_mov').text());//Fecha transaccion
-        var mes = 0;
-        console.log("holaaaaaaaaaaaaa");
-        console.log(dias);
-        console.log(d);
-        function sumarDias(d, dias){
-                fecha_new = d + dias;
-                return fecha_new;
-        }
-        console.log("Suma del mes: "+sumarDias(d, dias));
-        
-        //Evaluando la fecha en que se realizo la transaccion
-        if(sumarDias(d, dias) >= '1' && sumarDias(d, dias) <= '12'){
-                mes = 1
-        }else{
-                if(sumarDias(d, dias) >= '13' && sumarDias(d, dias) <= '27'){
-                        mes = 0.5
-                }
-        }
-        var monto_transacc = monto_transa.replace("$","");
-        //Validar que para calcular monto de ajuste debe haber ingresado los campos respectivos
-        if(valor == "false"){
-            if(tipo == 'PAGO DE ALQUILER' && plazo_m != ""){
-                Calculo_sin = monto_transacc / plazo_m;
-                Calculo = Number(Calculo_sin.toFixed(2));
-                $("#id_monto_ajuste").val(Calculo);
-            }else{
-                if(tipo == 'COMPRA DE EQUIPO AL CREDITO' && vida_u != "" && valor_r != ""){
-                    var Cargo_dep_anual = (monto_transacc - valor_r)/vida_u;
-                    var Cargo_dep_mensual = Cargo_dep_anual/12;
-                    Calculo_sin = Cargo_dep_mensual * mes;
-                    Calculo = Number(Calculo_sin.toFixed(2));
-                    $("#id_monto_ajuste").val(Calculo);
-                }else{
-                    if(tipo == 'COMPRA DE EQUIPO AL CONTADO' && vida_u != "" && valor_r != ""){
-                        var Cargo_dep_anual = (monto_transacc - valor_r)/vida_u;
-                        var Cargo_dep_mensual = Cargo_dep_anual/12;
-                        Calculo_sin = Cargo_dep_mensual * mes;
-                        Calculo = Number(Calculo_sin.toFixed(2));
-                        $("#id_monto_ajuste").val(Calculo);
-                    }else{
-                        if(tipo == 'PRESTAMO BANCARIO' && interes_m != "" && plazo_a != ""){
-                            Calculo_sin = monto_transacc * (interes_m/100) * mes;
-                            Calculo = Number(Calculo_sin.toFixed(2));
-                            $("#id_monto_ajuste").val(Calculo);
-                        }else{
-                            if(tipo == 'PRESTAMO A UN EMPLEADO' && interes_m != ""){
-                                Calculo_sin = monto_transacc * (interes_m/100) * mes;
-                                Calculo = Number(Calculo_sin.toFixed(2));
-                                $("#id_monto_ajuste").val(Calculo);
-                            }else{
-                                if(tipo == 'COMPRA DE SEGURO' && plazo_a != ""){
-                                    var cal_plazo_anio = monto_transacc / plazo_a;
-                                    Calculo_sin = (cal_plazo_anio / 12)*mes;
-                                    Calculo = Number(Calculo_sin.toFixed(2));
-                                    $("#id_monto_ajuste").val(Calculo);
-                                }else{
-                                    validar_completar_campos_transaccion();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //Funcion de mensage de validacion de campos de transaccion
-    function validar_completar_campos_transaccion(){
-        document.getElementById("cb_monto_ajuste").checked = false;
-        Swal.fire({
-            type: 'error',
-            title: 'Datos incompletos.',
-            text: 'Debe llenar los campos para calcular el monto'
-        });
-    }
-    
         //Declaracion de variables
         var count = 0;
         var totalCargos = 0;
@@ -499,84 +251,24 @@
                 return false;
             });
         });
-
         //Funcion para desactivar componentes de transaccion
         function desactivar(){
-            var valor = $('input[name=Tipo_ajuste1]:checked', '#monto_ajuste_1').val();
-            var plazo_a = $("#plazo_anio").val();
-            var plazo_m = $("#plazo_meses").val();
-            var interes_m = $("#interes_mes").val();
-            var fecha_p = $("#datepicker_1").val();
-            var vida_u = $("#vida_util").val();
-            var valor_r = $("#valor_recuperacion").val();
-            var tipo = $('td#nombre_tipo').text();      
             var descripcion = $("#id_descripcion_ajuste").val();
             var cbTipo = document.getElementById("id_tipo_ajuste");
             var monto = parseFloat($("#id_monto_ajuste").val());
-            console.log(valor);
-                if(descripcion != '' && !isNaN(monto) && valor == "false"){
-                    if(tipo == 'COMPRA DE EQUIPO AL CREDITO' && vida_u != "" && valor_r != ""){
-                        desactivar_Campos();
-                        document.getElementById("valor_recuperacion").disabled = true;
-                        document.getElementById("vida_util").disabled = true;
-                        document.getElementById("cb_monto_ajuste").disabled = true;
-                    }else{
-                        if(tipo == 'PAGO DE ALQUILER' && plazo_m != ""){
-                            desactivar_Campos();
-                            document.getElementById("plazo_meses").disabled = true;
-                            document.getElementById("cb_monto_ajuste").disabled = true;
-                        }else{
-                            if(tipo == 'COMPRA DE EQUIPO AL CONTADO' && vida_u != "" && valor_r != ""){
-                                desactivar_Campos();
-                                document.getElementById("valor_recuperacion").disabled = true;
-                                document.getElementById("vida_util").disabled = true;
-                                document.getElementById("cb_monto_ajuste").disabled = true;
-                            }else{
-                                if(tipo == 'PRESTAMO BANCARIO' && interes_m != "" && plazo_a != ""){
-                                    desactivar_Campos();
-                                    document.getElementById("plazo_anio").disabled = true;
-                                    document.getElementById("interes_mes").disabled = true;
-                                    document.getElementById("cb_monto_ajuste").disabled = true;
-                                }else{
-                                    if(tipo == 'PRESTAMO A UN EMPLEADO' && interes_m != ""){
-                                        desactivar_Campos();
-                                        document.getElementById("interes_mes").disabled = true;
-                                        document.getElementById("cb_monto_ajuste").disabled = true;
-                                    }else{
-                                        if(tipo == 'COMPRA DE SEGURO' && plazo_a != ""){
-                                            desactivar_Campos();
-                                            document.getElementById("plazo_anio").disabled = true;
-                                            document.getElementById("cb_monto_ajuste").disabled = true;
-                                        }else{
-                                            validar_completar_campos_transaccion();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }else{
-                    if(descripcion != '' && !isNaN(monto)){
-                        desactivar_Campos();
-                    }else{
-                        Swal.fire({
-                            type: 'error',
-                            title: 'Datos incompletos.',
-                            text: 'Debe llenar los campos para calcular el monto'
-                        });
-                    }
-                }
-                
+            if(descripcion != '' && !isNaN(monto)){
+                document.getElementById("id_tipo_ajuste").disabled = true;
+                document.getElementById("datepicker").disabled = true;
+                document.getElementById("id_monto_ajuste").disabled = true;
+                document.getElementById("id_descripcion_ajuste").disabled = true;
+            }else{
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Verifique que los campos de la transaccion que estén completos.'
+                });
+            }
         }
-
-        //Funcion para desactivar_campos_similares
-        function desactivar_Campos(){
-            document.getElementById("id_tipo_ajuste").disabled = true;
-            document.getElementById("datepicker").disabled = true;
-            document.getElementById("id_monto_ajuste").disabled = true;
-            document.getElementById("id_descripcion_ajuste").disabled = true;
-        }
-
         //Funcion para obtener los datos de los movimientos
         function obtenerDatos(){
             console.log("agregarFila");
@@ -691,163 +383,71 @@
             var info = string.split('/');
             return info[2] + '-' + info[1] + '-' + info[0];
         }
-
-        function post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion){
-            var total = $("#table11 tbody tr").find("td:first-child").text();
-            //var total = $('td#id_tran').text();
-            $.ajax({
-                url: "/contabilidad_general/asiento_ajuste/agregar_ajuste/"+total,
-                type: "POST",
-                data: {
-                    'ID_CUENTA': codigo_cuentas,
-                    'FECHA_MOVIMIENTO': fecha,
-                    'DETALLE_MOVIMIENTO': detalles,
-                    'MONTO_CARGO': cargos,
-                    'MONTO_ABONO': abonos,
-                    'CODIGO_TIPO_AJUSTE': codigoTipo,
-                    'MONTO_TRANSACCION_AJUSTE': monto,
-                    'DESCRIPCION_TRANSACCION_AJUSTE': descripcion,
-                    'FECHA_TRANSACCION_AJUSTE': fecha,
-                    'ES_AJUSTE':ajuste,
-                    'INTERES_MES': interes_mes,
-                    'PLAZO_MES': plazo_mes,
-                    'PLAZO_ANIO': plazo_anio,
-                    'VIDA_UTIL': vida_util,
-                    'VALOR_RECUPERACION': valor_recuperacion
-                },
-                success: function(data){
-                    console.log(data);
-                    console.log("SUCCESS");
-                },
-                    dataType: "json"
-                }).always(function() {
-                    console.log("complete");
-                    location.href = "/contabilidad_general/asiento_ajuste";
-            });
-        }
-
-        //Funcion mensaje de validación de campos de transaccion
-        function message_validar_transacion(){
-            Swal.fire({
-                type: 'error',
-                title: 'Datos incompletos.',
-                text: 'Verifique que los campos de la transaccion que estén completos.'
-            });
-        }
-
-        //Funcion mensaje de error en partida doble
-        function message_partida_doble(){
-            Swal.fire({
-                type: 'error',
-                title: '!Error en partida doble!',
-                text: 'Los movimientos registrados para esta transacción no cumplen partida doble.'
-            });
-        }
-
-        //Funcion mensaje de error en incoherencia de datos
-        function message_datos_incoherentes(){
-            Swal.fire({
-                type: 'error',
-                title: '!Datos incoherentes!',
-                text: 'El monto de la partida doble no concuerda con el monto de la transaccion.'
-            });
-        }  
         
         //Funcion para guardar los movimientos y transaccion realizada
         function guardarDato(){
-            var tipo = $('td#nombre_tipo').text(); 
-            var valor = $('input[name=Tipo_ajuste1]:checked', '#monto_ajuste_1').val();
+            var total = $("#table11 tbody tr").find("td:first-child").text();
             var codigoTipo = $("#id_tipo_ajuste").val();
             var cbTipo = document.getElementById("id_tipo_ajuste");
-            //var tipo = cbTipo.options[cbTipo.selectedIndex].text;
+            var tipo = cbTipo.options[cbTipo.selectedIndex].text;
             var monto = parseFloat($("#id_monto_ajuste").val());
             var descripcion = $("#id_descripcion_ajuste").val();
             var fecha = $("#datepicker").val();
             var ajuste = "SI";
-            if(valor == "false"){
-                if(cbTipo.value != '0' && !isNaN(monto) && descripcion!=''){
-                    if(totalAbonos==totalCargos){
-                        if(totalAbonos==monto){
-                            if(tipo == 'COMPRA DE EQUIPO AL CREDITO' || tipo == 'COMPRA DE EQUIPO AL CONTADO'){
-                                var interes_mes = 0;
-                                var plazo_mes = 0;
-                                var plazo_anio = 0;
-                                var vida_util = $("#vida_util").val();
-                                var valor_recuperacion = $("#valor_recuperacion").val();
-                                post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                            }else{
-                                if(tipo == 'PAGO DE ALQUILER'){
-                                    var interes_mes = 0;
-                                    var plazo_anio = 0;
-                                    var vida_util = 0;
-                                    var valor_recuperacion = 0;
-                                    var plazo_mes = $('#plazo_meses').val();
-                                    post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                                }else{
-                                    if(tipo == 'PRESTAMO BANCARIO'){
-                                        var plazo_mes = 0;
-                                        var vida_util = 0;
-                                        var valor_recuperacion = 0;
-                                        interes_mes = $('#interes_mes').val();
-                                        plazo_anio = $('#plazo_anio').val();
-                                        post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                                    }else{
-                                        if(tipo == 'PRESTAMO A UN EMPLEADO'){
-                                            var plazo_mes = 0;
-                                            var plazo_anio = 0;
-                                            var vida_util = 0;
-                                            var valor_recuperacion = 0;
-                                            var interes_mes = $('#interes_mes').val();
-                                            post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                                        }else{
-                                            if(tipo == 'COMPRA DE SEGURO'){
-                                                var plazo_mes = 0;
-                                                var plazo_anio = 0;
-                                                var vida_util = 0;
-                                                var valor_recuperacion = 0;
-                                                var interes_mes = $('#plazo_anio').val();
-                                                post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }else{
-                            message_datos_incoherentes();
-                        }
+            //var detalle_mov =$("#detalle_movimiento").val();
+            if(tipo!='' && tipo!='---------' && !isNaN(monto) && descripcion!=''){
+                if(totalAbonos==totalCargos){
+                    if(totalAbonos==monto){
+                        $.ajax({
+                            url: "/contabilidad_general/asiento_ajuste/agregar_ajuste/"+total,
+                            type: "POST",
+                            data: {
+                                'ID_CUENTA': codigo_cuentas,
+                                'FECHA_MOVIMIENTO': fecha,
+                                'DETALLE_MOVIMIENTO': detalles,
+                                'MONTO_CARGO': cargos,
+                                'MONTO_ABONO': abonos,
+                                'CODIGO_TIPO_AJUSTE': codigoTipo,
+                                'MONTO_TRANSACCION_AJUSTE': monto,
+                                'DESCRIPCION_TRANSACCION_AJUSTE': descripcion,
+                                'FECHA_TRANSACCION_AJUSTE': fecha,
+                                'ES_AJUSTE':ajuste
+                            },
+                            success: function(data){
+                                console.log(data);
+                                console.log("SUCCESS");
+                            },
+                            dataType: "json"
+                        }).always(function() {
+                            console.log("complete");
+                            location.href = "/contabilidad_general/asiento_ajuste";
+                        });
                     }else{
-                        message_partida_doble();
+                        Swal.fire({
+                            type: 'error',
+                            title: '!Datos incoherentes!',
+                            text: 'El monto de la partida doble no concuerda con el monto de la transaccion de ajuste.'
+                        });
                     }
                 }else{
-                    message_validar_transacion();
+                    Swal.fire({
+                        type: 'error',
+                        title: '!Error en partida doble!',
+                        text: 'Los movimientos registrados para esta transacción de ajuste no cumplen partida doble.'
+                    });
                 }
             }else{
-                if(cbTipo.value != '0' && !isNaN(monto) && descripcion!=''){
-                    if(totalAbonos==totalCargos){
-                        if(totalAbonos==monto){
-                            var interes_mes = 0;
-                            var plazo_mes = 0;
-                            var plazo_anio = 0;
-                            var vida_util = 0;
-                            var valor_recuperacion = 0;
-                            post_transaccion_ajuste(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, fecha, ajuste, interes_mes, plazo_mes, plazo_anio, vida_util, valor_recuperacion);
-                        }else{
-                            message_datos_incoherentes();
-                        }
-                    }else{
-                        message_partida_doble();
-                    }
-                }else{
-                    message_validar_transacion();
-                }
+                Swal.fire({
+                    type: 'error',
+                    title: 'Datos incompletos.',
+                    text: 'Verifique que los campos de la Transacción de ajuste estén completos.'
+                });
             }
         }
-
         //Validad que solo un chechbox este seleccionado
         function unselect(){
             document.querySelectorAll('[name=Tipo]').forEach((x) => x.checked=false);
         }
-
         //Funcion para saber cual radiobutton esta seleccionado
         $('#myForm input').on('change', function() {
             abonar = $('input[name=Tipo]:checked', '#myForm').val();
@@ -858,10 +458,8 @@
             /*$('html, body').animate({
                 scrollTop: $("#elementoID").offset().top
             }, 3500);
-
             $(window).scrollTop(100);
             */
-
             //Funcion para el boton "cancelar"
             $("#cancel").click(function() {
                 swal.fire({
@@ -901,7 +499,6 @@
                     $('#sub_cuenta').prop('disabled', true);
                 }
             });
-
             //Funcion para llenar select de subsubcuenta dependiendo de la seleccion del select de subcuenta
             $('#sub_cuenta').change(function(){            
                 var seleccionada = $('#sub_cuenta').val();

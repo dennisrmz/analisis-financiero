@@ -1,57 +1,69 @@
-<div class="container">
-    <div class="texto-primario">
-        <h1 class="titulo text-center">INVENTARIO MATERIA PRIMA</h1>
-        <a href="entrada_materia_prima_saldo" class="btn m-3 btn-success">Registrar Entrada de Materia Prima</a>
-          <a href="materia_prima_salida" class="btn m-3 btn-success">Salida de Materia Prima</a>
+{{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">
+                    Sistema Administrativo
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/costeo/listar_materia_prima">
+                    Materia Prima
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Entrada Materia Prima</li>
+        </ol>
+    </div>
+</div>
+
+    <div class="container">
+        <div class="texto-primario">
+            <div class="alert bold alert-info">
+                <i class="fas fw fa-plus-circle"></i>
+                <a href="materia_prima_entrada">
+                    <strong>¡Registrar Entrada de Materia Prima!</strong>
+                </a>
+            </div>
+        </div>
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i>
+            <a href="materia_prima_salida">
+                <strong>¡Salida de Materia Prima!</strong>
+            </a>
+        </div>
+    
+    <div>
+        <h1 class="titulo text-center">INVENTARIO ENTRADA MATERIA PRIMA</h1>
         <select class="m-2 form-control" name="productos" id="productos">
-            <option value="silla">Silla</option> 
+            <option value="silla">Silla</option>
             <option value="mesa" selected>Mesa</option>
         </select>
-    </div>
-    <div class="texto-secundario">
-        <h2 class="subtitulo text-center">Entradas</h2>
     </div>
 
     <table id="datatable" class="table table-striped">
         <thead>
             <tr>
+                <th>Nombre</th>
                 <th>Fecha</th>
-                <th>Detalle</th>
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
             </tr>
         </thead>
         </tfoot>
         <tbody>
+            {{#each entradaMateriasPrimas}}
             <tr>
-                <td>11/05/10</td>
-                <td>Saldo Anterior</td>
-                <td>10</td>
-                <td>10.00</td>
+                <td>{{nombre}}</td>
+                <td>{{fecha}}</td>
+                <td>{{cantidad}}</td>
+                <td>{{preciounitario}}</td>
+            </tr>
+            {{/each}}
 
-            </tr>
-            <tr>
-                <td>12/05/10</td>
-                <td>Venta</td>
-                <td>8</td>
-                <td>11.00</td>
-            </tr>
-            <tr>
-                <td>12/05/10</td>
-                <td>Venta</td>
-                <td>2</td>
-                <td>8.00</td>
-            </tr>
-            <tr>
-                <td>12/05/10</td>
-                <td>Saldo Final</td>
-                <td>2</td>
-                <td>8.00</td>
-            </tr>
-           
         </tbody>
 
-        
+
     </table>
 
 </div>

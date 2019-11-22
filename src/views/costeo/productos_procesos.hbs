@@ -1,9 +1,27 @@
+{{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active">Productos en Procesos</li>
+        </ol>
+    </div>
+</div>
 <div class="container">
     <div class="texto-primario">
+        <div class="alert bold alert-info">
+            <i class="fas fw fa-plus-circle"></i>
+            <a href="agregar_productos_proceso">
+                <strong>¡Agregar Productos a Proceso!</strong>
+            </a>
+        </div>
+        <div class="alert bold alert-info">
+            <i class="fas fw fa-plus-circle"></i>
+            <a href="/costeo/producto_terminado_entrada">
+                <strong>¡Productos Terminados!</strong>
+            </a>
+        </div>
         <h1 class="titulo text-center">PRODUCTOS EN PROCESO</h1>
     </div>
-    <a href="/costeo/agregar_productos_proceso" class="btn m-3 btn-success"> Agregar Productos a Proceso</a>
-    
      <table id="datatable" class="table table-striped">
         <thead>
             <tr>
