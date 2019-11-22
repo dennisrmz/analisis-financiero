@@ -1,14 +1,24 @@
 {{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/costeo/producto_proceso">
+                    Productos en Procesos
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Tranferir Producto en Proceso</li>
+        </ol>
+    </div>
+</div>
 <div class="container p-4">
-    <div class="row">
-        <div class="col-md-4 mx-auto">
+    <div class="">
+        <div class="mx-auto">
                {{#each procesos}}
             <div class="card">
              
          <h2 class="text-center">Proceso {{numero}}</h2>
        
-
-                
                 <div class="card-body">
                     <form action="/costeo/transferir_proceso" method="POST">
                     <div  style="display: none">
