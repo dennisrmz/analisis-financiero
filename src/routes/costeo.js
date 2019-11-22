@@ -82,11 +82,6 @@ router.get('/producto_proceso', isLoggedIn, async (req, res) => {
     res.render('costeo/productos_procesos', { productoproc });
 });
 
-router.get('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
-    const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
-    res.render('costeo/agregar_productos_a_proceso', { materiasPrimas });
-})
-
 router.post('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
     const { tipoproducto, cantidadrestante, detalle, materiaprimaid, cantidadmatariaprima,
         numeroprocesos } = req.body;
@@ -135,6 +130,13 @@ router.post('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
     req.flash('success', 'Link Saved Succesfully');
     res.render('costeo/productos_procesos', { productoproc });
 });
+
+router.get('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
+    const materiasPrimas = await pool.query('SELECT * FROM materiasprimas');
+    res.render('costeo/agregar_productos_a_proceso', { materiasPrimas });
+})
+
+
 
 router.get('/detalle_producto_proceso/:id', isLoggedIn, async (req, res) => {
     console.log(req.params.id);
@@ -237,4 +239,8 @@ async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid
     console.log(totalcosto);
     return totalcosto;
 }
+
+router.get('/producto_salida', isLoggedIn, async (req, res) => {
+    res.render('costeo/salida_producto');
+});
 module.exports = router;
