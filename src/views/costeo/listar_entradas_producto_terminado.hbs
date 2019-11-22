@@ -12,19 +12,7 @@
     </div>
 </div>
 <div class="container">
-    <div class="texto-primario">
-        <div class="alert alert-danger">
-            <i class="fa fa-exclamation-circle"></i>
-            <a href="/costeo/producto_salida">
-                <strong>¡Registrar Salida de Producto!</strong>
-            </a>
-        </div>
-        <h1 class="titulo text-center">INVENTARIO PRODUCTO TERMINADO</h1>
-        <select class="m-2 form-control" name="productos" id="productos">
-            <option value="silla">Silla</option> 
-            <option value="mesa" selected>Mesa</option>
-        </select>
-    </div>
+    
 
     <table id="datatable" class="table table-striped">
         <thead>
@@ -37,31 +25,16 @@
         </thead>
         </tfoot>
         <tbody>
-            <tr>
-                <td>10/05/10</td>
-                <td>Saldo Anterior</td>
-                <td>10</td>
-                <td>10.00</td>
+              {{#each productoTerminado}}
 
-            </tr>
             <tr>
-                <td>12/05/10</td>
-                <td>Venta</td>
-                <td>8</td>
-                <td>11.00</td>
+                <td>{{fechaterminado}}</td>
+                <td>{{detalle}}</td>
+                <td>{{cantidadproducto}}</td>
+                <td>{{preciounitario}}</td>
+              
             </tr>
-            <tr>
-                <td>12/05/10</td>
-                <td>Venta</td>
-                <td>2</td>
-                <td>8.00</td>
-            </tr>
-            <tr>
-                <td>12/05/10</td>
-                <td>Saldo Final</td>
-                <td>2</td>
-                <td>8.00</td>
-            </tr>
+            {{/each}}
            
         </tbody>
 
