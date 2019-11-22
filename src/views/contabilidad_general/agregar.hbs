@@ -2,28 +2,24 @@
 <div class="container-fluid">
         <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">Notas Explicativas</li>
-                <li class="breadcrumb-item active">Modificar | Agregar Nota Explicativa</li>
+                        Notas Explicativas | Agregar Nota Explicativa
                 </ol>
         <div class="row">
                 <div class="col-md-6 mx-auto">
                         <div class="card">
                                 <div class="card-header">
                                         <i class="fas fa-plus-circle"></i>
-                                        Creación | Edicion
-                                        <i class="fas fa-edit"></i>
-
+                                        Creación 
                                 </div>
                                 <div class="card-body">
-                                        <!--<form action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST">-->
-                                        <form action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST">
+                                        <form  id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST" onClick="return enviar();">
                                                 <div class="form-group">
                                                         <a>Nombre de Nota:</a>
-                                                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" autofocus>
+                                                        <input type="text" name="TITULO_NOTA" class="form-control" placeholder="Titulo de la nota">
                                                 </div>
                                                 <div class="form-group">
                                                         <a>Descripción:</a>
-                                                        <textarea type="text" name="descripcion" rows = "8" class="form-control" placeholder="Descripción"></textarea>
+                                                        <textarea type="text" name="DESCRIPCION_NOTA" rows = "7" class="form-control" placeholder="Descripción"></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                         <button style="width: 50%" class="btn btn-primary">Guardar</button>
@@ -36,3 +32,20 @@
         </div>
 </div>
 {{> footer }}
+<script type="text/javascrip">
+$(document).ready(function(){
+        enviar();
+});
+        function enviar(){
+                var seleccionada = $('#parametro').val();
+                var url_nueva = "/contabilidad_general/estados_financieros/"+seleccionada+"/notas_explicativas/listado/agregar";
+                $.ajax({
+                        type: 'post',
+                        url: url_nueva,
+                        success: function(data){
+                                console.log("SUCESS");
+                        }
+                });
+        }
+});
+</script>

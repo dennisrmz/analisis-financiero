@@ -3,60 +3,78 @@
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
                 <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                        <a href="/contabilidad_general/estados_financieros/listado">
-                        Estados Financieros
-                        </a> 
-                </li>
-                <li class="breadcrumb-item active">Balance de Comprobación Inicial</li>
+                        <li class="breadcrumb-item">
+                                <a href="/contabilidad_general/estados_financieros/listado">
+                                Estados Financieros
+                                </a> 
+                        </li>
+                        <li class="breadcrumb-item active">Balance de Comprobación Inicial</li>
                 </ol>
-                <div class="card mb-3">
-                        <div class="card-body">
-                                <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="4" class="text-center">
-                                                            PROPLASTIC S.A. DE C.V.
-                                                            <br>
-                                                            Balance de Comprobacion Inicial
-                                                            <br>
-                                                            Al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                    <tr>
-                                                        <th class="text-center">CODIGO</th>
-                                                        <th class="text-center">CUENTAS</th>
-                                                        <th class="text-center">DEBE</th>
-                                                        <th class="text-center">HABER</th>
-                                                    </tr>
-                                                {{#each cuentas}}
-                                                <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                                <td width="15%">{{ CODIGO_CUENTA}}</td>
-                                                                <td>{{ NOMBRE_CUENTA }}</td>
-                                                                <td class="text-center">{{ MONTO_SALDO }}</td>
-                                                                <td class="text-center">{{ ES_SALDO_ACREEDOR  }}</td>                     
-                                                        </tr>
-                                                </tbody>
-                                                {{else}}
-                                                <div class="card card-body text-center">
-                                                        <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                <div class="row">
+                        <div class="col-md-7 mx-auto">
+                                <div class="card">
+                                        <div class="card-body">
+                                                <div class="table-responsive">
+                                                        <table class="table table-bordered" id="dataTable" >
+                                                         <thead>
+                                                                <tr>
+                                                                        <th colspan="4" class="text-center">
+                                                                                PROPLASTIC S.A. DE C.V.
+                                                                        <br>
+                                                                                Balance de Comprobacion Inicial
+                                                                        <br>
+                                                                                Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
+                                                                        </th>
+                                                                </tr>
+                                                        </thead>
+                                                                <tr>
+                                                                        <th class="text-center">CODIGO</th>
+                                                                        <th class="text-center">CUENTAS</th>
+                                                                        <th class="text-center">DEBE</th>
+                                                                        <th class="text-center">HABER</th>
+                                                                </tr>
+                                                        {{#each cuentas_deudoras}}
+                                                        <tbody>
+                                                                <tr id="ID_ESTADOFINANCIERO">
+                                                                        <td >{{ CODIGO_CUENTA}}</td>
+                                                                        <td>{{ NOMBRE_CUENTA }}</td>
+                                                                        <td class="text-center">{{ MONTO_SALDO }}</td>
+                                                                        <td class="text-center"></td>                     
+                                                                </tr>
+                                                        </tbody>
+                                                        {{else}}
+                                                        <div class="card card-body text-center">
+                                                                <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                                                        </div>
+                                                        {{/each}}
+                                                        {{#each cuentas_acreedoras}}
+                                                        <tbody>
+                                                                <tr id="ID_ESTADOFINANCIERO">
+                                                                        <td >{{ CODIGO_CUENTA}}</td>
+                                                                        <td>{{ NOMBRE_CUENTA }}</td>
+                                                                        <td class="text-center"></td>
+                                                                        <td class="text-center">{{ MONTO_SALDO }}</td>                     
+                                                                </tr>
+                                                        </tbody>
+                                                        {{else}}
+                                                        <div class="card card-body text-center">
+                                                                <p>¡Opps! Parece que no se puede generar un estado sin cuentas.</p>
+                                                        </div>
+                                                        {{/each}}
+                                                                <tr>
+                                                                        <th class="text-center"></th>
+                                                                        <th class="text-right">TOTAL</th>
+                                                                        <th class="text-center">{{suma_debe.DEBE}}</th>
+                                                                        <th class="text-center">{{suma_haber.HABER}}</th>
+                                                                </tr>
+                                                        </tbody>
+                                                        </table>
                                                 </div>
-                                                {{/each}}
-                                                <tr>
-                                                        <th class="text-center"></th>
-                                                        <th class="text-right">TOTAL</th>
-                                                        <th class="text-center">{{suma_debe.DEBE}}</th>
-                                                        <th class="text-center">{{suma_haber.HABER}}</th>
-                                                </tr>
-                                            </table>
+                                        </div>
                                 </div>
-                                <!--</form>-->
                         </div>
-                </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
 {{> footer }}
+

@@ -1,5 +1,4 @@
 {{> navigation }}
-
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -12,72 +11,74 @@
                 </li>
                 <li class="breadcrumb-item active">Estado de Resultados</li>
                 </ol>
-                <!-- DataTables -->
-                <div class="card mb-3">
-                        <div class="card-body">
-
-                                <div class="table-responsive">
-                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="3" class="text-center">
-                                                            PROPLASTIC S.A. DE C.V.
-                                                            <br>
-                                                            Estado de Pérdidas y Ganancias
-                                                            <br>
-                                                            Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="3">INGRESOS</th>
-                                                    </tr>
-                                                </thead>
-                                                {{#each cuentas_ingresos}}
-                                                    <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                            <td width="15%">{{ CODIGO_CUENTA}}</td>
-                                                            <td>{{ NOMBRE_CUENTA }}</td>
-                                                            <td class="text-center">{{ MONTO_SALDO }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                {{/each}}
-                                                <tr>
-                                                        <th class="text-center"></th>
-                                                        <th class="text-right">Total Ingresos</th>
-                                                        <th class="text-center">{{suma_ingreso.INGRESO}}</th>
-                                                </tr>
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="3">GASTOS</th>
-                                                    </tr>
-                                                </thead>
-                                                    {{#each cuentas_gastos}}
-                                                    <tbody>
-                                                        <tr id="ID_ESTADOFINANCIERO">
-                                                            <td width="15%">{{ CODIGO_CUENTA}}</td>
-                                                            <td>{{ NOMBRE_CUENTA }}</td>
-                                                            <td class="text-center">{{ MONTO_SALDO }}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                {{/each}}
-                                                <tr>
-                                                        <th class="text-center"></th>
-                                                        <th class="text-right">Total Gastos</th>
-                                                        <th class="text-center">{{suma_gasto.GASTO}}</th>
-                                                </tr>
-                                                <tr>
-                                                        <th class="text-center"></th>
-                                                        <th class="text-right">{{utilidad.NOMBRE_CUENTA}}</th>
-                                                        <th class="text-center">{{saldo_utilidad}}</th>
-                                                </tr>
-
-                                        </table>
+                <div class="row">
+                        <div class="col-md-7 mx-auto">
+                                <div class="card">
+                                    <div class="card-body">
+                                            <div class="table-responsive">
+                                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="3" class="text-center">
+                                                                        PROPLASTIC S.A. DE C.V.
+                                                                        <br>
+                                                                        Estado de Pérdidas y Ganancias
+                                                                        <br>
+                                                                        Del {{periodocontable.FECHAINICIO}} al {{periodocontable.FECHAFINAL}} de {{periodocontable.MES}} de {{periodocontable.ANIO}}</td>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="3">INGRESOS</th>
+                                                                </tr>
+                                                            </thead>
+                                                            {{#each cuentas_ingresos}}
+                                                                <tbody>
+                                                                    <tr id="ID_ESTADOFINANCIERO">
+                                                                        <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                                        <td>{{ NOMBRE_CUENTA }}</td>
+                                                                        <td class="text-center">{{ MONTO_SALDO }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            {{/each}}
+                                                            <tr>
+                                                                    <th class="text-center"></th>
+                                                                    <th class="text-right">Total Ingresos</th>
+                                                                    <th class="text-center">{{suma_ingreso.INGRESO}}</th>
+                                                            </tr>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="3">GASTOS</th>
+                                                                </tr>
+                                                            </thead>
+                                                                {{#each cuentas_gastos}}
+                                                                <tbody>
+                                                                    <tr id="ID_ESTADOFINANCIERO">
+                                                                        <td width="15%">{{ CODIGO_CUENTA}}</td>
+                                                                        <td>{{ NOMBRE_CUENTA }}</td>
+                                                                        <td class="text-center">{{ MONTO_SALDO }}</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            {{/each}}
+                                                            <tr>
+                                                                    <th class="text-center"></th>
+                                                                    <th class="text-right">Total Gastos</th>
+                                                                    <th class="text-center">{{suma_gasto.GASTO}}</th>
+                                                            </tr>
+                                                            <tr>
+                                                                    <th class="text-center"></th>
+                                                                    <th class="text-right">{{utilidad.NOMBRE_CUENTA}}</th>
+                                                                    <th class="text-center">{{saldo_utilidad}}</th>
+                                                            </tr>
+                                                    </table>
+                                            </div>
+                                    </div>
                                 </div>
                         </div>
                 </div>
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
 {{> footer }}
+
 
