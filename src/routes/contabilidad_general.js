@@ -133,7 +133,6 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         await pool.query('INSERT INTO notaexplicativa SET ?', [newNota]);
         console.log('Se ha insertado correctamente la nota ');
         res.redirect('/contabilidad_general/estados_financieros/listado');
-       
     });
     
     //---------------------------------------ESTADOS FINANCIEROS---------------------------------------------------------

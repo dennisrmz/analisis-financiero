@@ -12,15 +12,14 @@
                                         Creación 
                                 </div>
                                 <div class="card-body">
-                                        <!--<form action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST">-->
                                         <form  id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" action="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar" method="POST" onClick="return enviar();">
                                                 <div class="form-group">
                                                         <a>Nombre de Nota:</a>
-                                                        <input type="text" name="titulo" class="form-control" placeholder="Titulo de la nota">
+                                                        <input type="text" name="TITULO_NOTA" class="form-control" placeholder="Titulo de la nota">
                                                 </div>
                                                 <div class="form-group">
                                                         <a>Descripción:</a>
-                                                        <textarea type="text" name="descripcion" rows = "7" class="form-control" placeholder="Descripción"></textarea>
+                                                        <textarea type="text" name="DESCRIPCION_NOTA" rows = "7" class="form-control" placeholder="Descripción"></textarea>
                                                 </div>
                                                 <div class="form-group">
                                                         <button style="width: 50%" class="btn btn-primary">Guardar</button>
