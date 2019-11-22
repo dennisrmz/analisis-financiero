@@ -1,4 +1,5 @@
 {{> navigation }}
+
 <div id="content-wrapper">
         <div class="container-fluid">
                 <!-- Breadcrumbs-->
@@ -11,6 +12,7 @@
                 <li class="breadcrumb-item active">Estados Financieros</li>
                 </ol>
                 <!-- DataTables -->
+
                 <div class="card mb-3">
                         <div class="card-header">
                                 <i class="fas fa-table"></i>
@@ -21,22 +23,26 @@
                                         <!--<div class="form-group">
                                                 <input style="width: 15%" type="text" class="search form-control" placeholder="Buscar">
                                         </div>-->
+
                                 </div>
                                 <div class="table-responsive">
                                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                                 <thead>
                                                         <tr>
+
                                                                 <th class="text-center">Identificador</th>
                                                                 <th class="text-center">Período Contable</th>
                                                                 <th class="text-center" style="width: 40%">Nombre del Estado Financiero</th>
                                                                 <th class="text-center" style="width: 15%">Visualizar</th>
                                                                 <th class="text-center" style="width: 15%">Notas Explicativas</th>
+
                                                         </tr>
                                                 </thead>
                                                 {{#each estadofinanciero}}
                                                 <tbody>
                                                         <tr id="ID_ESTADOFINANCIERO">
                                                                 <td class="text-center">{{ ID_ESTADOFINANCIERO }}</td>
+
                                                                 <td>DEL {{ FECHAINICIO}} AL {{ FECHAFINAL }}</td>
                                                                 <td>{{ NOMBRE_ESTADOFINANCIERO }}</td>
                                                                 <td class="text-center">
@@ -45,6 +51,7 @@
                                                                 <td class="text-center">
                                                                         <a class="fa fa-folder" name="ver" value="{{ID_ESTADOFINANCIERO}}" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado" onclick="" style="color:gray !important"></a>
                                                                 </td>                            
+
                                                         </tr>
                                                 </tbody>
                                                 {{else}}
@@ -59,3 +66,4 @@
         </div><!-- /.container-fluid -->
 </div><!-- /.content-wrapper -->
 {{> footer }}
+

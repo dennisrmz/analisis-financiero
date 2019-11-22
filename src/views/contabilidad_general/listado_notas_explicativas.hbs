@@ -13,7 +13,8 @@
                 <!-- DataTables -->
                 <div class="alert bold alert-info">
                         <i class="fas fw fa-plus-circle"></i>
-                        <a id="parametro" value="{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}" onClick="return enviar();" href="/contabilidad_general/estados_financieros/{{NOMBRE_ESTADOFINANCIERO}}/{{ID_ESTADOFINANCIERO}}/notas_explicativas/listado/agregar">
+
+                        <a href="/contabilidad_general/estados_financieros/agregar_nota_explicativa">
                         <strong>¡Click aquí para agregar una nota explicativa!</strong>
                         </a>
                 </div>
@@ -45,6 +46,7 @@
                                                         <p>¡Opps! Parece que no tienes ninguna nota explicativa hasta el momento.</p>
                                                 </div>
                                                 {{/each}}
+
                                         </table>
                                 </div>
                         </div>
@@ -69,3 +71,4 @@ $(document).ready(function(){
         }
 });
 </script>
+

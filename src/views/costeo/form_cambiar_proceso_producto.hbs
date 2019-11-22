@@ -1,0 +1,75 @@
+<div class="container p-4">
+    <div class="row">
+        <div class="col-md-4 mx-auto">
+               {{#each procesos}}
+            <div class="card">
+             
+         <h2 class="text-center">Proceso {{numero}}</h2>
+       
+
+                
+                <div class="card-body">
+                    <form action="/costeo/transferir_proceso" method="POST">
+                    <div  style="display: none">
+  <input type="radio" id="ordenproceso_id" name="ordenproceso_id" value="{{ordenproceso_id}}"
+         checked>
+  <label for="huey">Orden #{{ordenproceso_id}}</label>
+</div>
+ <div  style="display: none">
+  <input type="radio" id="numero" name="numero" value="{{numero}}"
+         checked>
+  <label for="huey">Proceso actual #{{numero}}</label>
+</div>
+                        <div class="form-group">
+                            <input type="number" class="form-control" min="0" max={{cantidaddeproducto}} name="cantidadproducto" placeholder="cantidadproducto" autofocus>
+                        </div>
+                        {{/each}}
+                          <div class="form-group">
+                            <label>Seleccione Materia Prima</label>
+                            <table class="table table-bordered">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Materia Prima</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <select name="materiaprima_id" class="form-control" required="">
+                                              
+                                                 {{#each materiasPrimas}}                                                                                          
+                                             <option value="{{id}}">{{nombre}}</option> 
+                                           
+                                                {{/each}}   
+                                            </select>
+                                        
+           
+                                        </td>
+                                        <td><input type="number" name="cantidadmatariaprima" required=""
+                                                class="form-control quantity" min="1"></td>
+                                       
+                                    </tr>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="mod" step="0.01" class="form-control" placeholder="costo M.O.D">
+                        </div>
+                        <div class="form-group">
+                            <input type="number" name="cif" step="0.01" class="form-control" placeholder="costo C.I.F">
+                        </div>
+                        <div class="from-group">
+                            <button class="btn btn-success btn-block">
+                                Tranferir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+         
+    </div>
+</div>

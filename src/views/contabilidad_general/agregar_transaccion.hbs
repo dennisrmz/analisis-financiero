@@ -9,11 +9,6 @@
             </li>
             <li class="breadcrumb-item active">Agregar transacción</li>
             </ol>
-            <div class="form-inline">
-                <a>Periodo contable Actual:&nbsp;&nbsp;&nbsp;</a>
-                <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
-            </div>
-            <br>
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-edit"></i>
@@ -24,6 +19,10 @@
                         <div class="col-lg-6 col-xs-12 border rounded">
                             <form name="transaccion_form" novalidate>
                                 <h5 class="mb-3 text-center header_id">TRANSACCIÓN</h5>
+                                <div class="form-group">
+                                    <a>Periodo contable Actual:&nbsp;&nbsp;&nbsp;</a>
+                                    <textarea rows="1" class="form-control" id="periodo_conta" value="{{periodo.FECHA_PERIODO}}" disabled>{{periodo.FECHA_PERIODO}}</textarea>
+                                </div>
                                 <div class="form-group">
                                     <a>Fecha en que se realiza:</a>
                                     <input name="fecha" class="form-control" data-date-format="yyyy/mm/dd" id="datepicker">
@@ -40,8 +39,6 @@
                                         {{/each}}
                                     </select>
                                 </div>
-                                <div id="fecha_prestamo" class="form-group">
-                                </div>
                                 <div class="form-group">
                                     <a>Ingrese descripción de transacción:</a>
                                     <textarea rows="2" id="id_descripcion_transaccion" type="text" name="descripcion" class="form-control" placeholder="Descripción"></textarea>
@@ -53,16 +50,6 @@
                                 <div id="impuesto" class="form-group">
                                 </div>
                                 <div id="iva_calculado" class="form-group">
-                                </div>
-                                <div id="plazo_a" class="form-group">
-                                </div>
-                                <div id="plazo_m" class="form-group">
-                                </div>
-                                <div id="interes" class="form-group">
-                                </div>
-                                <div id="valor_recuperacion_p" class="form-group">
-                                </div>
-                                <div id="vida_util_p" class="form-group">
                                 </div>
                                 <div class="col-12 text-center" style="padding-bottom: 5%">    
                                     <button class="btn btn-outline-primary" onclick="desactivar()" type="button">
@@ -228,69 +215,17 @@
             var descripcion = $("#id_descripcion_transaccion").val();
             var cbTipo = document.getElementById("id_tipo_transaccion");
             var monto = parseFloat($("#id_monto_transaccion").val());
-            var plazo_a = $("#plazo_anio").val();
-            var plazo_m = $("#plazo_meses").val();
-            var interes_m = $("#interes_mes").val();
-            var fecha_p = $("#datepicker_1").val();
-            var vida_u = $("#vida_util").val();
-            var valor_r = $("#valor_recuperacion").val();
             //valor = Aplicar IVA
             if(valor == "false"){
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    if(cbTipo.value == '1' || cbTipo.value == '2' || cbTipo.value == '4' || cbTipo.value == '5'){
-                        desactivar_Campos();
-                        document.getElementById("cb_impuesto").disabled = true;
-                    }else{
-                        if(cbTipo.value == '3' && plazo_a != ''){
-                            desactivar_Campos();
-                            document.getElementById("plazo_anio").disabled = true;
-                            document.getElementById("cb_impuesto").disabled = true;
-                        }else{
-                            if(cbTipo.value == '6' && plazo_m != ''){
-                                desactivar_Campos();
-                                document.getElementById("plazo_meses").disabled = true;
-                                document.getElementById("cb_impuesto").disabled = true;
-                            }else{
-                                if(cbTipo.value == '10' && vida_u != '' && valor_r != ''){
-                                    desactivar_Campos();
-                                    document.getElementById("valor_recuperacion").disabled = true;
-                                    document.getElementById("vida_util").disabled = true;
-                                    document.getElementById("cb_impuesto").disabled = true;
-                                }else{
-                                    if(cbTipo.value == '11' && vida_u != '' && valor_r != ''){
-                                        desactivar_Campos();
-                                        document.getElementById("valor_recuperacion").disabled = true;
-                                        document.getElementById("vida_util").disabled = true;
-                                        document.getElementById("cb_impuesto").disabled = true;
-                                    }else{
-                                        message_validar_transacion();
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    desactivar_Campos();
+                    document.getElementById("cb_impuesto").disabled = true;
                 }else{
                     message_validar_transacion();
                 }
             }else{
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
-                    if(cbTipo.value == '7' || cbTipo.value == '10'){
-                        desactivar_Campos();
-                    }else{
-                        if(cbTipo.value == '9' && interes_m != ''){
-                            desactivar_Campos();
-                            document.getElementById("interes_mes").disabled = true;
-                        }else{
-                            if(cbTipo.value == '8' && interes_m != '' && plazo_a != '' && fecha_p != ''){
-                                desactivar_Campos();
-                                document.getElementById("interes_mes").disabled = true;
-                                document.getElementById("plazo_anio").disabled = true;
-                                document.getElementById("datepicker_1").disabled = true;
-                            }else{
-                                message_validar_transacion();
-                            }
-                        }
-                    }
+                    desactivar_Campos();
                 }else{
                     message_validar_transacion();
                 }
@@ -414,7 +349,7 @@
         }
 
         //Funcion metodo post para agregar transaccion
-        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion){
+        function post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto){
             $.ajax({
                 url: "/contabilidad_general/transaccion/agregar_transaccion",
                 type: "POST",
@@ -432,13 +367,7 @@
                     'ES_AJUSTE': ajuste,
                     'ID_TRANSACCION_AJUSTE': codigo_ajuste,
                     'ES_IMPUESTO': is_impuesto, 
-                    'MONTO_IMPUESTO': monto_impuesto,
-                    'INTERES_MES': interes_mes,
-                    'PLAZO_MES': plazo_mes,
-                    'PLAZO_ANIO': plazo_anio,
-                    'VIDA_UTIL': vida_util,
-                    'VALOR_RECUPERACION': valor_recuperacion,
-                    'FECHA_PRESTAMO': fecha_prestamo
+                    'MONTO_IMPUESTO': monto_impuesto
                 },
                 success: function(data){
                 console.log(data);
@@ -482,44 +411,9 @@
             if(valor == "false"){
                 is_impuesto = "SI";
                 monto_impuesto = $('#monto_iva').val();
-                fecha_prestamo = '1990-01-01';
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalCargos_imp==totalAbonos_imp){
-                        if(cbTipo.value == '1' || cbTipo.value == '2' || cbTipo.value == '4' || cbTipo.value == '5'){
-                            interes_mes = 0;
-                            plazo_anio = 0;
-                            plazo_mes = 0;
-                            vida_util = 0;
-                            valor_recuperacion = 0;
-                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                        }else{
-                            if(cbTipo.value == '3'){
-                                interes_mes = 0;
-                                plazo_anio = $('#plazo_anio').val();
-                                plazo_mes = 0;
-                                vida_util = 0;
-                                valor_recuperacion = 0;
-                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                            }else{
-                                if(cbTipo.value == '6'){
-                                    interes_mes = 0;
-                                    plazo_anio = 0;
-                                    plazo_mes = $('#plazo_meses').val();
-                                    vida_util = 0;
-                                    valor_recuperacion = 0;
-                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                                }else{
-                                    if(cbTipo.value == '10' || cbTipo.value == '11'){
-                                        interes_mes = 0;
-                                        plazo_anio = 0;
-                                        plazo_mes = $('#plazo_meses').val();
-                                        vida_util = $("#vida_util").val();
-                                        valor_recuperacion = $("#valor_recuperacion").val();
-                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                                    }
-                                }
-                            }
-                        }
+                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto);
                     }else{
                         message_partida_doble();
                     }
@@ -534,31 +428,7 @@
                 if(cbTipo.value != '0' && descripcion != '' && !isNaN(monto)){
                     if(totalAbonos==totalCargos){
                         if(totalAbonos==monto){
-                            if(cbTipo.value == '7' || cbTipo.value == '10'){
-                                fecha_prestamo = '1990-01-01';
-                                interes_mes = 0;
-                                plazo_anio = 0;
-                                plazo_mes = 0;
-                                post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                            }
-                            else{
-                                if(cbTipo.value == '9'){
-                                    fecha_prestamo = '1990-01-01';
-                                    interes_mes = $('#interes_mes').val();
-                                    plazo_anio = 0;
-                                    plazo_mes = 0;
-                                    post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                                }
-                                else{
-                                    if(cbTipo.value == '8'){
-                                        fecha_prestamo = $("#datepicker_1").val();
-                                        interes_mes = $('#interes_mes').val();
-                                        plazo_anio = $('#plazo_anio').val();;
-                                        plazo_mes = 0;
-                                        post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto, interes_mes, plazo_mes, plazo_anio, fecha_prestamo, vida_util, valor_recuperacion);
-                                    }
-                                }
-                            }
+                            post_agregar_transaccion(codigo_cuentas, fecha, detalles, cargos, abonos, codigoTipo, monto, descripcion, periodo, ajuste, codigo_ajuste, is_impuesto, monto_impuesto);
                         }else{
                             message_datos_incoherentes();
                         }
@@ -615,18 +485,7 @@
                 var seleccionada = $('#id_tipo_transaccion').val();
                 console.log(seleccionada);
                 var url_nueva = "/contabilidad_general/check_impuesto";
-                var url_nueva_plazo_a = "/contabilidad_general/input_plazo_a";
-                var url_nueva_plazo_m = "/contabilidad_general/input_plazo_mes";
-                var url_nueva_interes = "/contabilidad_general/input_interes_mes";
-                var url_nueva_fecha = "/contabilidad_general/input_fecha_prestamo";
-                var url_nueva_vida = "/contabilidad_general/input_vida_util";
-                var url_nueva_valor = "/contabilidad_general/input_valor_recuperacion";
-                $('#id_monto_transaccion').val("");
-                $('#id_descripcion_transaccion').val("");
-                $('#iva_calculado_1').remove();
-                //Se le aplica iva a COMPRA AL CONTADO, COMPRA AL CREDITO, COMPRA DE SEGURO, VENTA AL CONTADO, VENTA AL CREDITO, PAGO DE ALQUILER
                 if(seleccionada == 1 || seleccionada == 2 || seleccionada == 3 || seleccionada == 4 || seleccionada == 5 || seleccionada == 6 || seleccionada == 10 || seleccionada == 11){
-                    //Impuesto
                     $.ajax({
                         type: 'get',
                         url: url_nueva,
@@ -635,109 +494,9 @@
                             console.log("SUCCESS");
                         },
                     });
-                    //Para COMPRA DE SEGURO
-                    if(seleccionada == 3){
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_plazo_a,
-                            success: function(data){
-                                $('#plazo_a').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                    }else{
-                        $('#plazo_1a').remove();
-                    }
-                    //Para PAGO DE ALQUILER
-                    if(seleccionada == 6){
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_plazo_m,
-                            success: function(data){
-                                $('#plazo_m').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                    }else{
-                        $('#plazo_1m').remove();
-                    }
-
-                    //Para compra equipo contado y credito
-                    if(seleccionada == 10 || seleccionada == 11){
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_vida,
-                            success: function(data){
-                                $('#vida_util_p').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_valor,
-                            success: function(data){
-                                $('#valor_recuperacion_p').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                    }else{
-                        $('#vida_util1').remove();
-                        $('#valor_recuperacion1').remove();
-                    }
-                    $('#interes_1').remove();
-                    $('#fecha_prestamo_1').remove();
                 }
                 else{
-                    //Para PRESTAMO BANCARIO
-                    if(seleccionada == 8){
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_interes,
-                            success: function(data){
-                                $('#interes').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_plazo_a,
-                            success: function(data){
-                                $('#plazo_a').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_fecha,
-                            success: function(data){
-                                $('#fecha_prestamo').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                    }else{
-                        $('#interes_1').remove();
-                        $('#plazo_1a').remove();
-                        $('#fecha_prestamo_1').remove();
-                    }
-                    //Para PRESTAMO A UN EMPLEADO
-                    if(seleccionada == 9){
-                        $.ajax({
-                            type: 'get',
-                            url: url_nueva_interes,
-                            success: function(data){
-                                $('#interes').html(data);
-                                console.log("SUCCESS");
-                            },
-                        });
-                    }else{
-                        $('#interes_1').remove();
-                    }
                     $('#impuesto_1').remove();
-                    $('#plazo_1m').remove();
-                    $('#plazo_1a').remove();
-                    $('#fecha_prestamo_1').remove();
-                    $('#vida_util1').remove();
-                    $('#valor_recuperacion1').remove();
                 }
             });
 
