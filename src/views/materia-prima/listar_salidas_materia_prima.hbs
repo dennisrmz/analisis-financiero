@@ -1,10 +1,35 @@
 {{> navigation }}
+<div id="content-wrapper">
+    <div class="container-fluid">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="/">
+                    Sistema Administrativo
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/costeo/listar_materia_prima">
+                    Materia Prima
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="/costeo/materia_prima_entrada">
+                    Entrada Materia Prima
+                </a>
+            </li>
+            <li class="breadcrumb-item active">Salida Materia Prima</li>
+        </ol>
+    </div>
+</div>
 <div class="container">
     <div class="texto-primario">
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-circle"></i>
+            <a href="agregar_productos_proceso">
+                <strong>¡Registrar Salida de Materia Prima!</strong>
+            </a>
+        </div>
         <h1 class="titulo text-center">INVENTARIO PRODUCTO TERMINADO</h1>
-
-         <a href="agregar_productos_proceso" class="btn m-3 btn-success">Registrar Salida de Materia Prima</a>
-
         <select class="m-2 form-control" name="productos" id="productos">
             <option value="silla">Silla</option> 
             <option value="mesa" selected>Mesa</option>
