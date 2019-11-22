@@ -103,7 +103,10 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
     //------------------------------------------NOTAS EXPLICATIVAS------------------------------------------------------
     
     //Mostrar listado de notas explicativas del estado financiero elegido
-    router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',isLoggedIn, async (req, res) => {
+   //------------------------------------------NOTAS EXPLICATIVAS------------------------------------------------------
+    
+    //Mostrar listado de notas explicativas del estado financiero elegido
+    router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado',async (req, res) => {
         const { NOMBRE_ESTADOFINANCIERO } = req.params;
         const { ID_ESTADOFINANCIERO } = req.params;
         const notasexplicativas = await pool.query('SELECT * FROM notaexplicativa INNER JOIN estadofinanciero ON ' +
@@ -111,6 +114,29 @@ router.get('/estados_financieros/BALANCE_DE_COMPROBACION_INICIAL/:ID_ESTADOFINAN
         console.log("ID_ESTADOFINANCIERO");
         console.log({ID_ESTADOFINANCIERO});
         res.render('contabilidad_general/listado_notas_explicativas', {notasexplicativas, ID_ESTADOFINANCIERO, NOMBRE_ESTADOFINANCIERO});
+    });
+    
+    
+    //Agregar Notas Explicativas
+    router.get('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', (req, res) => {
+        const { ID_ESTADOFINANCIERO } = req.params;
+        const { NOMBRE_ESTADOFINANCIERO } = req.params;
+        console.log({ID_ESTADOFINANCIERO});
+        res.render('contabilidad_general/agregar', {NOMBRE_ESTADOFINANCIERO, ID_ESTADOFINANCIERO});
+    });
+
+    router.post('/estados_financieros/:NOMBRE_ESTADOFINANCIERO/:ID_ESTADOFINANCIERO/notas_explicativas/listado/agregar', async (req, res) => {
+        const { ID_ESTADOFINANCIERO} = req.params;
+        const { TITULO_NOTA, DESCRIPCION_NOTA } = req.body;
+        console.log(req.body);
+        const newNota = {
+                ID_ESTADOFINANCIERO,
+                TITULO_NOTA,
+                DESCRIPCION_NOTA
+        };
+        await pool.query('INSERT INTO notaexplicativa SET ?', [newNota]);
+        console.log('Se ha insertado correctamente la nota ');
+        res.redirect('/contabilidad_general/estados_financieros/listado');
     });
     
     
