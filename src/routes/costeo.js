@@ -67,7 +67,8 @@ router.get('/producto_terminado_saldo', isLoggedIn, async (req, res) => {
 });
 
 router.get('/producto_terminado_entrada', isLoggedIn, async (req, res) => {
-    res.render('costeo/listar_entradas_producto_terminado');
+  const productoTerminado = await pool.query('SELECT orden.detalle,productosterminados.cantidadproducto,productosterminados.fechaterminado, (productosterminados.costototal / productosterminados.cantidadproducto) AS preciounitario FROM `orden` INNER JOIN productosterminados ON productosterminados.orden_id = orden.id');   
+    res.render('costeo/listar_entradas_producto_terminado',{productoTerminado});
 });
 
 router.get('/producto_terminado_salida', isLoggedIn, async (req, res) => {
@@ -106,13 +107,13 @@ router.post('/agregar_productos_proceso', isLoggedIn, async (req, res) => {
     await pool.query('INSERT INTO orden set ?', [orden]);
     var Arrayorden = await pool.query('SELECT * FROM `orden`  ORDER BY id DESC');
     const ordenproceso_id = Arrayorden[0].id;
-    const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprimaid);
+    const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad,t1.materiaprima_id FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprimaid);
     
     costomp = await procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid);
         
        
   
-    const materiaprima_id = materiaPrima[0].id;
+    const materiaprima_id = materiaPrima[0].materiaprima_id;
     const numero = 1;
     
     const nuevoProceso = {
@@ -154,7 +155,7 @@ router.get('/transferir_proceso/:id', isLoggedIn, async (req, res) => {
 router.post('/transferir_proceso', isLoggedIn, async (req, res) => {
     var { ordenproceso_id, numero, materiaprima_id, cantidadproducto, cantidadmatariaprima, mod,
         cif } = req.body;
-        const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprima_id);
+        const materiaPrima = await pool.query('SELECT t1.id,t1.preciounitario,t1.cantidad,t1.materiaprima_id FROM `entradamp` t1 INNER JOIN materiasprimas t2 ON t1.materiaprima_id = t2.id where t2.id=?', materiaprima_id);
         costomp = await procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprima_id);
     
     var cantidadProceso = await pool.query('SELECT  invproductosproceso.id,invproductosproceso.numeroprocesos,invproductosproceso.tipoproducto FROM `orden`  INNER JOIN invproductosproceso on orden.productoproceso_id = invproductosproceso.id where orden.id = ?', ordenproceso_id);
@@ -169,10 +170,12 @@ router.post('/transferir_proceso', isLoggedIn, async (req, res) => {
             cantidaddeproducto:cantidadproducto,
             costomp
         }
+        console.log("aca llega "+ [nuevoProceso]);
         console.log(nuevoProceso);
         await pool.query('INSERT INTO procesos set ?', [nuevoProceso]);
+        
         await pool.query('UPDATE `procesos` SET `cantidaddeproducto`=?, `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [0,mod, cif, ordenproceso_id, procActual]);
-        var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+        var productoproc = await pool.query('SELECT * FROM `invproductosproceso` WHERE invproductosproceso.estado != 1 ORDER BY id DESC');
 
         res.render('costeo/productos_procesos', { productoproc });
     } else {
@@ -192,7 +195,7 @@ router.post('/transferir_proceso', isLoggedIn, async (req, res) => {
         await pool.query('UPDATE `invproductosproceso` SET estado=1 WHERE id = ?',cantidadProceso[0].id)
         await pool.query('UPDATE `procesos` SET `cantidaddeproducto`=?, `costomod`=?,`costocif`=? WHERE (procesos.ordenproceso_id = ? AND procesos.numero = ?)', [0,mod, cif, ordenproceso_id, procActual]);
         await pool.query('INSERT INTO productosterminados set ?', [productoTerminado]);
-        var productoproc = await pool.query('SELECT * FROM `invproductosproceso`  ORDER BY id DESC');
+        var productoproc = await pool.query('SELECT * FROM `invproductosproceso` WHERE invproductosproceso.estado != 1 ORDER BY id DESC');
 
         res.render('costeo/productos_procesos', { productoproc });
     }
@@ -217,6 +220,7 @@ async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid
           
             element.cantidad = parseInt(element.cantidad) - parseInt(cantidadmatariaprima);
             await pool.query('UPDATE `entradamp` SET `cantidad`=? WHERE entradamp.id = ?', [element.cantidad,element.id]);
+            await pool.query('UPDATE `materiasprimas` SET `existencias`=(materiasprimas.existencias-?) WHERE materiasprimas.id = ?',[cantidadmatariaprima,element.materiaprima_id]);
             await pool.query('INSERT INTO entradamp set ?', [newEntradaMateriaPrima]);
             console.log(cantidadmatariaprima);
             totalcosto = parseFloat(totalcosto) + parseFloat(element.preciounitario) * parseFloat(cantidadmatariaprima);
@@ -232,7 +236,9 @@ async  function procesokardexmp(materiaPrima,cantidadmatariaprima,materiaprimaid
           cantidadmatariaprima=parseInt(cantidadmatariaprima)-parseInt(element.cantidad);           
             await pool.query('UPDATE `entradamp` SET `cantidad`=? WHERE entradamp.id = ?', [0,element.id]);
             await pool.query('INSERT INTO entradamp set ?', [newEntradaMateriaPrima]);
-            totalcosto = totalcosto + parseFloat(element.preciounitario) * parseFloat(element.cantidadmatariaprima);
+            await pool.query('UPDATE `materiasprimas` SET `existencias`=(materiasprimas.existencias-?) WHERE materiasprimas.id = ?',[element.cantidad,element.materiaprima_id]);
+            totalcosto = parseFloat(totalcosto) + parseFloat(element.preciounitario) * parseFloat(element.cantidad);
+            console.log(totalcosto);
         }
         
     }

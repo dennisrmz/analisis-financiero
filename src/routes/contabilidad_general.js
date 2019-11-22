@@ -440,11 +440,13 @@ router.post('/transaccion/agregar_transaccion',isLoggedIn, async (req, res, next
                                 fecha:FECHA_TRANSACCION
                         }
                         await pool.query('INSERT INTO entradamp set ?', [new_entrada_materia]);
+                        await pool.query('UPDATE `materiasprimas` SET `existencias`=(materiasprimas.existencias+?) WHERE materiasprimas.id = ?',[CANTIDAD_MATERIA,ID_CUENTA_NUM[k]]);
                         console.log("se guardo exitosamente: "+[new_entrada_materia]);
                 }
         }
         // ****************************************************************
         //AQUI AGREGAS CODIGO
+
         // ****************************************************************
         //Insertar los movimientos realizados en una transaccion
         const id_transaccion = await pool.query('SELECT ID_TRANSACCION FROM transaccion ORDER BY ID_TRANSACCION DESC LIMIT 1');
