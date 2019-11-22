@@ -4,6 +4,27 @@ const router = express.Router();
 const pool = require('../database');
 const { isLoggedIn } = require('../lib/auth');
 
+//-----------------------------------RAZONES FINANCIERAS-----------------------------------------------------
+router.get('/razones', async (req, res) => {
+    console.log("hola")
+            const activos_c = await(pool.query('SELECT CODIGO_CUENTA, NOMBRE_CUENTA, SALDO_CUENTA FROM cuenta WHERE CODIGO_CUENTA="11"'));
+            const pasivos_c = await(pool.query('SELECT CODIGO_CUENTA, NOMBRE_CUENTA, SALDO_CUENTA FROM cuenta WHERE CODIGO_CUENTA="21"'));
+            const activos_corriente = await(pool.query('SELECT ROUND(SUM(SALDO_CUENTA), 2) AS AC FROM cuenta WHERE CODIGO_CUENTA IN (1111, 1112, 1121, 1122, 1131, 1132, 1133, 11411, 11412, 11413, 11414, 11415, 1142, 11431, 11432, 11433, 11441, 11442, 11443, 11444, 11511, 11512, 11513, 11514, 11515, 1152, 116, 1171, 1172, 1173)'));
+            const pasivos_corriente = await(pool.query('SELECT ROUND(SUM(SALDO_CUENTA), 2) AS PC FROM cuenta WHERE CODIGO_CUENTA IN (211, 2121, 213)'));
+            var rc =0;
+            rc = Number((activos_corriente[0].AC/ pasivos_corriente[0].PC).toFixed(2));
+            
+            const inventarios = await(pool.query('SELECT CODIGO_CUENTA, NOMBRE_CUENTA, SALDO_CUENTA FROM cuenta WHERE CODIGO_CUENTA="114"'));
+            const sumas_inventarios = await(pool.query('SELECT ROUND(SUM(SALDO_CUENTA), 2) AS INVENTARIO  FROM cuenta WHERE CODIGO_CUENTA IN (11411, 11412, 11413, 11414, 11415, 1142, 11431, 11432, 11433, 11441, 11442, 11443, 11444)'));
+            var razon_liq_cor = 0;
+            razon_liq_cor = Number(((activos_corriente[0].AC - sumas_inventarios[0].INVENTARIO) / pasivos_corriente[0].PC).toFixed(2));
+            
+            const costos_ventas = await(pool.query('SELECT CODIGO_CUENTA, NOMBRE_CUENTA, SALDO_CUENTA FROM cuenta WHERE CODIGO_CUENTA="521"'));
+            var razon_inv = 0;
+            razon_inv = Number((costos_ventas[0].SALDO_CUENTA / sumas_inventarios[0].INVENTARIO).toFixed(2));
+            res.render('contabilidad_general/razones_financieras', { activo_c:activos_c[0], pasivo_c:pasivos_c[0], activo_corriente:activos_corriente[0], pasivo_corriente:pasivos_corriente[0], rc, suma_inventario:sumas_inventarios[0], inventario:inventarios[0], razon_liq_cor, costo_venta:costos_ventas[0],razon_inv});
+});
+
 
 // ********************Rutas Crear Materia Prima *************** */
 router.get('/crear_materia_prima', isLoggedIn, async (req, res) => {
@@ -67,7 +88,7 @@ router.get('/producto_terminado_saldo', isLoggedIn, async (req, res) => {
 });
 
 router.get('/producto_terminado_entrada', isLoggedIn, async (req, res) => {
-  const productoTerminado = await pool.query('SELECT orden.detalle,productosterminados.cantidadproducto,productosterminados.fechaterminado, (productosterminados.costototal / productosterminados.cantidadproducto) AS preciounitario FROM `orden` INNER JOIN productosterminados ON productosterminados.orden_id = orden.id');   
+  const productoTerminado = await pool.query("SELECT orden.detalle,productosterminados.cantidadproducto, DATE_FORMAT(productosterminados.fechaterminado, '%Y/%m/%d') AS fechaterminado, (productosterminados.costototal / productosterminados.cantidadproducto) AS preciounitario FROM `orden` INNER JOIN productosterminados ON productosterminados.orden_id = orden.id");   
     res.render('costeo/listar_entradas_producto_terminado',{productoTerminado});
 });
 

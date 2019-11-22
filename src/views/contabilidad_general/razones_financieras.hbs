@@ -1,0 +1,141 @@
+{{> navigation }}
+<div id="content-wrapper">
+        <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                        <a href="/contabilidad_general">
+                        Contabilidad General
+                        </a> 
+                </li>
+                <li class="breadcrumb-item active">Razones Financieras</li>
+                </ol>
+                <div class="row">
+                        <div class="col-md-7 mx-auto">
+                        <div class="card">
+                        <div class="card-body">
+                                
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="6" class="text-center">
+                                                            RAZON CIRCULANTE
+                                                            <br>
+                                                            Razon Circulante = Activos Corrientes / PasivosCorrientes
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="text-center">CODIGO</th>
+                                                        <th class="text-center">CUENTAS</th>
+                                                        <th class="text-center">SALDO </th>
+                                                    </tr>
+                                                    
+                                                    <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{activo_c.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;" >{{activo_c.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ activo_corriente.AC }}</th>
+                                                    </tr>
+                                                     <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{pasivo_c.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{pasivo_c.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ pasivo_corriente.PC }}</th>
+                                                    </tr>
+                                                     <tr>
+                                                        <th class="text-center" ></th>
+                                                        <th class="text-right">TOTAL</th>
+                                                        <th class="text-center">{{rc}}</th>
+                                                    </tr>
+                                                    </tbody>
+                                        </table>
+                                </div>
+
+
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="6" class="text-center">
+                                                            RAZON DE LIQUIDEZ CORRIENTE
+                                                            <br>
+                                                            Razon de Liquidez = (Activos Corrientes - Inventario) / PasivosCorrientes
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                    <tr>
+                                                        <th class="text-center">CODIGO</th>
+                                                        <th class="text-center">CUENTAS</th>
+                                                        <th class="text-center">SALDO </th>
+                                                    </tr>
+                                                    
+                                            
+                                                    <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{activo_c.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{activo_c.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ activo_corriente.AC }}</th>
+                                                    </tr>
+                                                     <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{inventario.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{inventario.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ suma_inventario.INVENTARIO }}</th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{pasivo_c.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{pasivo_c.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ pasivo_corriente.PC }}</th>
+                                                    </tr>
+                                                    
+                                                     <tr>
+                                                        <th class="text-center" ></th>
+                                                        <th class="text-right">TOTAL</th>
+                                                        <th class="text-center">{{razon_liq_cor}}</th>
+                                                    </tr>
+                                        </table>
+                                </div>
+
+                                <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="6" class="text-center">
+                                                            ROTACION DE INVENTARIO
+                                                            <br>
+                                                            Rotacion de Inventario = Costo de Venta / Inventario
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <th class="text-center">CODIGO</th>
+                                                        <th class="text-center">CUENTAS</th>
+                                                        <th class="text-center">SALDO </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{costo_venta.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{costo_venta.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ costo_venta.SALDO_CUENTA }}</th>
+                                                    </tr>
+                                                     <tr>
+                                                        <th class="text-center" style="font-weight: normal;">{{inventario.CODIGO_CUENTA}}</th>
+                                                        <th style="font-weight: normal;">{{inventario.NOMBRE_CUENTA}}</th>
+                                                        <th class="text-center" style="font-weight: normal;">{{ suma_inventario.INVENTARIO }}</th>
+                                                    </tr>
+                                                     
+                                                     <tr>
+                                                        <th class="text-center" ></th>
+                                                        <th class="text-right">TOTAL</th>
+                                                        <th class="text-center">{{razon_inv}}</th>
+                                                    </tr>
+                                                    </tbody>
+                                        </table>
+                                </div>
+
+                        </div>
+                        </div>
+                        </div>
+                </div>
+        </div><!-- /.container-fluid -->
+</div><!-- /.content-wrapper -->
+{{> footer }}
